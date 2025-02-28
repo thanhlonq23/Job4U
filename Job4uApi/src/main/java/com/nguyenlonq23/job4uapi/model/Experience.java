@@ -31,25 +31,11 @@ public class Experience {
         this.experienceName = experienceName;
     }
 
-    // toString, equals, and hashCode
     @Override
     public String toString() {
         return "Experience{" +
                 "id=" + id +
                 ", experienceName='" + experienceName + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Experience that = (Experience) o;
-        return id == that.id && Objects.equals(experienceName, that.experienceName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, experienceName);
     }
 }

@@ -31,25 +31,11 @@ public class Location {
         this.locationName = locationName;
     }
 
-    // toString, equals, and hashCode
     @Override
     public String toString() {
         return "Location{" +
                 "id=" + id +
                 ", locationName='" + locationName + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Location location = (Location) o;
-        return id == location.id && Objects.equals(locationName, location.locationName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, locationName);
     }
 }

@@ -31,7 +31,6 @@ public class JobLevel {
         this.joblevelName = joblevelName;
     }
 
-    // toString, equals, and hashCode
     @Override
     public String toString() {
         return "JobLevel{" +
@@ -40,16 +39,4 @@ public class JobLevel {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        JobLevel jobLevel = (JobLevel) o;
-        return id == jobLevel.id && Objects.equals(joblevelName, jobLevel.joblevelName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, joblevelName);
-    }
 }

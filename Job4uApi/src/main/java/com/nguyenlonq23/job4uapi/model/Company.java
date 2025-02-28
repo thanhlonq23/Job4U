@@ -87,7 +87,6 @@ public class Company {
         this.updatedAt = updatedAt;
     }
 
-    // toString, equals, and hashCode
     @Override
     public String toString() {
         return "Company{" +
@@ -99,18 +98,5 @@ public class Company {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Company company = (Company) o;
-        return id == company.id && Objects.equals(name, company.name) && Objects.equals(address, company.address) && Objects.equals(phonenumber, company.phonenumber) && Objects.equals(taxnumber, company.taxnumber) && Objects.equals(createdAt, company.createdAt) && Objects.equals(updatedAt, company.updatedAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, address, phonenumber, taxnumber, createdAt, updatedAt);
     }
 }

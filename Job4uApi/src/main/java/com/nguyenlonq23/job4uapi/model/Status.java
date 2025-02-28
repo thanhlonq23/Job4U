@@ -31,25 +31,11 @@ public class Status {
         this.statusName = statusName;
     }
 
-    // toString, equals, and hashCode
     @Override
     public String toString() {
         return "Status{" +
                 "id=" + id +
                 ", statusName='" + statusName + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Status status = (Status) o;
-        return id == status.id && Objects.equals(statusName, status.statusName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, statusName);
     }
 }

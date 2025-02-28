@@ -31,25 +31,11 @@ public class WorkType {
         this.worktypeName = worktypeName;
     }
 
-    // toString, equals, and hashCode
     @Override
     public String toString() {
         return "WorkType{" +
                 "id=" + id +
                 ", worktypeName='" + worktypeName + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        WorkType workType = (WorkType) o;
-        return id == workType.id && Objects.equals(worktypeName, workType.worktypeName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, worktypeName);
     }
 }

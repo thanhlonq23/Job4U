@@ -31,25 +31,11 @@ public class Salary {
         this.salaryRange = salaryRange;
     }
 
-    // toString, equals, and hashCode
     @Override
     public String toString() {
         return "Salary{" +
                 "id=" + id +
                 ", salaryRange='" + salaryRange + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Salary salary = (Salary) o;
-        return id == salary.id && Objects.equals(salaryRange, salary.salaryRange);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, salaryRange);
     }
 }
