@@ -1,9 +1,11 @@
 package com.nguyenlonq23.job4uapi.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Objects;
 
+@Data
 @Entity
 @Table(name = "worktypes")
 public class WorkType {
@@ -11,31 +13,6 @@ public class WorkType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "worktype_name", nullable = false)
+    @Column(name = "worktype_name", nullable = false, unique = true)
     private String worktypeName;
-
-    // Getters and Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getWorktypeName() {
-        return worktypeName;
-    }
-
-    public void setWorktypeName(String worktypeName) {
-        this.worktypeName = worktypeName;
-    }
-
-    @Override
-    public String toString() {
-        return "WorkType{" +
-                "id=" + id +
-                ", worktypeName='" + worktypeName + '\'' +
-                '}';
-    }
 }

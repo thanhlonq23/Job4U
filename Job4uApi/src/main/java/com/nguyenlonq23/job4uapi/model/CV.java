@@ -1,9 +1,12 @@
 package com.nguyenlonq23.job4uapi.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "cvs")
 public class CV {
@@ -26,6 +29,10 @@ public class CV {
     @Column(name = "description")
     private String description;
 
+
+    @Column(name = "isChecked", nullable = false)
+    private boolean isChecked;
+
     @Column(name = "createdAt", nullable = false)
     private Date createdAt;
 
@@ -41,62 +48,6 @@ public class CV {
         this.file = file;
         this.description = description;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public byte[] getFile() {
-        return file;
-    }
-
-    public void setFile(byte[] file) {
-        this.file = file;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

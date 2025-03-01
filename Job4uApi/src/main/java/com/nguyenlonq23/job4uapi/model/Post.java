@@ -1,9 +1,11 @@
 package com.nguyenlonq23.job4uapi.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -11,11 +13,14 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "descriptionHTML")
     private String descriptionHTML;
+
+    @Column(name = "descriptionMarkdown", columnDefinition = "LONGTEXT")
+    private String descriptionMarkdown;
 
     @ManyToOne
     @JoinColumn(name = "statusId")
@@ -45,9 +50,6 @@ public class Post {
     @JoinColumn(name = "experience_job_id")
     private Experience experience;
 
-    @Column(name = "genderPostCode")
-    private int genderPostCode;
-
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
@@ -65,7 +67,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(String name, String descriptionHTML, Status status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, int genderPostCode, User user, Company company, Date createdAt, Date updatedAt) {
+    public Post(String name, String descriptionHTML, Status status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, User user, Company company, Date createdAt, Date updatedAt) {
         this.name = name;
         this.descriptionHTML = descriptionHTML;
         this.status = status;
@@ -75,130 +77,9 @@ public class Post {
         this.jobLevel = jobLevel;
         this.workType = workType;
         this.experience = experience;
-        this.genderPostCode = genderPostCode;
         this.user = user;
         this.company = company;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescriptionHTML() {
-        return descriptionHTML;
-    }
-
-    public void setDescriptionHTML(String descriptionHTML) {
-        this.descriptionHTML = descriptionHTML;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Salary getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Salary salary) {
-        this.salary = salary;
-    }
-
-    public JobLevel getJobLevel() {
-        return jobLevel;
-    }
-
-    public void setJobLevel(JobLevel jobLevel) {
-        this.jobLevel = jobLevel;
-    }
-
-    public WorkType getWorkType() {
-        return workType;
-    }
-
-    public void setWorkType(WorkType workType) {
-        this.workType = workType;
-    }
-
-    public Experience getExperience() {
-        return experience;
-    }
-
-    public void setExperience(Experience experience) {
-        this.experience = experience;
-    }
-
-    public int getGenderPostCode() {
-        return genderPostCode;
-    }
-
-    public void setGenderPostCode(int genderPostCode) {
-        this.genderPostCode = genderPostCode;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

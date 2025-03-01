@@ -1,9 +1,11 @@
 package com.nguyenlonq23.job4uapi.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Objects;
 
+@Data
 @Entity
 @Table(name = "joblevels")
 public class JobLevel {
@@ -11,32 +13,6 @@ public class JobLevel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "joblevel_name", nullable = false)
+    @Column(name = "joblevel_name", nullable = false, unique = true)
     private String joblevelName;
-
-    // Getters and Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getJoblevelName() {
-        return joblevelName;
-    }
-
-    public void setJoblevelName(String joblevelName) {
-        this.joblevelName = joblevelName;
-    }
-
-    @Override
-    public String toString() {
-        return "JobLevel{" +
-                "id=" + id +
-                ", joblevelName='" + joblevelName + '\'' +
-                '}';
-    }
-
 }

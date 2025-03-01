@@ -1,9 +1,11 @@
 package com.nguyenlonq23.job4uapi.model;
 
 import jakarta.persistence.*;
+import com.nguyenlonq23.job4uapi.model.Skill;
+import lombok.Data;
+import java.util.List;
 
-import java.util.Objects;
-
+@Data
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -11,23 +13,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "category_name", nullable = false)
+    @Column(name = "category_name", nullable = false, unique = true)
     private String categoryName;
 
-    // Getters and Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Skill> skills;
 }
