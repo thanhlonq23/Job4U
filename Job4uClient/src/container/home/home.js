@@ -52,14 +52,14 @@ const Home = () => {
             <div
               class="single-slider slider-height d-flex align-items-center"
               style={{
-                backgroundImage: `url("./assets/img/hero/h1_hero.jpg")`,
+                backgroundImage: `url("./assets/img/hero/banner-1.png")`,
               }}
             >
               <div class="container">
                 <div class="row">
                   <div class="col-xl-6 col-lg-9 col-md-10">
                     <div class="hero__caption">
-                      <h1>Hãy tìm công việc phù hợp với bạn nào</h1>
+                      <h1>NƠI KHỞI ĐẦU CHO HÀNH TRÌNH SỰ NGHIỆP CỦA BẠN </h1>
                     </div>
                   </div>
                 </div>

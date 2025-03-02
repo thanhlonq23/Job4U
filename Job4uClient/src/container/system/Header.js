@@ -22,7 +22,7 @@ const Header = () => {
   return (
     <nav className="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <Link className="navbar-brand brand-logo mr-5" to="/admin/">
+        <Link className="navbar-brand brand-logo mr-5" to="/">
           <img src="/assetsAdmin/images/logo.png" className="mr-2" alt="logo" />
           JOB4U
         </Link>
