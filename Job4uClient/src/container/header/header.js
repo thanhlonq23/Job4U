@@ -35,7 +35,7 @@ const Header = () => {
                       <img
                         src="/assets/img/logo/long-logo.png"
                         alt=""
-                        style={{ width: "190px", height: "auto" }}
+                        style={{ width: "160px", height: "auto" }}
                       />
                     </NavLink>
                   </div>
