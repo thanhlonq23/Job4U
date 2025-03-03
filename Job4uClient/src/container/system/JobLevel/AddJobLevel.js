@@ -1,138 +1,140 @@
-import React from 'react'
-import { useEffect, useState } from 'react';
-import { createAllCodeService, getDetailAllcodeById, UpdateAllcodeService } from '../../../service/userService';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Spinner, Modal } from 'reactstrap'
-import '../../../components/modal/modal.css'
+import { toast } from "react-toastify";
+import { Spinner, Modal } from "reactstrap";
+import "../../../components/modal/modal.css";
+import {
+  createJobLevelService,
+  getAllJobLevelService,
+  UpdateJobLevelService,
+} from "../../../service/JobLevelService";
+
 const AddJobLevel = () => {
+  // *** State Management ***
+  const [isActionADD, setIsActionADD] = useState(true); // Xác định là thêm mới hay cập nhật
+  const [isLoading, setIsLoading] = useState(false); // Quản lý trạng thái tải
+  const { id } = useParams(); // Lấy id từ URL để xác định chế độ chỉnh sửa
 
+  // Quản lý giá trị các input
+  const [inputValues, setInputValues] = useState({
+    joblevelName: "",
+  });
 
-    const [isActionADD, setisActionADD] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
-
-    const { id } = useParams();
-
-    const [inputValues, setInputValues] = useState({
-        value: '', code: ''
-    });
-
-    useEffect(() => {
-
-        if (id) {
-            let fetchDetailJobLevel = async () => {
-                setisActionADD(false)
-                let allcode = await getDetailAllcodeById(id)
-                if (allcode && allcode.errCode === 0) {
-                    setInputValues({ ...inputValues, ["value"]: allcode.data.value, ["code"]: allcode.data.code })
-                }
-            }
-            fetchDetailJobLevel()
+  // *** Fetching Data ***
+  useEffect(() => {
+    if (id) {
+      const fetchDetailJobLevel = async () => {
+        setIsActionADD(false); // Chuyển chế độ sang cập nhật
+        try {
+          const joblevel = await getAllJobLevelService(id);
+          if (joblevel && joblevel.errCode === 0) {
+            setInputValues({
+              joblevelName: joblevel.data.joblevelName,
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching job level details:", error);
         }
-    }, [])
+      };
+      fetchDetailJobLevel();
+    }
+  }, [id]);
 
-    const handleOnChange = event => {
-        const { name, value } = event.target;
-        setInputValues({ ...inputValues, [name]: value });
+  // *** Event Handlers ***
+  // Xử lý thay đổi trong các input
+  const handleOnChange = (event) => {
+    const { name, value } = event.target;
+    setInputValues((prev) => ({ ...prev, [name]: value }));
+  };
 
+  // Lưu cấp bậc mới hoặc cập nhật cấp bậc
+  const handleSaveJobLevel = async () => {
+    setIsLoading(true); // Hiển thị trạng thái tải
+    const payload = {
+      joblevelName: inputValues.joblevelName,
     };
 
-    let handleSaveJobLevel = async () => {
-        setIsLoading(true)
-        if (isActionADD === true) {
-            let res = await createAllCodeService({
-                value: inputValues.value,
-                code: inputValues.code,
-                type: 'JOBLEVEL',
+    try {
+      let response;
+      if (isActionADD) {
+        response = await createJobLevelService(payload); // Thêm mới cấp bậc
+      } else {
+        response = await UpdateJobLevelService({ ...payload, id }); // Cập nhật cấp bậc
+      }
 
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Thêm cấp bậc thành công")
-                    setInputValues({
-                        ...inputValues,
-                        ["value"]: '',
-                        ["code"]: '',
-                    })
-                }
-                else if (res && res.errCode === 2) {
-                    toast.error(res.errMessage)
-                }
-                else toast.error("Thêm cấp bậc thất bại")
-            }, 1000);
-        } else {
-            let res = await UpdateAllcodeService({
-                value: inputValues.value,
-                code: inputValues.code,
-                id: id,
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Cập nhật cấp bậc thành công")
+      setIsLoading(false); // Tắt trạng thái tải
 
-                }
-                else if (res && res.errCode === 2) {
-                    toast.error(res.errMessage)
-                }
-                else toast.error("Cập nhật cấp bậc thất bại")
-            }, 1000);
+      // Xử lý kết quả trả về
+      if (response && response.errCode === 0) {
+        toast.success(
+          isActionADD
+            ? "Thêm cấp bậc thành công"
+            : "Cập nhật cấp bậc thành công"
+        );
+
+        if (isActionADD) {
+          // Đặt lại giá trị input sau khi thêm thành công
+          setInputValues({
+            joblevelName: "",
+          });
         }
+      } else {
+        toast.error(response?.errMessage || "Đã xảy ra lỗi!");
+      }
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Đã xảy ra lỗi khi gửi dữ liệu!");
+      console.error(error);
     }
+  };
 
-    return (
-        <div className=''>
-            <div className="col-12 grid-margin">
-                <div className="card">
-                    <div className="card-body">
-                        <h4 className="card-title">{isActionADD === true ? 'Thêm mới cấp bậc' : 'Cập nhật cấp bậc'}</h4>
-                        <br></br>
-                        <form className="form-sample">
-
-                            <div className="row">
-                                <div className="col-md-8">
-                                    <div className="form-group row">
-                                        <label className="col-sm-3 col-form-label">Tên cấp bậc</label>
-                                        <div className="col-sm-9">
-                                            <input type="text" value={inputValues.value} name="value" onChange={(event) => handleOnChange(event)} className="form-control" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-8">
-                                    <div className="form-group row">
-                                        <label className="col-sm-3 col-form-label">Mã code</label>
-                                        <div className="col-sm-9">
-                                            <input type="text" value={inputValues.code} name="code" onChange={(event) => handleOnChange(event)} className="form-control" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="button" className="btn1 btn1-primary1 btn1-icon-text" onClick={() => handleSaveJobLevel()}>
-                                <i class="ti-file btn1-icon-prepend"></i>
-                                Lưu
-                            </button>
-                        </form>
-                    </div>
+  // *** Render UI ***
+  return (
+    <div className="add-job-level">
+      <div className="col-12 grid-margin">
+        <div className="card">
+          <div className="card-body">
+            <h4 className="card-title">
+              {isActionADD ? "Thêm mới cấp bậc" : "Cập nhật cấp bậc"}
+            </h4>
+            <form className="form-sample">
+              {/* Input tên cấp bậc */}
+              <div className="form-group row">
+                <label className="col-sm-3 col-form-label">Tên cấp bậc</label>
+                <div className="col-sm-9">
+                  <input
+                    type="text"
+                    value={inputValues.joblevelName}
+                    name="joblevelName"
+                    onChange={handleOnChange}
+                    className="form-control"
+                  />
                 </div>
-            </div>
-            {isLoading &&
-                <Modal isOpen='true' centered contentClassName='closeBorder' >
+              </div>
 
-                    <div style={{
-                        position: 'absolute', right: '50%',
-                        justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <Spinner animation="border"  ></Spinner>
-                    </div>
-
-                </Modal>
-            }
+              {/* Button lưu */}
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveJobLevel}
+              >
+                Lưu
+              </button>
+            </form>
+          </div>
         </div>
-    )
-}
+      </div>
 
-export default AddJobLevel
+      {/* Hiển thị trạng thái loading */}
+      {isLoading && (
+        <Modal isOpen centered>
+          <div className="spinner-container">
+            <Spinner />
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+export default AddJobLevel;

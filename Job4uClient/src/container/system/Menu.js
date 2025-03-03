@@ -15,7 +15,9 @@ const Menu = () => {
   // Đồng bộ trạng thái menu với URL hiện tại
   useEffect(() => {
     const pathSegments = location.pathname.split("/");
+    console.log("Path Segments:", pathSegments);
     const currentMenu = pathSegments[2]; // Lấy phần tử thứ 2 trong URL
+    console.log("Current Menu:", currentMenu);
     setExpandedMenu((prev) => ({
       ...prev,
       [currentMenu]: true,
@@ -46,6 +48,7 @@ const Menu = () => {
             className="nav-link"
             onClick={() => toggleMenu("user")}
             aria-expanded={expandedMenu["user"] || false}
+            href="#"
           >
             <i className="icon-head menu-icon" />
             <span className="menu-title">Quản lý User</span>
@@ -76,6 +79,7 @@ const Menu = () => {
             className="nav-link"
             onClick={() => toggleMenu("jobtype")}
             aria-expanded={expandedMenu["jobtype"] || false}
+            href="#"
           >
             <i className="far fa-building menu-icon" />
             <span className="menu-title">Quản lý loại công việc</span>
@@ -106,6 +110,7 @@ const Menu = () => {
             className="nav-link"
             onClick={() => toggleMenu("joblevel")}
             aria-expanded={expandedMenu["joblevel"] || false}
+            href="#"
           >
             <i className="fas fa-level-up-alt menu-icon"></i>
             <span className="menu-title">Quản lý cấp bậc</span>
@@ -136,6 +141,7 @@ const Menu = () => {
             className="nav-link"
             onClick={() => toggleMenu("worktype")}
             aria-expanded={expandedMenu["worktype"] || false}
+            href="#"
           >
             <i className="fas fa-briefcase menu-icon"></i>
             <span className="menu-title">Quản lý hình thức làm việc</span>
@@ -166,6 +172,7 @@ const Menu = () => {
             className="nav-link"
             onClick={() => toggleMenu("salarytype")}
             aria-expanded={expandedMenu["salarytype"] || false}
+            href="#"
           >
             <i className="fas fa-money-check-alt menu-icon"></i>
             <span className="menu-title">Quản lý khoảng lương</span>
@@ -196,6 +203,7 @@ const Menu = () => {
             className="nav-link"
             onClick={() => toggleMenu("company")}
             aria-expanded={expandedMenu["company"] || false}
+            href="#"
           >
             <i className="far fa-clock menu-icon"></i>
             <span className="menu-title">Quản lý công ty</span>
