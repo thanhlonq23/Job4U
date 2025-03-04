@@ -4,12 +4,12 @@ import { toast } from "react-toastify";
 import { Spinner, Modal } from "reactstrap";
 import "../../../components/modal/modal.css";
 import {
-  createJobLevelService,
-  getAllJobLevelService,
-  UpdateJobLevelService,
-} from "../../../service/JobLevelService";
+  createSkillService,
+  getAllSkillService,
+  UpdateSkillService,
+} from "../../../service/SkillService";
 
-const AddJobLevel = () => {
+const AddSkill = () => {
   // *** State Management ***
   const [isActionADD, setIsActionADD] = useState(true); // Xác định là thêm mới hay cập nhật
   const [isLoading, setIsLoading] = useState(false); // Quản lý trạng thái tải
@@ -17,26 +17,26 @@ const AddJobLevel = () => {
 
   // Quản lý giá trị các input
   const [inputValues, setInputValues] = useState({
-    jobLevel_name: "",
+    skillName: "",
   });
 
   // *** Fetching Data ***
   useEffect(() => {
     if (id) {
-      const fetchDetailJobLevel = async () => {
+      const fetchDetailSkill = async () => {
         setIsActionADD(false); // Chuyển chế độ sang cập nhật
         try {
-          const joblevel = await getAllJobLevelService(id);
-          if (joblevel && joblevel.errCode === 0) {
+          const skill = await getAllSkillService(id);
+          if (skill && skill.errCode === 0) {
             setInputValues({
-              jobLevel_name: joblevel.data.jobLevel_name,
+              skillName: skill.data.skillName,
             });
           }
         } catch (error) {
           console.error("Error fetching job level details:", error);
         }
       };
-      fetchDetailJobLevel();
+      fetchDetailSkill();
     }
   }, [id]);
 
@@ -48,18 +48,18 @@ const AddJobLevel = () => {
   };
 
   // Lưu cấp bậc mới hoặc cập nhật cấp bậc
-  const handleSaveJobLevel = async () => {
+  const handleSaveSkill = async () => {
     setIsLoading(true); // Hiển thị trạng thái tải
     const payload = {
-      jobLevel_name: inputValues.jobLevel_name,
+      skillName: inputValues.skillName,
     };
 
     try {
       let response;
       if (isActionADD) {
-        response = await createJobLevelService(payload); // Thêm mới cấp bậc
+        response = await createSkillService(payload); // Thêm mới cấp bậc
       } else {
-        response = await UpdateJobLevelService(payload, id); // Cập nhật cấp bậc
+        response = await UpdateSkillService(payload, id); // Cập nhật cấp bậc
       }
 
       setIsLoading(false); // Tắt trạng thái tải
@@ -75,7 +75,7 @@ const AddJobLevel = () => {
         if (isActionADD) {
           // Đặt lại giá trị input sau khi thêm thành công
           setInputValues({
-            jobLevel_name: "",
+            skillName: "",
           });
         }
       } else {
@@ -104,8 +104,8 @@ const AddJobLevel = () => {
                 <div className="col-sm-9">
                   <input
                     type="text"
-                    value={inputValues.jobLevel_name}
-                    name="jobLevel_name"
+                    value={inputValues.skillName}
+                    name="skillName"
                     onChange={handleOnChange}
                     className="form-control"
                   />
@@ -115,10 +115,9 @@ const AddJobLevel = () => {
               {/* Button lưu */}
               <button
                 type="button"
-                className="btn1 btn1-primary1 btn1-icon-text"
-                onClick={() => handleSaveJobLevel()}
+                className="btn btn-primary"
+                onClick={handleSaveSkill}
               >
-                <i class="ti-file btn1-icon-prepend"></i>
                 Lưu
               </button>
             </form>
@@ -138,4 +137,4 @@ const AddJobLevel = () => {
   );
 };
 
-export default AddJobLevel;
+export default AddSkill;

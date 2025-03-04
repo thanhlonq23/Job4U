@@ -9,12 +9,9 @@ import "../../../components/modal/modal.css";
 import "./AddJobType.scss";
 
 import {
-  getDetailAllcodeById,
-  UpdateAllcodeService,
-} from "../../../service/userService";
-import {
   UpdateCategoryService,
   createCategoryService,
+  getCategoryByIdService,
 } from "../../../service/CategoriesService";
 
 const AddJobType = () => {
@@ -22,10 +19,11 @@ const AddJobType = () => {
   const [isActionADD, setIsActionADD] = useState(true); // Xác định là thêm mới hay cập nhật
   const [isLoading, setIsLoading] = useState(false); // Quản lý trạng thái tải
   const { id } = useParams(); // Lấy id từ URL để xác định chế độ chỉnh sửa
+  const [dataReady, setDataReady] = useState(false);
 
   // Quản lý giá trị các input
   const [inputValues, setInputValues] = useState({
-    categoryName: "",
+    category_name: "",
     image: "",
     imageReview: "",
     isOpen: false,
@@ -35,22 +33,33 @@ const AddJobType = () => {
   useEffect(() => {
     if (id) {
       const fetchDetailJobType = async () => {
-        setIsActionADD(false); // Chuyển chế độ sang cập nhật
+        setIsActionADD(false);
         try {
-          const response = await getDetailAllcodeById(id); // Lấy thông tin chi tiết loại công việc
+          const response = await getCategoryByIdService(id);
+          console.log("API Response:", response); // Log phản hồi từ API
+
           if (response && response.errCode === 0) {
             setInputValues({
-              categoryName: response.data.value,
-              image: response.data.image,
-              imageReview: response.data.image,
+              category_name: response.category_name || "",
+              image: response.image || "",
+              imageReview: response.image || "",
               isOpen: false,
             });
+          } else {
+            console.error(
+              "API Error:",
+              response?.errMessage || "Unknown error"
+            );
           }
         } catch (error) {
           console.error("Error fetching job type details:", error);
+        } finally {
+          setDataReady(true); // Đánh dấu dữ liệu đã tải xong
         }
       };
       fetchDetailJobType();
+    } else {
+      setDataReady(true);
     }
   }, [id]);
 
@@ -87,7 +96,7 @@ const AddJobType = () => {
     setIsLoading(true); // Hiển thị trạng thái tải
 
     const payload = {
-      categoryName: inputValues.categoryName,
+      category_name: inputValues.category_name,
       image: inputValues.image,
     };
 
@@ -113,7 +122,7 @@ const AddJobType = () => {
         if (isActionADD) {
           // Đặt lại giá trị input sau khi thêm thành công
           setInputValues({
-            categoryName: "",
+            category_name: "",
             image: "",
             imageReview: "",
             isOpen: false,
@@ -149,8 +158,8 @@ const AddJobType = () => {
                 <div className="col-sm-9">
                   <input
                     type="text"
-                    value={inputValues.categoryName}
-                    name="categoryName"
+                    value={dataReady ? inputValues.category_name : ""}
+                    name="category_name"
                     onChange={handleOnChange}
                     className="form-control"
                   />
@@ -177,7 +186,9 @@ const AddJobType = () => {
                   <div
                     className="box-img-preview"
                     style={{
-                      backgroundImage: `url(${inputValues.imageReview})`,
+                      backgroundImage: `url(${
+                        dataReady ? inputValues.imageReview : ""
+                      })`,
                     }}
                     onClick={openPreviewImage}
                   ></div>

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/job-levels")
+@RequestMapping("/api/job-levels")
 public class JobLevelController {
     @Autowired
     private JobLevelService jobLevelService;

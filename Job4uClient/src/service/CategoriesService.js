@@ -8,6 +8,10 @@ const getAllCategoryService = (data) => {
   return axios.get(`/api/categories`);
 };
 
+const getCategoryByIdService = (id) => {
+  return axios.get(`/api/categories/${id}`);
+};
+
 const UpdateCategoryService = (data, id) => {
   return axios.put(`/api/categories/${id}`, data);
 };
@@ -21,4 +25,5 @@ export {
   getAllCategoryService,
   UpdateCategoryService,
   DeleteCategoryService,
+  getCategoryByIdService,
 };

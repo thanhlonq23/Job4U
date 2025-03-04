@@ -101,7 +101,7 @@ const ManageJobType = () => {
                     dataJobType.map((item, index) => (
                       <tr key={item.id}>
                         <td>{index + 1}</td>
-                        <td>{item.categoryName}</td>
+                        <td>{item.category_name}</td>
                         <td style={{ width: "30%" }}>
                           <div
                             onClick={() => openPreviewImage(item.image)}
