@@ -1,5 +1,5 @@
 package com.nguyenlonq23.job4userver.service;
-import com.nguyenlonq23.job4userver.model.Salary;
+import com.nguyenlonq23.job4userver.model.entity.Salary;
 import com.nguyenlonq23.job4userver.repository.SalaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

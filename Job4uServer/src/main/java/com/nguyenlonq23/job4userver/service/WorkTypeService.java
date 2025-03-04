@@ -1,7 +1,7 @@
 package com.nguyenlonq23.job4userver.service;
 
 
-import com.nguyenlonq23.job4userver.model.WorkType;
+import com.nguyenlonq23.job4userver.model.entity.WorkType;
 import com.nguyenlonq23.job4userver.repository.WorkTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
