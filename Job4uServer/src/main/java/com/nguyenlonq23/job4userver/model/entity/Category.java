@@ -1,4 +1,4 @@
-package com.nguyenlonq23.job4userver.model;
+package com.nguyenlonq23.job4userver.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

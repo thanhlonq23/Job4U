@@ -1,8 +1,11 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.model.JobLevel;
+import com.nguyenlonq23.job4userver.model.entity.JobLevel;
+import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.JobLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,34 +16,98 @@ public class JobLevelController {
     @Autowired
     private JobLevelService jobLevelService;
 
-    // Lấy tất cả job levels
+    // Get all job levels
     @GetMapping
-    public List<JobLevel> getAllJobLevels() {
-        return jobLevelService.getAllJobLevels();
+    public ResponseEntity<ApiResponse<List<JobLevel>>> getAllJobLevels() {
+        List<JobLevel> jobLevels = jobLevelService.getAllJobLevels();
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully retrieved the list of job levels",
+                jobLevels
+        ));
     }
 
-    // Lấy job level theo ID
+    // Get job level by ID
     @GetMapping("/{id}")
-    public JobLevel getJobLevelById(@PathVariable int id) {
-        return jobLevelService.getJobLevelById(id);
+    public ResponseEntity<ApiResponse<JobLevel>> getJobLevelById(@PathVariable int id) {
+        JobLevel jobLevel = jobLevelService.getJobLevelById(id);
+        if (jobLevel != null) {
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the job level",
+                    jobLevel
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Job level with ID: " + id + " not found",
+                    null
+            ));
+        }
     }
 
-    // Tạo mới job level
+    // Create a new job level
     @PostMapping
-    public JobLevel createJobLevel(@RequestBody JobLevel jobLevel) {
-        return jobLevelService.saveJobLevel(jobLevel);
+    public ResponseEntity<ApiResponse<JobLevel>> createJobLevel(@RequestBody JobLevel jobLevel) {
+        if (jobLevel.getJobLevel_name() == null || jobLevel.getJobLevel_name().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(
+                    "ERROR",
+                    "Job level name is required",
+                    null
+            ));
+        }
+
+        JobLevel savedJobLevel = jobLevelService.saveJobLevel(jobLevel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully created the job level",
+                savedJobLevel
+        ));
     }
 
-    // Cập nhật job level
+    // Update a job level
     @PutMapping("/{id}")
-    public JobLevel updateJobLevel(@PathVariable int id, @RequestBody JobLevel jobLevel) {
+    public ResponseEntity<ApiResponse<JobLevel>> updateJobLevel(
+            @PathVariable int id,
+            @RequestBody JobLevel jobLevel
+    ) {
+        JobLevel existingJobLevel = jobLevelService.getJobLevelById(id);
+
+        if (existingJobLevel == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Job level with ID: " + id + " not found",
+                    null
+            ));
+        }
+
         jobLevel.setId(id);
-        return jobLevelService.saveJobLevel(jobLevel);
+        JobLevel updatedJobLevel = jobLevelService.saveJobLevel(jobLevel);
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully updated the job level",
+                updatedJobLevel
+        ));
     }
 
-    // Xóa job level
+    // Delete a job level
     @DeleteMapping("/{id}")
-    public void deleteJobLevel(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<Void>> deleteJobLevel(@PathVariable int id) {
+        JobLevel existingJobLevel = jobLevelService.getJobLevelById(id);
+
+        if (existingJobLevel == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Job level with ID: " + id + " not found",
+                    null
+            ));
+        }
+
         jobLevelService.deleteJobLevel(id);
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully deleted the job level",
+                null
+        ));
     }
 }

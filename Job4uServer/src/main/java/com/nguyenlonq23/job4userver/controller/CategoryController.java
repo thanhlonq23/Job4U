@@ -1,8 +1,11 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.model.Category;
+import com.nguyenlonq23.job4userver.model.entity.Category;
+import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,34 +16,96 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    // Lấy tất cả categories
+    // Get all categories
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryService.getAllCategories();
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
+        List<Category> categories = categoryService.getAllCategories();
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully retrieved the list of categories",
+                categories
+        ));
     }
 
-    // Lấy category theo ID
+    // Get category by ID
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable int id) {
-        return categoryService.getCategoryById(id);
+    public ResponseEntity<ApiResponse<Category>> getCategoryById(@PathVariable int id) {
+        Category category = categoryService.getCategoryById(id);
+
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Category with ID: " + id + " not found",
+                    null
+            ));
+        }
+
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully retrieved the category",
+                category
+        ));
     }
 
-    // Tạo mới category
+    // Create a new category
     @PostMapping
-    public Category createCategory(@RequestBody Category category) {
-        return categoryService.saveCategory(category);
+    public ResponseEntity<ApiResponse<Category>> createCategory(@RequestBody Category category) {
+        if (category.getCategory_name() == null || category.getCategory_name().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(
+                    "ERROR",
+                    "Category name cannot be empty",
+                    null
+            ));
+        }
+
+        Category savedCategory = categoryService.saveCategory(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully created the category",
+                savedCategory
+        ));
     }
 
-    // Cập nhật category
+    // Update a category
     @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable int id, @RequestBody Category category) {
+    public ResponseEntity<ApiResponse<Category>> updateCategory(@PathVariable int id, @RequestBody Category category) {
+        Category existingCategory = categoryService.getCategoryById(id);
+
+        if (existingCategory == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Category with ID: " + id + " not found",
+                    null
+            ));
+        }
+
         category.setId(id);
-        return categoryService.saveCategory(category);
+        Category updatedCategory = categoryService.saveCategory(category);
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully updated the category",
+                updatedCategory
+        ));
     }
 
-    // Xóa category
+    // Delete a category
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable int id) {
+        Category category = categoryService.getCategoryById(id);
+
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Category with ID: " + id + " not found",
+                    null
+            ));
+        }
+
         categoryService.deleteCategory(id);
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully deleted the category",
+                null
+        ));
     }
 }

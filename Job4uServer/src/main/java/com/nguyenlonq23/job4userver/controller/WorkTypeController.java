@@ -1,8 +1,11 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.model.WorkType;
+import com.nguyenlonq23.job4userver.model.entity.WorkType;
+import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.WorkTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,34 +16,95 @@ public class WorkTypeController {
     @Autowired
     private WorkTypeService workTypeService;
 
-    // Lấy tất cả work types
+    // Get all work types
     @GetMapping
-    public List<WorkType> getAllWorkTypes() {
-        return workTypeService.getAllWorkTypes();
+    public ResponseEntity<ApiResponse<List<WorkType>>> getAllWorkTypes() {
+        List<WorkType> workTypes = workTypeService.getAllWorkTypes();
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully retrieved the list of work types",
+                workTypes
+        ));
     }
 
-    // Lấy work type theo ID
+    // Get work type by ID
     @GetMapping("/{id}")
-    public WorkType getWorkTypeById(@PathVariable int id) {
-        return workTypeService.getWorkTypeById(id);
+    public ResponseEntity<ApiResponse<WorkType>> getWorkTypeById(@PathVariable int id) {
+        WorkType workType = workTypeService.getWorkTypeById(id);
+        if (workType != null) {
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the work type",
+                    workType
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Work type with ID: " + id + " not found",
+                    null
+            ));
+        }
     }
 
-    // Tạo mới work type
+    // Create a new work type
     @PostMapping
-    public WorkType createWorkType(@RequestBody WorkType workType) {
-        return workTypeService.saveWorkType(workType);
+    public ResponseEntity<ApiResponse<WorkType>> createWorkType(@RequestBody WorkType workType) {
+        if (workType.getWorkType_name() == null || workType.getWorkType_name().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(
+                    "ERROR",
+                    "Work type name is required",
+                    null
+            ));
+        }
+
+        WorkType savedWorkType = workTypeService.saveWorkType(workType);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully created the work type",
+                savedWorkType
+        ));
     }
 
-    // Cập nhật work type
+    // Update a work type
     @PutMapping("/{id}")
-    public WorkType updateWorkType(@PathVariable int id, @RequestBody WorkType workType) {
+    public ResponseEntity<ApiResponse<WorkType>> updateWorkType(
+            @PathVariable int id,
+            @RequestBody WorkType workType) {
+        WorkType existingWorkType = workTypeService.getWorkTypeById(id);
+        if (existingWorkType == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Work type with ID: " + id + " not found",
+                    null
+            ));
+        }
+
         workType.setId(id);
-        return workTypeService.saveWorkType(workType);
+        WorkType updatedWorkType = workTypeService.saveWorkType(workType);
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully updated the work type",
+                updatedWorkType
+        ));
     }
 
-    // Xóa work type
+    // Delete a work type
     @DeleteMapping("/{id}")
-    public void deleteWorkType(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<Void>> deleteWorkType(@PathVariable int id) {
+        WorkType existingWorkType = workTypeService.getWorkTypeById(id);
+        if (existingWorkType == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "Work type with ID: " + id + " not found",
+                    null
+            ));
+        }
+
         workTypeService.deleteWorkType(id);
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully deleted the work type",
+                null
+        ));
     }
 }
