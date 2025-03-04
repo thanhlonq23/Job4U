@@ -1,6 +1,6 @@
 package com.nguyenlonq23.job4userver.repository;
 
-import com.nguyenlonq23.job4userver.model.Experience;
+import com.nguyenlonq23.job4userver.model.entity.Experience;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
