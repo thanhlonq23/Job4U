@@ -21,10 +21,10 @@ public class User {
     private String password;
 
     @Column(name = "firstName")
-    private String firstName;
+    private String first_name;
 
     @Column(name = "lastName")
-    private String lastName;
+    private String last_name;
 
     @Column(name = "address")
     private String address;
@@ -37,11 +37,11 @@ public class User {
     private Gender gender;
 
     @ManyToOne
-    @JoinColumn(name = "roleId")
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @ManyToOne
-    @JoinColumn(name = "statusId")
+    @JoinColumn(name = "status_id")
     private Status status;
 
     @ManyToOne

@@ -14,16 +14,16 @@ public class Post {
     private int id;
 
     @Column(name = "name", nullable = false)
-    private String name;
+    private String post_name;
 
-    @Column(name = "descriptionHTML")
-    private String descriptionHTML;
+    @Column(name = "description_HTML", columnDefinition = "LONGTEXT")
+    private String description_HTML;
 
-    @Column(name = "descriptionMarkdown", columnDefinition = "LONGTEXT")
-    private String descriptionMarkdown;
+    @Column(name = "description_Markdown", columnDefinition = "LONGTEXT")
+    private String description_Markdown;
 
     @ManyToOne
-    @JoinColumn(name = "statusId")
+    @JoinColumn(name = "status_id")
     private Status status;
 
     @ManyToOne
@@ -51,7 +51,7 @@ public class Post {
     private Experience experience;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
@@ -67,9 +67,10 @@ public class Post {
     public Post() {
     }
 
-    public Post(String name, String descriptionHTML, Status status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, User user, Company company, Date createdAt, Date updatedAt) {
-        this.name = name;
-        this.descriptionHTML = descriptionHTML;
+    public Post(String post_name, String descriptionHTML, String descriptionMarkdown, Status status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, User user, Company company) {
+        this.post_name = post_name;
+        this.description_HTML = descriptionHTML;
+        this.description_Markdown = descriptionMarkdown;
         this.status = status;
         this.category = category;
         this.location = location;
@@ -79,7 +80,5 @@ public class Post {
         this.experience = experience;
         this.user = user;
         this.company = company;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 }

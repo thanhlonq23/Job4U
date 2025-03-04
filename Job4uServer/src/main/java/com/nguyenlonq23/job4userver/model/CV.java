@@ -28,7 +28,6 @@ public class CV {
     @Column(name = "description")
     private String description;
 
-
     @Column(name = "isChecked", nullable = false)
     private boolean isChecked;
 

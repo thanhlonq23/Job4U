@@ -11,7 +11,7 @@ public class Experience {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "experience_name", nullable = false, unique = true)
-    private String experienceName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String experience_name;
 
 }

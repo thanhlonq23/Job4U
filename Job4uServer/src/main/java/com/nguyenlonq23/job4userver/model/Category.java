@@ -12,9 +12,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "category_name", nullable = false, unique = true)
-    private String categoryName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String category_name;
 
+    @Lob
     @Column(name = "image", columnDefinition = "LONGTEXT")
     private String image;
 

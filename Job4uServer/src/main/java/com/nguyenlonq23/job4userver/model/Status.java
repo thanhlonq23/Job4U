@@ -11,6 +11,6 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "status_name", nullable = false, unique = true)
-    private String statusName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String status_name;
 }

@@ -11,6 +11,6 @@ public class JobLevel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "joblevel_name", nullable = false, unique = true)
-    private String joblevelName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String jobLevel_name;
 }

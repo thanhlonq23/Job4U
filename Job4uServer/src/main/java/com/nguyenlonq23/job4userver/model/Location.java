@@ -11,6 +11,6 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "location_name", nullable = false, unique = true)
-    private String locationName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String location_name;
 }

@@ -13,19 +13,21 @@ public class Company {
     private int id;
 
     @Column(name = "name" , nullable = false)
-    private String name;
+    private String company_name;
 
-    @Column(name = "thumbnail")
+    @Lob
+    @Column(name = "thumbnail", columnDefinition = "LONGTEXT")
     private String thumbnail;
 
-    @Column(name = "coverimage")
+    @Lob
+    @Column(name = "coverimage", columnDefinition = "LONGTEXT")
     private String coverImage;
 
-    @Column(name = "descriptionHTML", columnDefinition = "LONGTEXT")
-    private String descriptionHTML;
+    @Column(name = "description_HTML", columnDefinition = "LONGTEXT")
+    private String description_HTML;
 
-    @Column(name = "descriptionMarkdown", columnDefinition = "LONGTEXT")
-    private String descriptionMarkdown;
+    @Column(name = "description_Markdown", columnDefinition = "LONGTEXT")
+    private String description_Markdown;
 
     @Column(name = "website")
     private String website;

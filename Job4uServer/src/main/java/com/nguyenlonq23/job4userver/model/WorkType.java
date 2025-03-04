@@ -11,6 +11,6 @@ public class WorkType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "worktype_name", nullable = false, unique = true)
-    private String worktypeName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String workType_name;
 }
