@@ -4,8 +4,18 @@ const createWorkTypeService = (data) => {
   return axios.post(`api/work-types`, data);
 };
 
-const getAllWorkTypeService = (data) => {
-  return axios.get(`/api/work-types`);
+const getAllWorkTypeService = ({ page = 0, size = 10 }) => {
+  return axios.get(`/api/work-types`, {
+    params: {
+      page, // Số trang (bắt đầu từ 0)
+      size, // Số lượng phần tử mỗi trang
+    },
+  });
+};
+
+
+const getWorkTypeByIdService = (id) => {
+  return axios.get(`/api/work-types/${id}`);
 };
 
 const UpdateWorkTypeService = (data, id) => {
@@ -21,4 +31,5 @@ export {
   getAllWorkTypeService,
   UpdateWorkTypeService,
   DeleteWorkTypeService,
+  getWorkTypeByIdService,
 };

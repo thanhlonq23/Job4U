@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import {
+  getAllJobLevelService,
+  deleteJobLevelService,
+} from "../../../service/JobLevelService";
 import { PAGINATION } from "../../../util/constant";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  getAllJobLevelService,
-  DeleteJobLevelService,
-} from "../../../service/JobLevelService";
 
 const ManageJobLevel = () => {
-  // **STATE KHỞI TẠO**
-  const [dataJobLevel, setDataJobLevel] = useState([]); // Dữ liệu danh sách cấp bậc
-  const [totalPages, setTotalPages] = useState(0); // Tổng số trang
-  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-  const [isLoading, setIsLoading] = useState(false); // Trạng thái loading
+  const [dataJobLevel, setDataJobLevel] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   // **FETCH DỮ LIỆU DANH SÁCH CẤP BẬC**
-  const fetchJobLevels = async (offset = 0) => {
+  const fetchJobLevels = async (page = 0) => {
     setIsLoading(true);
     try {
       const response = await getAllJobLevelService({
-        limit: PAGINATION.pagerow,
-        offset,
+        page,
+        size: PAGINATION.pagerow,
       });
-
-      if (response && Array.isArray(response)) {
-        setDataJobLevel(response);
-        setTotalPages(Math.ceil(response.count / PAGINATION.pagerow));
+      if (response && response.data) {
+        const { content, totalPages } = response.data;
+        setDataJobLevel(content);
+        setTotalPages(totalPages);
       } else {
         toast.error("Dữ liệu không hợp lệ!");
       }
@@ -49,16 +47,18 @@ const ManageJobLevel = () => {
     event.preventDefault();
     if (window.confirm("Bạn có chắc chắn muốn xóa cấp bậc này?")) {
       try {
-        const res = await DeleteJobLevelService(id);
+        const res = await deleteJobLevelService(id);
         if (res && res.errCode === 0) {
           toast.success("Xóa cấp bậc thành công");
-
-          // Cập nhật trực tiếp danh sách
+          // Xóa phần tử khỏi danh sách hiện tại
           const updatedData = dataJobLevel.filter((item) => item.id !== id);
           setDataJobLevel(updatedData);
 
-          // Cập nhật lại số trang nếu cần
-          setTotalPages(Math.ceil(updatedData.length / PAGINATION.pagerow));
+          // Kiểm tra xem có cần giảm số trang không
+          if (updatedData.length === 0 && currentPage > 0) {
+            setCurrentPage((prev) => prev - 1);
+            fetchJobLevels(currentPage - 1);
+          }
         } else {
           toast.error(res?.errMessage || "Xóa cấp bậc thất bại!");
         }
@@ -71,9 +71,8 @@ const ManageJobLevel = () => {
 
   // **XỬ LÝ PHÂN TRANG**
   const handlePageChange = async (selectedPage) => {
-    const offset = selectedPage.selected * PAGINATION.pagerow;
     setCurrentPage(selectedPage.selected);
-    await fetchJobLevels(offset);
+    await fetchJobLevels(selectedPage.selected);
   };
 
   // **RENDER GIAO DIỆN**
@@ -83,8 +82,6 @@ const ManageJobLevel = () => {
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">Danh sách cấp bậc</h4>
-
-            {/* BẢNG DANH SÁCH CẤP BẬC */}
             <div className="table-responsive pt-2">
               <table className="table table-bordered">
                 <thead>
@@ -107,7 +104,8 @@ const ManageJobLevel = () => {
                   ) : dataJobLevel.length > 0 ? (
                     dataJobLevel.map((item, index) => (
                       <tr key={item.id}>
-                        <td>{index + 1}</td>
+                        {/* Số thứ tự chính xác dựa trên trang hiện tại */}
+                        <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
                         <td>{item.jobLevel_name}</td>
                         <td>
                           <Link
@@ -144,7 +142,6 @@ const ManageJobLevel = () => {
             </div>
           </div>
 
-          {/* PHÂN TRANG */}
           <ReactPaginate
             previousLabel={"Quay lại"}
             nextLabel={"Tiếp"}

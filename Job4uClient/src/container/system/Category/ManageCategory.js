@@ -7,32 +7,38 @@ import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 import {
   getAllCategoryService,
-  DeleteCategoryService,
+  deleteCategoryService,
 } from "../../../service/CategoriesService";
 
 const ManageJobType = () => {
   // **STATE KHỞI TẠO**
-  const [dataJobType, setdataJobType] = useState([]); // Dữ liệu danh sách loại công việc
-  const [count, setCount] = useState(0); // Tổng số trang
-  const [numberPage, setnumberPage] = useState(0); // Trang hiện tại
-  const [imgPreview, setimgPreview] = useState(""); // Hình ảnh đang xem
-  const [isOpen, setisOpen] = useState(false); // Trạng thái mở Lightbox
+  const [dataJobType, setdataJobType] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [imgPreview, setimgPreview] = useState("");
+  const [isOpen, setisOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // **FETCH DỮ LIỆU DANH SÁCH LOẠI CÔNG VIỆC**
-  const fetchJobTypes = async (offset = 0) => {
+  const fetchJobTypes = async (page = 0) => {
+    setIsLoading(true);
     try {
       const response = await getAllCategoryService({
-        limit: PAGINATION.pagerow,
-        offset,
+        page,
+        size: PAGINATION.pagerow,
       });
-
-      if (response && Array.isArray(response)) {
-        setdataJobType(response);
-        setCount(Math.ceil(response.length / PAGINATION.pagerow));
+      if (response && response.data) {
+        const { content, totalPages } = response.data;
+        setdataJobType(content);
+        setTotalPages(totalPages);
+      } else {
+        toast.error("Dữ liệu không hợp lệ!");
       }
     } catch (error) {
       console.error("Lỗi khi fetch dữ liệu:", error);
       toast.error("Không thể tải dữ liệu danh sách!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,31 +56,32 @@ const ManageJobType = () => {
   // **XÓA LOẠI CÔNG VIỆC**
   const handleDeleteJobType = async (event, id) => {
     event.preventDefault();
-    try {
-      const res = await DeleteCategoryService(id);
-      if (res && res.errCode === 0) {
-        toast.success("Xóa loại công việc thành công");
+    if (window.confirm("Bạn có chắc chắn muốn xóa loại công việc này?")) {
+      try {
+        const res = await deleteCategoryService(id);
+        if (res && res.errCode === 0) {
+          toast.success("Xóa loại công việc thành công");
+          setdataJobType((prev) => prev.filter((item) => item.id !== id));
 
-        // Cập nhật trực tiếp danh sách
-        const updatedData = dataJobType.filter((item) => item.id !== id);
-        setdataJobType(updatedData);
-
-        // Cập nhật lại số trang nếu cần
-        setCount(Math.ceil(updatedData.length / PAGINATION.pagerow));
-      } else {
-        toast.error(res?.errMessage || "Xóa loại công việc thất bại!");
+          // Nếu xóa hết dữ liệu trên trang hiện tại, load lại trang trước đó
+          if (dataJobType.length === 1 && currentPage > 0) {
+            fetchJobTypes(currentPage - 1);
+            setCurrentPage(currentPage - 1);
+          }
+        } else {
+          toast.error(res?.errMessage || "Xóa loại công việc thất bại!");
+        }
+      } catch (error) {
+        console.error("Lỗi khi xóa loại công việc:", error);
+        toast.error("Đã xảy ra lỗi khi xóa loại công việc!");
       }
-    } catch (error) {
-      console.error("Lỗi khi xóa công việc:", error);
-      toast.error("Đã xảy ra lỗi khi xóa loại công việc!");
     }
   };
 
   // **XỬ LÝ PHÂN TRANG**
-  const handleChangePage = async (number) => {
-    const offset = number.selected * PAGINATION.pagerow;
-    setnumberPage(number.selected);
-    await fetchJobTypes(offset);
+  const handleChangePage = async (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
+    await fetchJobTypes(selectedPage.selected);
   };
 
   // **RENDER GIAO DIỆN**
@@ -97,10 +104,19 @@ const ManageJobType = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dataJobType && dataJobType.length > 0 ? (
+                  {isLoading ? (
+                    <tr>
+                      <td
+                        colSpan="4"
+                        style={{ textAlign: "center", padding: "20px" }}
+                      >
+                        Đang tải dữ liệu...
+                      </td>
+                    </tr>
+                  ) : dataJobType && dataJobType.length > 0 ? ( // Thêm kiểm tra dataJobType
                     dataJobType.map((item, index) => (
                       <tr key={item.id}>
-                        <td>{index + 1}</td>
+                        <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
                         <td>{item.category_name}</td>
                         <td style={{ width: "30%" }}>
                           <div
@@ -139,7 +155,12 @@ const ManageJobType = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5">Không có dữ liệu</td>
+                      <td
+                        colSpan="4"
+                        style={{ textAlign: "center", padding: "20px" }}
+                      >
+                        Không có dữ liệu.
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -152,8 +173,10 @@ const ManageJobType = () => {
             previousLabel={"Quay lại"}
             nextLabel={"Tiếp"}
             breakLabel={"..."}
-            pageCount={count}
+            pageCount={totalPages}
             marginPagesDisplayed={3}
+            pageRangeDisplayed={5}
+            onPageChange={handleChangePage}
             containerClassName={"pagination justify-content-center pb-3"}
             pageClassName={"page-item"}
             pageLinkClassName={"page-link"}
@@ -164,7 +187,7 @@ const ManageJobType = () => {
             breakLinkClassName={"page-link"}
             breakClassName={"page-item"}
             activeClassName={"active"}
-            onPageChange={handleChangePage}
+            forcePage={currentPage}
           />
         </div>
       </div>

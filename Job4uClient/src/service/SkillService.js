@@ -4,8 +4,14 @@ const createSkillService = (data) => {
   return axios.post(`api/skills`, data);
 };
 
-const getAllSkillService = (data) => {
-  return axios.get(`/api/skills`);
+
+const getAllSkillService = ({ page = 0, size = 10 }) => {
+  return axios.get(`/api/skills`, {
+    params: {
+      page,
+      size,
+    },
+  });
 };
 
 const UpdateSkillService = (data, id) => {

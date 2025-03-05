@@ -7,8 +7,8 @@ import Home from "./Home";
 import ABC from "./ABC";
 import ManageUser from "./User/ManageUser";
 import AddUser from "./User/AddUser";
-import AddJobType from "./JobType/AddJobType";
-import ManageJobType from "./JobType/ManageJobType";
+import AddCategory from "./Category/AddCategory";
+import ManageCategory from "./Category/ManageCategory";
 import AddJobLevel from "./JobLevel/AddJobLevel";
 import ManageJobLevel from "./JobLevel/ManageJobLevel";
 import AddWorkType from "./WorkType/AddWorkType";
@@ -56,9 +56,9 @@ export const adminRoutes = [
   { path: "list-user", element: <ManageUser /> },
   { path: "add-user", element: <AddUser /> },
   { path: "edit-user/:id", element: <AddUser /> },
-  { path: "add-job-type", element: <AddJobType /> },
-  { path: "list-job-type", element: <ManageJobType /> },
-  { path: "edit-job-type/:id", element: <AddJobType /> },
+  { path: "add-job-type", element: <AddCategory /> },
+  { path: "list-job-type", element: <ManageCategory /> },
+  { path: "edit-job-type/:id", element: <AddCategory /> },
   { path: "add-job-level", element: <AddJobLevel /> },
   { path: "list-job-level", element: <ManageJobLevel /> },
   { path: "edit-job-level/:id", element: <AddJobLevel /> },

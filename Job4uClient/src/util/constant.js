@@ -30,5 +30,5 @@ export const USER_ROLE = {
 
 }
 export const PAGINATION = {
-    pagerow: 7
+    pagerow: 10
 }

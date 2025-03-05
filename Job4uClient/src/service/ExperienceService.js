@@ -4,8 +4,13 @@ const createExperienceService = (data) => {
   return axios.post(`api/experiences`, data);
 };
 
-const getAllExperienceService = (data) => {
-  return axios.get(`/api/experiences`);
+const getAllExperienceService = ({ page = 0, size = 10 }) => {
+  return axios.get(`/api/experiences`, {
+    params: {
+      page,
+      size,
+    },
+  });
 };
 
 const UpdateExperienceService = (data, id) => {

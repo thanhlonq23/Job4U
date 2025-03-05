@@ -1,10 +1,11 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./container/home/home";
 import JobPage from "./container/JobPage/JobPage";
 import Header from "./container/header/header";
 import Footer from "./container/footer/Footer";
 import HomeAdmin, { adminRoutes } from "./container/system/HomeAdmin";
+import ABC from "./container/system/ABC";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         />
 
         {/* Route cho trang Admin */}
+        <Route path="/admin" element={<Navigate to="/admin/" replace />} />
         <Route path="/admin/*" element={<HomeAdmin />}>
           {adminRoutes.map((route, index) => (
             <Route key={index} path={route.path} element={route.element} />

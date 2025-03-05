@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Spinner, Modal } from "reactstrap";
 import "../../../components/modal/modal.css";
 import {
   createJobLevelService,
-  getAllJobLevelService,
-  UpdateJobLevelService,
+  getJobLevelByIdService,
+  updateJobLevelService,
 } from "../../../service/JobLevelService";
 
 const AddJobLevel = () => {
@@ -14,6 +14,7 @@ const AddJobLevel = () => {
   const [isActionADD, setIsActionADD] = useState(true); // Xác định là thêm mới hay cập nhật
   const [isLoading, setIsLoading] = useState(false); // Quản lý trạng thái tải
   const { id } = useParams(); // Lấy id từ URL để xác định chế độ chỉnh sửa
+  const [dataReady, setDataReady] = useState(false); // Đánh dấu dữ liệu đã tải xong
 
   // Quản lý giá trị các input
   const [inputValues, setInputValues] = useState({
@@ -26,17 +27,26 @@ const AddJobLevel = () => {
       const fetchDetailJobLevel = async () => {
         setIsActionADD(false); // Chuyển chế độ sang cập nhật
         try {
-          const joblevel = await getAllJobLevelService(id);
-          if (joblevel && joblevel.errCode === 0) {
+          setIsLoading(true);
+          const response = await getJobLevelByIdService(id);
+          if (response?.status === "SUCCESS") {
             setInputValues({
-              jobLevel_name: joblevel.data.jobLevel_name,
+              jobLevel_name: response.data.jobLevel_name || "",
             });
+          } else {
+            toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
           }
         } catch (error) {
+          toast.error("Không thể tải dữ liệu!");
           console.error("Error fetching job level details:", error);
+        } finally {
+          setDataReady(true); // Đánh dấu dữ liệu đã tải xong
+          setIsLoading(false); // Tắt trạng thái tải
         }
       };
       fetchDetailJobLevel();
+    } else {
+      setDataReady(true); // Nếu không có ID, đánh dấu dữ liệu đã sẵn sàng
     }
   }, [id]);
 
@@ -50,26 +60,25 @@ const AddJobLevel = () => {
   // Lưu cấp bậc mới hoặc cập nhật cấp bậc
   const handleSaveJobLevel = async () => {
     setIsLoading(true); // Hiển thị trạng thái tải
+
     const payload = {
       jobLevel_name: inputValues.jobLevel_name,
     };
 
     try {
       let response;
+
       if (isActionADD) {
         response = await createJobLevelService(payload); // Thêm mới cấp bậc
       } else {
-        response = await UpdateJobLevelService(payload, id); // Cập nhật cấp bậc
+        response = await updateJobLevelService(payload, id); // Cập nhật cấp bậc
       }
 
-      setIsLoading(false); // Tắt trạng thái tải
-
-      // Xử lý kết quả trả về
-      if (response && response.errCode === 0) {
+      if (response?.status === "SUCCESS") {
         toast.success(
           isActionADD
-            ? "Thêm cấp bậc thành công"
-            : "Cập nhật cấp bậc thành công"
+            ? "Thêm cấp bậc thành công!"
+            : "Cập nhật cấp bậc thành công!"
         );
 
         if (isActionADD) {
@@ -82,9 +91,10 @@ const AddJobLevel = () => {
         toast.error(response?.errMessage || "Đã xảy ra lỗi!");
       }
     } catch (error) {
-      setIsLoading(false);
       toast.error("Đã xảy ra lỗi khi gửi dữ liệu!");
-      console.error(error);
+      console.error("Error saving job level:", error);
+    } finally {
+      setIsLoading(false); // Tắt trạng thái tải
     }
   };
 
@@ -104,10 +114,12 @@ const AddJobLevel = () => {
                 <div className="col-sm-9">
                   <input
                     type="text"
-                    value={inputValues.jobLevel_name}
+                    value={dataReady ? inputValues.jobLevel_name : ""}
                     name="jobLevel_name"
                     onChange={handleOnChange}
                     className="form-control"
+                    placeholder="Nhập tên cấp bậc"
+                    disabled={!dataReady || isLoading}
                   />
                 </div>
               </div>
@@ -116,10 +128,12 @@ const AddJobLevel = () => {
               <button
                 type="button"
                 className="btn1 btn1-primary1 btn1-icon-text"
-                onClick={() => handleSaveJobLevel()}
+                onClick={handleSaveJobLevel}
+                style={{ marginLeft: "90%" }}
+                disabled={isLoading}
               >
-                <i class="ti-file btn1-icon-prepend"></i>
-                Lưu
+                <i className="ti-file btn1-icon-prepend"></i>
+                {isLoading ? "Đang lưu..." : "Lưu"}
               </button>
             </form>
           </div>
@@ -134,6 +148,9 @@ const AddJobLevel = () => {
           </div>
         </Modal>
       )}
+
+      {/* ToastContainer để hiển thị thông báo */}
+      <ToastContainer />
     </div>
   );
 };

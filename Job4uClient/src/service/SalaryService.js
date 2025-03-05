@@ -4,8 +4,13 @@ const createSalaryService = (data) => {
   return axios.post(`api/salaries`, data);
 };
 
-const getAllSalaryService = (data) => {
-  return axios.get(`/api/salaries`);
+const getAllSalaryService = ({ page = 0, size = 10 }) => {
+  return axios.get(`/api/salaries`, {
+    params: {
+      page,
+      size,
+    },
+  });
 };
 
 const UpdateSalaryService = (data, id) => {

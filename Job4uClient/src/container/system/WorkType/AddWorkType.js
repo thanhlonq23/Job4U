@@ -1,19 +1,20 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { Spinner, Modal } from "reactstrap";
 import "../../../components/modal/modal.css";
 import {
-  getAllWorkTypeService,
+  getWorkTypeByIdService,
   UpdateWorkTypeService,
   createWorkTypeService,
 } from "../../../service/WorkTypeService";
+
 const AddWorkType = () => {
   // *** State Management ***
   const [isActionADD, setIsActionADD] = useState(true); // Xác định là thêm mới hay cập nhật
   const [isLoading, setIsLoading] = useState(false); // Quản lý trạng thái tải
   const { id } = useParams(); // Lấy id từ URL để xác định chế độ chỉnh sửa
+  const [dataReady, setDataReady] = useState(false); // Đánh dấu dữ liệu đã tải
 
   // Quản lý giá trị các input
   const [inputValues, setInputValues] = useState({
@@ -26,17 +27,24 @@ const AddWorkType = () => {
       const fetchDetailWorkType = async () => {
         setIsActionADD(false); // Chuyển chế độ sang cập nhật
         try {
-          const joblevel = await getAllWorkTypeService(id);
-          if (joblevel && joblevel.errCode === 0) {
+          const response = await getWorkTypeByIdService(id);
+          if (response?.status === "SUCCESS") {
             setInputValues({
-              workType_name: joblevel.data.workType_name,
+              workType_name: response.data.workType_name || "",
             });
+          } else {
+            toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
           }
         } catch (error) {
+          toast.error("Không thể tải dữ liệu!");
           console.error("Error fetching work type details:", error);
+        } finally {
+          setDataReady(true); // Đánh dấu dữ liệu đã tải xong
         }
       };
       fetchDetailWorkType();
+    } else {
+      setDataReady(true); // Nếu không có ID, đánh dấu dữ liệu đã sẵn sàng
     }
   }, [id]);
 
@@ -50,12 +58,14 @@ const AddWorkType = () => {
   // Lưu hình thức làm việc mới hoặc cập nhật hình thức làm việc
   const handleSaveWorkType = async () => {
     setIsLoading(true); // Hiển thị trạng thái tải
+
     const payload = {
       workType_name: inputValues.workType_name,
     };
 
     try {
       let response;
+
       if (isActionADD) {
         response = await createWorkTypeService(payload); // Thêm mới hình thức làm việc
       } else {
@@ -68,8 +78,8 @@ const AddWorkType = () => {
       if (response && response.errCode === 0) {
         toast.success(
           isActionADD
-            ? "Thêm hình thức làm việc thành công"
-            : "Cập nhật hình thức làm việc thành công"
+            ? "Thêm hình thức làm việc thành công!"
+            : "Cập nhật hình thức làm việc thành công!"
         );
 
         if (isActionADD) {
@@ -84,63 +94,59 @@ const AddWorkType = () => {
     } catch (error) {
       setIsLoading(false);
       toast.error("Đã xảy ra lỗi khi gửi dữ liệu!");
-      console.error(error);
+      console.error("Error saving work type:", error);
     }
   };
 
+  // *** Render UI ***
   return (
-    <div className="">
+    <div className="add-work-type">
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">
-              {isActionADD === true
+              {isActionADD
                 ? "Thêm mới hình thức làm việc"
                 : "Cập nhật hình thức làm việc"}
             </h4>
-            <br></br>
             <form className="form-sample">
-              <div className="row">
-                <div className="col-md-8">
-                  <div className="form-group row">
-                    <label className="col-sm-3 col-form-label">
-                      Tên hình thức làm việc
-                    </label>
-                    <div className="col-sm-9">
-                      <input
-                        type="text"
-                        value={inputValues.workType_name}
-                        name="workType_name"
-                        onChange={(event) => handleOnChange(event)}
-                        className="form-control"
-                      />
-                    </div>
-                  </div>
+              {/* Input tên hình thức làm việc */}
+              <div className="form-group row">
+                <label className="col-sm-3 col-form-label">
+                  Tên hình thức làm việc
+                </label>
+                <div className="col-sm-9">
+                  <input
+                    type="text"
+                    value={dataReady ? inputValues.workType_name : ""}
+                    name="workType_name"
+                    onChange={handleOnChange}
+                    className="form-control"
+                    placeholder="Nhập tên hình thức làm việc"
+                  />
                 </div>
               </div>
+
+              {/* Button lưu */}
               <button
                 type="button"
                 className="btn1 btn1-primary1 btn1-icon-text"
-                onClick={() => handleSaveWorkType()}
+                onClick={handleSaveWorkType}
+                style={{ marginLeft: "90%" }}
               >
-                <i class="ti-file btn1-icon-prepend"></i>
+                <i className="ti-file btn1-icon-prepend"></i>
                 Lưu
               </button>
             </form>
           </div>
         </div>
       </div>
+
+      {/* Hiển thị trạng thái loading */}
       {isLoading && (
-        <Modal isOpen="true" centered contentClassName="closeBorder">
-          <div
-            style={{
-              position: "absolute",
-              right: "50%",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Spinner animation="border"></Spinner>
+        <Modal isOpen centered>
+          <div className="spinner-container">
+            <Spinner />
           </div>
         </Modal>
       )}

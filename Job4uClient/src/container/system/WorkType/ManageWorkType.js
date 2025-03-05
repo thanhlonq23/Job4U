@@ -1,34 +1,30 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getAllWorkTypeService,
   DeleteWorkTypeService,
 } from "../../../service/WorkTypeService";
-import moment from "moment";
 import { PAGINATION } from "../../../util/constant";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const ManageWorkType = () => {
-  // **STATE KHỞI TẠO**
-  const [dataWorkType, setDataWorkType] = useState([]); // Dữ liệu danh sách cấp bậc
-  const [totalPages, setTotalPages] = useState(0); // Tổng số trang
-  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-  const [isLoading, setIsLoading] = useState(false); // Trạng thái loading
+  const [dataWorkType, setDataWorkType] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // **FETCH DỮ LIỆU DANH SÁCH CẤP BẬC**
-  const fetchJobLevels = async (offset = 0) => {
+  const fetchJobLevels = async (page = 0) => {
     setIsLoading(true);
     try {
       const response = await getAllWorkTypeService({
-        limit: PAGINATION.pagerow,
-        offset,
+        page,
+        size: PAGINATION.pagerow,
       });
-
-      if (response && Array.isArray(response)) {
-        setDataWorkType(response);
-        setTotalPages(Math.ceil(response.count / PAGINATION.pagerow));
+      if (response && response.data) {
+        const { content, totalPages } = response.data;
+        setDataWorkType(content);
+        setTotalPages(totalPages);
       } else {
         toast.error("Dữ liệu không hợp lệ!");
       }
@@ -40,41 +36,39 @@ const ManageWorkType = () => {
     }
   };
 
-  // **GỌI FETCH DỮ LIỆU LẦN ĐẦU**
   useEffect(() => {
     fetchJobLevels(0);
   }, []);
 
-  // **XÓA CẤP BẬC**
   const handleDeleteJobLevel = async (event, id) => {
     event.preventDefault();
-    if (window.confirm("Bạn có chắc chắn muốn xóa cấp bậc này?")) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa hình thức làm việc này?")) {
       try {
         const res = await DeleteWorkTypeService(id);
         if (res && res.errCode === 0) {
-          toast.success("Xóa cấp bậc thành công");
-
-          // Cập nhật trực tiếp danh sách
+          toast.success("Xóa hình thức làm việc thành công");
+          // Xóa phần tử khỏi danh sách hiện tại
           const updatedData = dataWorkType.filter((item) => item.id !== id);
           setDataWorkType(updatedData);
 
-          // Cập nhật lại số trang nếu cần
-          setTotalPages(Math.ceil(updatedData.length / PAGINATION.pagerow));
+          // Kiểm tra xem có cần giảm số trang không
+          if (updatedData.length === 0 && currentPage > 0) {
+            setCurrentPage((prev) => prev - 1);
+            fetchJobLevels(currentPage - 1);
+          }
         } else {
-          toast.error(res?.errMessage || "Xóa cấp bậc thất bại!");
+          toast.error(res?.errMessage || "Xóa hình thức làm việc thất bại!");
         }
       } catch (error) {
-        console.error("Lỗi khi xóa cấp bậc:", error);
-        toast.error("Đã xảy ra lỗi khi xóa cấp bậc!");
+        console.error("Lỗi khi xóa hình thức làm việc:", error);
+        toast.error("Đã xảy ra lỗi khi xóa hình thức làm việc!");
       }
     }
   };
 
-  // **XỬ LÝ PHÂN TRANG**
   const handlePageChange = async (selectedPage) => {
-    const offset = selectedPage.selected * PAGINATION.pagerow;
     setCurrentPage(selectedPage.selected);
-    await fetchJobLevels(offset);
+    await fetchJobLevels(selectedPage.selected);
   };
 
   return (
@@ -83,8 +77,6 @@ const ManageWorkType = () => {
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">Danh sách hình thức làm việc</h4>
-
-            {/* BẢNG DANH SÁCH HÌNH THỨC LÀM VIỆC */}
             <div className="table-responsive pt-2">
               <table className="table table-bordered">
                 <thead>
@@ -107,7 +99,8 @@ const ManageWorkType = () => {
                   ) : dataWorkType.length > 0 ? (
                     dataWorkType.map((item, index) => (
                       <tr key={item.id}>
-                        <td>{index + 1}</td>
+                        {/* Số thứ tự chính xác dựa trên trang hiện tại */}
+                        <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
                         <td>{item.workType_name}</td>
                         <td>
                           <Link
@@ -144,7 +137,6 @@ const ManageWorkType = () => {
             </div>
           </div>
 
-          {/* PHÂN TRANG */}
           <ReactPaginate
             previousLabel={"Quay lại"}
             nextLabel={"Tiếp"}
