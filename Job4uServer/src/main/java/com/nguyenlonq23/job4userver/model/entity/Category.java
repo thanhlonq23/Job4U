@@ -19,6 +19,6 @@ public class Category {
     @Column(name = "image", columnDefinition = "LONGTEXT")
     private String image;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Skill> skills;
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Skill> skills;
 }

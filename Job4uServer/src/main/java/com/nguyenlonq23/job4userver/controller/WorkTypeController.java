@@ -4,6 +4,7 @@ import com.nguyenlonq23.job4userver.model.entity.WorkType;
 import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.WorkTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,19 @@ public class WorkTypeController {
 
     // Get all work types
     @GetMapping
-    public ResponseEntity<ApiResponse<List<WorkType>>> getAllWorkTypes() {
-        List<WorkType> workTypes = workTypeService.getAllWorkTypes();
+    public ResponseEntity<ApiResponse<Page<WorkType>>> getAllWorkTypes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<WorkType> workTypes = workTypeService.getWorkTypesWithPagination(page, size);
+
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
                 "Successfully retrieved the list of work types",
-                workTypes
+                workTypes // Trả về toàn bộ đối tượng Page
         ));
     }
+
 
     // Get work type by ID
     @GetMapping("/{id}")

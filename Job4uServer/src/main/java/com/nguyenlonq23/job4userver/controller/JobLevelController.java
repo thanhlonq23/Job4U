@@ -4,6 +4,7 @@ import com.nguyenlonq23.job4userver.model.entity.JobLevel;
 import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.JobLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,16 @@ public class JobLevelController {
 
     // Get all job levels
     @GetMapping
-    public ResponseEntity<ApiResponse<List<JobLevel>>> getAllJobLevels() {
-        List<JobLevel> jobLevels = jobLevelService.getAllJobLevels();
+    public ResponseEntity<ApiResponse<Page<JobLevel>>> getAllWorkTypes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<JobLevel> workTypes = jobLevelService.getJobLevelWithPagination(page, size);
+
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
                 "Successfully retrieved the list of job levels",
-                jobLevels
+                workTypes // Trả về toàn bộ đối tượng Page
         ));
     }
 
