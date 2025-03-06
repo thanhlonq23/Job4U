@@ -13,17 +13,22 @@ const getAllExperienceService = ({ page = 0, size = 10 }) => {
   });
 };
 
-const UpdateExperienceService = (data, id) => {
+const getExperienceByIdService = (id) => {
+  return axios.get(`/api/experiences/${id}`);
+};
+
+const updateExperienceService = (data, id) => {
   return axios.put(`/api/experiences/${id}`, data);
 };
 
-const DeleteExperienceService = (id) => {
+const deleteExperienceService = (id) => {
   return axios.delete(`/api/experiences/${id}`);
 };
 
 export {
   createExperienceService,
   getAllExperienceService,
-  UpdateExperienceService,
-  DeleteExperienceService,
+  updateExperienceService,
+  deleteExperienceService,
+  getExperienceByIdService,
 };

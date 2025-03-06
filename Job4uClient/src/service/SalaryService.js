@@ -13,17 +13,22 @@ const getAllSalaryService = ({ page = 0, size = 10 }) => {
   });
 };
 
-const UpdateSalaryService = (data, id) => {
+const getSalaryByIdService = (id) => {
+  return axios.get(`/api/job-levels/${id}`);
+};
+
+const updateSalaryService = (data, id) => {
   return axios.put(`/api/salaries/${id}`, data);
 };
 
-const DeleteSalaryService = (id) => {
+const deleteSalaryService = (id) => {
   return axios.delete(`/api/salaries/${id}`);
 };
 
 export {
   createSalaryService,
   getAllSalaryService,
-  UpdateSalaryService,
-  DeleteSalaryService,
+  updateSalaryService,
+  deleteSalaryService,
+  getSalaryByIdService,
 };

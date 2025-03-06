@@ -13,6 +13,16 @@ const getAllCategoryService = ({ page = 0, size = 10 }) => {
   });
 };
 
+const searchCategoryService = ({ page = 0, size = 10, keyword = "" }) => {
+  return axios.get(`/api/categories/search`, {
+    params: {
+      page,
+      size,
+      keyword,
+    },
+  });
+};
+
 const getCategoryByIdService = (id) => {
   return axios.get(`/api/categories/${id}`);
 };
@@ -31,4 +41,5 @@ export {
   updateCategoryService,
   deleteCategoryService,
   getCategoryByIdService,
+  searchCategoryService,
 };
