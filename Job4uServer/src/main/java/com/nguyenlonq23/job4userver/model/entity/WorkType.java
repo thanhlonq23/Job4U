@@ -12,5 +12,5 @@ public class WorkType {
     private int id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String workType_name;
+    private String name;
 }

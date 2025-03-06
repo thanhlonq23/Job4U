@@ -1,8 +1,12 @@
 package com.nguyenlonq23.job4userver.service;
 
+import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.Skill;
 import com.nguyenlonq23.job4userver.repository.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +19,11 @@ public class SkillService {
     // Lấy tất cả skills
     public List<Skill> getAllSkills() {
         return skillRepository.findAll();
+    }
+
+    public Page<Skill> getSkillsWithPagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size); // Tạo Pageable (pageIndex, pageSize)
+        return skillRepository.findAll(pageable);
     }
 
     // Lấy skill theo ID
