@@ -41,7 +41,6 @@ const Menu = () => {
             <span className="menu-title">Trang chủ</span>
           </Link>
         </li>
-
         {/* Menu Quản lý User */}
         <li className="nav-item">
           <a
@@ -72,7 +71,6 @@ const Menu = () => {
             </ul>
           </div>
         </li>
-
         {/* Menu Quản lý loại công việc */}
         <li className="nav-item">
           <a
@@ -103,7 +101,6 @@ const Menu = () => {
             </ul>
           </div>
         </li>
-
         {/* Menu Quản lý cấp bậc */}
         <li className="nav-item">
           <a
@@ -134,7 +131,68 @@ const Menu = () => {
             </ul>
           </div>
         </li>
-
+        {/* Menu Quản lý kinh nghiệm */}
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            onClick={() => toggleMenu("exptype")}
+            aria-expanded={expandedMenu["exptype"] || false}
+            href="#"
+          >
+            <i className="far fa-star menu-icon"></i>
+            <span className="menu-title">Quản lý kinh nghiệm</span>
+            <i className="menu-arrow" />
+          </a>
+          <div
+            className={`collapse ${expandedMenu["exptype"] ? "show" : ""}`}
+            id="exptype"
+          >
+            <ul className="nav flex-column sub-menu">
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/list-exp-type/">
+                  Danh sách kinh nghiệm
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/add-exp-type/">
+                  Thêm kinh nghiệm
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </li>
+        
+        {/* Menu Quản lý kỹ năng */}
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            onClick={() => toggleMenu("skilltype")}
+            aria-expanded={expandedMenu["skilltype"] || false}
+            href="#"
+          >
+            <i className="far fa-hand-paper menu-icon"></i>
+            <span className="menu-title">Quản lý kỹ năng</span>
+            <i className="menu-arrow" />
+          </a>
+          <div
+            className={`collapse ${expandedMenu["skilltype"] ? "show" : ""}`}
+            id="skilltype"
+          >
+            <ul className="nav flex-column sub-menu">
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/list-skill-type/">
+                  Danh sách kỹ năng
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/add-skill-type/">
+                  Thêm kỹ năng
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </li>
+        
         {/* Menu Quản lý hình thức làm việc */}
         <li className="nav-item">
           <a
@@ -165,7 +223,6 @@ const Menu = () => {
             </ul>
           </div>
         </li>
-
         {/* Menu Quản lý khoảng lương */}
         <li className="nav-item">
           <a
@@ -196,7 +253,6 @@ const Menu = () => {
             </ul>
           </div>
         </li>
-
         {/* Menu Quản lý công ty */}
         <li className="nav-item">
           <a

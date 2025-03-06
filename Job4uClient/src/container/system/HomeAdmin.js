@@ -26,6 +26,8 @@ import ManageCv from "./Cv/ManageCv";
 import UserCv from "./Cv/UserCv";
 import ChangePassword from "./User/ChangePassword";
 import UserInfo from "./User/UserInfo";
+import ManageSkill from "./Skill/ManageSkill";
+import AddSkill from "./Skill/AddSkill";
 
 const HomeAdmin = () => {
   return (
@@ -53,24 +55,35 @@ const HomeAdmin = () => {
 export const adminRoutes = [
   // { path: "", element: <Home /> },
   { path: "", element: <ABC /> },
+
   { path: "list-user", element: <ManageUser /> },
   { path: "add-user", element: <AddUser /> },
   { path: "edit-user/:id", element: <AddUser /> },
+
   { path: "add-job-type", element: <AddCategory /> },
   { path: "list-job-type", element: <ManageCategory /> },
   { path: "edit-job-type/:id", element: <AddCategory /> },
+
   { path: "add-job-level", element: <AddJobLevel /> },
   { path: "list-job-level", element: <ManageJobLevel /> },
   { path: "edit-job-level/:id", element: <AddJobLevel /> },
+
   { path: "add-work-type", element: <AddWorkType /> },
   { path: "list-work-type", element: <ManageWorkType /> },
   { path: "edit-work-type/:id", element: <AddWorkType /> },
+
   { path: "add-salary-type", element: <AddSalaryType /> },
   { path: "list-salary-type", element: <ManageSalaryType /> },
   { path: "edit-salary-type/:id", element: <AddSalaryType /> },
+
   { path: "add-exp-type", element: <AddExpType /> },
   { path: "list-exp-type", element: <ManageExpType /> },
   { path: "edit-exp-type/:id", element: <AddExpType /> },
+
+  { path: "add-skill-type", element: <AddSkill /> },
+  { path: "list-skill-type", element: <ManageSkill /> },
+  { path: "edit-skill-type/:id", element: <AddSkill /> },
+
   { path: "add-company", element: <AddCompany /> },
   { path: "recruitment", element: <Recruitment /> },
   { path: "list-employer", element: <ManageEmployer /> },
