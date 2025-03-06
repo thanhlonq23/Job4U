@@ -117,7 +117,7 @@ const ManageJobType = () => {
                     dataJobType.map((item, index) => (
                       <tr key={item.id}>
                         <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
-                        <td>{item.category_name}</td>
+                        <td>{item.name}</td>
                         <td style={{ width: "30%" }}>
                           <div
                             onClick={() => openPreviewImage(item.image)}

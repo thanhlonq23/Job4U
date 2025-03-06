@@ -106,7 +106,7 @@ const ManageJobLevel = () => {
                       <tr key={item.id}>
                         {/* Số thứ tự chính xác dựa trên trang hiện tại */}
                         <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
-                        <td>{item.jobLevel_name}</td>
+                        <td>{item.name}</td>
                         <td>
                           <Link
                             style={{ color: "#4B49AC" }}

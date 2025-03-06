@@ -101,7 +101,7 @@ const ManageWorkType = () => {
                       <tr key={item.id}>
                         {/* Số thứ tự chính xác dựa trên trang hiện tại */}
                         <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
-                        <td>{item.workType_name}</td>
+                        <td>{item.name}</td>
                         <td>
                           <Link
                             style={{ color: "#4B49AC" }}

@@ -1,73 +1,78 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import moment from "moment";
+import React, { useEffect, useState } from "react";
+import {
+  getAllSkillService,
+  deleteSkillService,
+} from "../../../service/SkillService";
 import { PAGINATION } from "../../../util/constant";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import {
-  getAllJobLevelService,
-  DeleteJobLevelService,
-} from "../../../service/JobLevelService";
+const ManageSkill = () => {
+  const [dataSkill, setDataSkill] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-const ManageJobLevel = () => {
-  // **STATE KHỞI TẠO**
-  const [dataJobLevel, setdataJobLevel] = useState([]); // Dữ liệu danh sách cấp bậc
-  const [count, setCount] = useState(0); // Tổng số trang
-  const [numberPage, setnumberPage] = useState(0); // Trang hiện tại
-
-  // **FETCH Dữ LIỆU DANH SÁCH CẤP BẬC**
-  const fetchJobLevels = async (offset = 0) => {
+  // **FETCH DỮ LIỆU**
+  const fetchSkills = async (page = 0) => {
+    setIsLoading(true);
     try {
-      const response = await getAllJobLevelService({
-        limit: PAGINATION.pagerow,
-        offset,
+      const response = await getAllSkillService({
+        page,
+        size: PAGINATION.pagerow,
       });
-
-      if (response && Array.isArray(response)) {
-        setdataJobLevel(response);
-        setCount(Math.ceil(response.count / PAGINATION.pagerow));
+      if (response && response.data) {
+        const { content, totalPages } = response.data;
+        setDataSkill(content);
+        setTotalPages(totalPages);
+      } else {
+        toast.error("Dữ liệu không hợp lệ!");
       }
     } catch (error) {
       console.error("Lỗi khi fetch dữ liệu:", error);
       toast.error("Không thể tải dữ liệu danh sách!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // **GỌI FETCH Dữ LIỆU LẦN ĐẦU**
+  // **GỌI FETCH DỮ LIỆU LẦN ĐẦU**
   useEffect(() => {
-    fetchJobLevels(0);
+    fetchSkills(0);
   }, []);
 
-  // **XÓA CẪP BẬC**
-  const handleDeleteJobLevel = async (event, id) => {
+  // **XÓA KỸ NĂNG**
+  const handleDeleteSkill = async (event, id) => {
     event.preventDefault();
-    try {
-      const res = await DeleteJobLevelService(id);
-      if (res && res.errCode === 0) {
-        toast.success("Xóa cấp bậc thành công");
+    if (window.confirm("Bạn có chắc chắn muốn xóa kỹ năng này?")) {
+      try {
+        const res = await deleteSkillService(id);
+        if (res && res.errCode === 0) {
+          toast.success("Xóa kỹ năng thành công");
+          // Xóa phần tử khỏi danh sách hiện tại
+          const updatedData = dataSkill.filter((item) => item.id !== id);
+          setDataSkill(updatedData);
 
-        // Cập nhật trực tiếp danh sách
-        const updatedData = dataJobLevel.filter((item) => item.id !== id);
-        setdataJobLevel(updatedData);
-
-        // Cập nhật lại số trang nếu cần
-        setCount(Math.ceil(updatedData.length / PAGINATION.pagerow));
-      } else {
-        toast.error(res?.errMessage || "Xóa cấp bậc thất bại!");
+          // Kiểm tra xem có cần giảm số trang không
+          if (updatedData.length === 0 && currentPage > 0) {
+            setCurrentPage((prev) => prev - 1);
+            fetchSkills(currentPage - 1);
+          }
+        } else {
+          toast.error(res?.errMessage || "Xóa kỹ năng thất bại!");
+        }
+      } catch (error) {
+        console.error("Lỗi khi xóa kỹ năng:", error);
+        toast.error("Đã xảy ra lỗi khi xóa kỹ năng!");
       }
-    } catch (error) {
-      console.error("Lỗi khi xóa cấp bậc:", error);
-      toast.error("Đã xảy ra lỗi khi xóa cấp bậc!");
     }
   };
 
-  // **Xử LÝ PHÂN TRANG**
-  const handleChangePage = async (number) => {
-    const offset = number.selected * PAGINATION.pagerow;
-    setnumberPage(number.selected);
-    await fetchJobLevels(offset);
+  // **XỬ LÝ PHÂN TRANG**
+  const handlePageChange = async (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
+    await fetchSkills(selectedPage.selected);
   };
 
   // **RENDER GIAO DIỆN**
@@ -76,28 +81,38 @@ const ManageJobLevel = () => {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4 className="card-title">Danh sách cấp bậc</h4>
-
-            {/* BẢNG DANH SÁCH CẪP BẬC */}
+            <h4 className="card-title">Danh sách kỹ năng</h4>
             <div className="table-responsive pt-2">
               <table className="table table-bordered">
                 <thead>
                   <tr>
                     <th>STT</th>
-                    <th>Tên cấp bậc</th>
+                    <th>Tên kỹ năng</th>
+                    <th>Lĩnh vực</th>
                     <th>Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {dataJobLevel && dataJobLevel.length > 0 ? (
-                    dataJobLevel.map((item, index) => (
+                  {isLoading ? (
+                    <tr>
+                      <td
+                        colSpan="3"
+                        style={{ textAlign: "center", padding: "20px" }}
+                      >
+                        Đang tải dữ liệu...
+                      </td>
+                    </tr>
+                  ) : dataSkill.length > 0 ? (
+                    dataSkill.map((item, index) => (
                       <tr key={item.id}>
-                        <td>{index + 1}</td>
-                        <td>{item.joblevelName}</td>
+                        {/* Số thứ tự chính xác dựa trên trang hiện tại */}
+                        <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
+                        <td>{item.name}</td>
+                        <td>{item.category.name}</td>
                         <td>
                           <Link
                             style={{ color: "#4B49AC" }}
-                            to={`/admin/edit-job-level/${item.id}/`}
+                            to={`/admin/edit-skill-type/${item.id}/`}
                           >
                             Edit
                           </Link>
@@ -106,7 +121,7 @@ const ManageJobLevel = () => {
                             style={{ color: "#4B49AC" }}
                             href="#"
                             onClick={(event) =>
-                              handleDeleteJobLevel(event, item.id)
+                              handleDeleteSkill(event, item.id)
                             }
                           >
                             Delete
@@ -117,7 +132,7 @@ const ManageJobLevel = () => {
                   ) : (
                     <tr>
                       <td
-                        colSpan="4"
+                        colSpan="3"
                         style={{ textAlign: "center", padding: "20px" }}
                       >
                         Không có dữ liệu.
@@ -129,13 +144,14 @@ const ManageJobLevel = () => {
             </div>
           </div>
 
-          {/* PHÂN TRANG */}
           <ReactPaginate
             previousLabel={"Quay lại"}
             nextLabel={"Tiếp"}
             breakLabel={"..."}
-            pageCount={count}
+            pageCount={totalPages}
             marginPagesDisplayed={3}
+            pageRangeDisplayed={5}
+            onPageChange={handlePageChange}
             containerClassName={"pagination justify-content-center pb-3"}
             pageClassName={"page-item"}
             pageLinkClassName={"page-link"}
@@ -146,7 +162,7 @@ const ManageJobLevel = () => {
             breakLinkClassName={"page-link"}
             breakClassName={"page-item"}
             activeClassName={"active"}
-            onPageChange={handleChangePage}
+            forcePage={currentPage}
           />
         </div>
       </div>
@@ -154,4 +170,4 @@ const ManageJobLevel = () => {
   );
 };
 
-export default ManageJobLevel;
+export default ManageSkill;
