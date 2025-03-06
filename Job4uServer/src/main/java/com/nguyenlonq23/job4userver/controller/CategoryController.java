@@ -20,7 +20,7 @@ public class CategoryController {
 
     // Get all categories
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<Category>>> getAllWorkTypes(
+    public ResponseEntity<ApiResponse<Page<Category>>> getAllCategoriesWithPagination(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
@@ -32,6 +32,23 @@ public class CategoryController {
                 workTypes // Trả về toàn bộ đối tượng Page
         ));
     }
+
+    // Get all categories with optional keyword filter
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<Category>>> getAllCategoriesWithPaginationAndFilter(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword // Thêm tham số keyword
+    ) {
+        Page<Category> categories = categoryService.getCategoriesWithPaginationAndFilter(page, size, keyword);
+
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully retrieved the list of categories",
+                categories // Trả về toàn bộ đối tượng Page
+        ));
+    }
+
 
     // Get category by ID
     @GetMapping("/{id}")
@@ -56,7 +73,7 @@ public class CategoryController {
     // Create a new category
     @PostMapping
     public ResponseEntity<ApiResponse<Category>> createCategory(@RequestBody Category category) {
-        if (category.getCategory_name() == null || category.getCategory_name().isEmpty()) {
+        if (category.getName() == null || category.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
                     "ERROR",
                     "Category name cannot be empty",

@@ -54,7 +54,7 @@ public class JobLevelController {
     // Create a new job level
     @PostMapping
     public ResponseEntity<ApiResponse<JobLevel>> createJobLevel(@RequestBody JobLevel jobLevel) {
-        if (jobLevel.getJobLevel_name() == null || jobLevel.getJobLevel_name().isEmpty()) {
+        if (jobLevel.getName() == null || jobLevel.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
                     "ERROR",
                     "Job level name is required",

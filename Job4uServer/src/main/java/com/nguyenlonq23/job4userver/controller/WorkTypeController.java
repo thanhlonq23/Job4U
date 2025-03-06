@@ -55,7 +55,7 @@ public class WorkTypeController {
     // Create a new work type
     @PostMapping
     public ResponseEntity<ApiResponse<WorkType>> createWorkType(@RequestBody WorkType workType) {
-        if (workType.getWorkType_name() == null || workType.getWorkType_name().isEmpty()) {
+        if (workType.getName() == null || workType.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
                     "ERROR",
                     "Work type name is required",

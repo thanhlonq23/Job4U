@@ -4,10 +4,13 @@ import com.nguyenlonq23.job4userver.model.entity.Experience;
 import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.ExperienceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -18,12 +21,16 @@ public class ExperienceController {
 
     // Get all experiences
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Experience>>> getAllExperiences() {
-        List<Experience> experiences = experienceService.getAllExperiences();
+    public ResponseEntity<ApiResponse<Page<Experience>>> getAllWorkTypes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<Experience> experiences = experienceService.getExperiencesWithPagination(page, size);
+
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
-                "Successfully retrieved the list of experiences",
-                experiences
+                "Successfully retrieved the list of experience",
+                experiences // Trả về toàn bộ đối tượng Page
         ));
     }
 
@@ -48,7 +55,7 @@ public class ExperienceController {
     // Create a new experience
     @PostMapping
     public ResponseEntity<ApiResponse<Experience>> createExperience(@RequestBody Experience experience) {
-        if (experience.getExperience_name() == null || experience.getExperience_name().isEmpty()) {
+        if (experience.getName() == null || experience.getName().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(
                     "ERROR",
                     "Experience name cannot be empty",

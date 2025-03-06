@@ -1,9 +1,11 @@
 package com.nguyenlonq23.job4userver.controller;
 
+import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.Salary;
 import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +20,16 @@ public class SalaryController {
 
     // Get all salaries
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Salary>>> getAllSalaries() {
-        List<Salary> salaries = salaryService.getAllSalaries();
+    public ResponseEntity<ApiResponse<Page<Salary>>> getAllWorkTypes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<Salary> workTypes = salaryService.getSalariesWithPagination(page, size);
+
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
-                "Successfully retrieved the list of salaries",
-                salaries
+                "Successfully retrieved the list of salary",
+                workTypes // Trả về toàn bộ đối tượng Page
         ));
     }
 

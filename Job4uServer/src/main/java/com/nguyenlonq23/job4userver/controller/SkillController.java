@@ -1,9 +1,11 @@
 package com.nguyenlonq23.job4userver.controller;
 
+import com.nguyenlonq23.job4userver.model.entity.Salary;
 import com.nguyenlonq23.job4userver.model.entity.Skill;
 import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +20,19 @@ public class SkillController {
 
     // Get all skills
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Skill>>> getAllSkills() {
-        List<Skill> skills = skillService.getAllSkills();
+    public ResponseEntity<ApiResponse<Page<Skill>>> getAllWorkTypes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<Skill> workTypes = skillService.getSkillsWithPagination(page, size);
+
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
-                "Successfully retrieved the list of skills",
-                skills
+                "Successfully retrieved the list of skill",
+                workTypes // Trả về toàn bộ đối tượng Page
         ));
     }
+
 
     // Get skill by ID
     @GetMapping("/{id}")
@@ -60,7 +67,7 @@ public class SkillController {
     // Create a new skill
     @PostMapping
     public ResponseEntity<ApiResponse<Skill>> createSkill(@RequestBody Skill skill) {
-        if (skill.getSkill_name() == null || skill.getSkill_name().isEmpty()) {
+        if (skill.getName() == null || skill.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
                     "ERROR",
                     "Skill name is required",
