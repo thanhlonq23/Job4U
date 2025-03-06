@@ -1,139 +1,160 @@
-import React from 'react'
-import { useEffect, useState } from 'react';
-import { createAllCodeService, getDetailAllcodeById, UpdateAllcodeService } from '../../../service/userService';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Spinner, Modal } from 'reactstrap'
-import '../../../components/modal/modal.css'
-const AddExpType = () => {
+import { toast, ToastContainer } from "react-toastify";
+import { Spinner, Modal } from "reactstrap";
+import "../../../components/modal/modal.css";
+import {
+  createExperienceService,
+  getExperienceByIdService,
+  updateExperienceService,
+} from "../../../service/ExperienceService";
 
+const AddExperience = () => {
+  // *** State Management ***
+  const [isActionADD, setIsActionADD] = useState(true); // Xác định là thêm mới hay cập nhật
+  const [isLoading, setIsLoading] = useState(false); // Quản lý trạng thái tải
+  const { id } = useParams(); // Lấy id từ URL để xác định chế độ chỉnh sửa
+  const [dataReady, setDataReady] = useState(false); // Đánh dấu dữ liệu đã tải xong
 
-    const [isActionADD, setisActionADD] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
+  // Quản lý giá trị các input
+  const [inputValues, setInputValues] = useState({
+    name: "",
+  });
 
-
-    const { id } = useParams();
-
-    const [inputValues, setInputValues] = useState({
-        value: '', code: ''
-    });
-
-    useEffect(() => {
-
-        if (id) {
-            let fetchDetailExpType = async () => {
-                setisActionADD(false)
-                let allcode = await getDetailAllcodeById(id)
-                if (allcode && allcode.errCode === 0) {
-                    setInputValues({ ...inputValues, ["value"]: allcode.data.value, ["code"]: allcode.data.code })
-                }
-            }
-            fetchDetailExpType()
+  // *** Fetching Data ***
+  useEffect(() => {
+    if (id) {
+      const fetchDetailExperience = async () => {
+        setIsActionADD(false); // Chuyển chế độ sang cập nhật
+        try {
+          setIsLoading(true);
+          const response = await getExperienceByIdService(id);
+          if (response?.status === "SUCCESS") {
+            setInputValues({
+              name: response.data.name || "",
+            });
+          } else {
+            toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
+          }
+        } catch (error) {
+          toast.error("Không thể tải dữ liệu!");
+          console.error("Error fetching job level details:", error);
+        } finally {
+          setDataReady(true); // Đánh dấu dữ liệu đã tải xong
+          setIsLoading(false); // Tắt trạng thái tải
         }
-    }, [])
+      };
+      fetchDetailExperience();
+    } else {
+      setDataReady(true); // Nếu không có ID, đánh dấu dữ liệu đã sẵn sàng
+    }
+  }, [id]);
 
-    const handleOnChange = event => {
-        const { name, value } = event.target;
-        setInputValues({ ...inputValues, [name]: value });
+  // *** Event Handlers ***
+  // Xử lý thay đổi trong các input
+  const handleOnChange = (event) => {
+    const { name, value } = event.target;
+    setInputValues((prev) => ({ ...prev, [name]: value }));
+  };
 
+  // Lưu kinh nghiệm mới hoặc cập nhật kinh nghiệm
+  const handleSaveExperience = async () => {
+    setIsLoading(true); // Hiển thị trạng thái tải
+
+    const payload = {
+      name: inputValues.name,
     };
 
-    let handleSaveExpType = async () => {
-        setIsLoading(true)
-        if (isActionADD === true) {
-            let res = await createAllCodeService({
-                value: inputValues.value,
-                code: inputValues.code,
-                type: 'EXPTYPE',
+    try {
+      let response;
 
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Thêm khoảng kinh nghiệm thành công")
-                    setInputValues({
-                        ...inputValues,
-                        ["value"]: '',
-                        ["code"]: '',
-                    })
-                }
-                else if (res && res.errCode === 2) {
-                    toast.error(res.errMessage)
-                }
-                else toast.error("Thêm khoảng kinh nghiệm thất bại")
-            }, 1000);
-        } else {
-            let res = await UpdateAllcodeService({
-                value: inputValues.value,
-                code: inputValues.code,
-                id: id,
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Cập nhật khoảng kinh nghiệm thành công")
+      if (isActionADD) {
+        response = await createExperienceService(payload); // Thêm mới kinh nghiệm
+      } else {
+        response = await updateExperienceService(payload, id); // Cập nhật kinh nghiệm
+      }
 
-                }
-                else if (res && res.errCode === 2) {
-                    toast.error(res.errMessage)
-                }
-                else toast.error("Cập nhật khoảng kinh nghiệm thất bại")
-            }, 1000);
+      if (response?.status === "SUCCESS") {
+        toast.success(
+          isActionADD
+            ? "Thêm kinh nghiệm thành công!"
+            : "Cập nhật kinh nghiệm thành công!"
+        );
+
+        if (isActionADD) {
+          // Đặt lại giá trị input sau khi thêm thành công
+          setInputValues({
+            name: "",
+          });
         }
+      } else {
+        toast.error(response?.errMessage || "Đã xảy ra lỗi!");
+      }
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi gửi dữ liệu!");
+      console.error("Error saving job level:", error);
+    } finally {
+      setIsLoading(false); // Tắt trạng thái tải
     }
+  };
 
-    return (
-        <div className=''>
-            <div className="col-12 grid-margin">
-                <div className="card">
-                    <div className="card-body">
-                        <h4 className="card-title">{isActionADD === true ? 'Thêm mới khoảng kinh nghiệm làm việc' : 'Cập nhật khoảng kinh nghiệm làm việc'}</h4>
-                        <br></br>
-                        <form className="form-sample">
-
-                            <div className="row">
-                                <div className="col-md-8">
-                                    <div className="form-group row">
-                                        <label className="col-sm-3 col-form-label">Tên khoảng kinh nghiệm</label>
-                                        <div className="col-sm-9">
-                                            <input type="text" value={inputValues.value} name="value" onChange={(event) => handleOnChange(event)} className="form-control" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-8">
-                                    <div className="form-group row">
-                                        <label className="col-sm-3 col-form-label">Mã code</label>
-                                        <div className="col-sm-9">
-                                            <input type="text" value={inputValues.code} name="code" onChange={(event) => handleOnChange(event)} className="form-control" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="button" className="btn1 btn1-primary1 btn1-icon-text" onClick={() => handleSaveExpType()}>
-                                <i class="ti-file btn1-icon-prepend"></i>
-                                Lưu
-                            </button>
-                        </form>
-                    </div>
+  // *** Render UI ***
+  return (
+    <div className="add-job-level">
+      <div className="col-12 grid-margin">
+        <div className="card">
+          <div className="card-body">
+            <h4 className="card-title">
+              {isActionADD ? "Thêm mới kinh nghiệm" : "Cập nhật kinh nghiệm"}
+            </h4>
+            <form className="form-sample">
+              {/* Input tên kinh nghiệm */}
+              <div className="form-group row">
+                <label className="col-sm-2 col-form-label">
+                  Tên kinh nghiệm
+                </label>
+                <div className="col-sm-9">
+                  <input
+                    type="text"
+                    value={dataReady ? inputValues.name : ""}
+                    name="name"
+                    onChange={handleOnChange}
+                    className="form-control"
+                    placeholder="Nhập tên kinh nghiệm"
+                    disabled={!dataReady || isLoading}
+                  />
                 </div>
-            </div>
-            {isLoading &&
-                <Modal isOpen='true' centered contentClassName='closeBorder' >
+              </div>
 
-                    <div style={{
-                        position: 'absolute', right: '50%',
-                        justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <Spinner animation="border"  ></Spinner>
-                    </div>
-
-                </Modal>
-            }
+              {/* Button lưu */}
+              <button
+                type="button"
+                className="btn1 btn1-primary1 btn1-icon-text"
+                onClick={handleSaveExperience}
+                style={{ marginLeft: "90%" }}
+                disabled={isLoading}
+              >
+                <i className="ti-file btn1-icon-prepend"></i>
+                {isLoading ? "Đang lưu..." : "Lưu"}
+              </button>
+            </form>
+          </div>
         </div>
-    )
-}
+      </div>
 
-export default AddExpType
+      {/* Hiển thị trạng thái loading */}
+      {isLoading && (
+        <Modal isOpen centered>
+          <div className="spinner-container">
+            <Spinner />
+          </div>
+        </Modal>
+      )}
+
+      {/* ToastContainer để hiển thị thông báo */}
+      <ToastContainer />
+    </div>
+  );
+};
+
+export default AddExperience;

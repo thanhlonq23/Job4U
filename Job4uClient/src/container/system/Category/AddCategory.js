@@ -19,7 +19,7 @@ const AddCategory = () => {
   const [isActionAdd, setIsActionAdd] = useState(!id);
   const [isLoading, setIsLoading] = useState(false);
   const [inputValues, setInputValues] = useState({
-    category_name: "",
+    name: "",
     image: "",
     imageReview: "",
     isOpen: false,
@@ -32,9 +32,9 @@ const AddCategory = () => {
       try {
         const response = await getCategoryByIdService(id);
         if (response?.status === "SUCCESS") {
-          const { category_name, image } = response.data;
+          const { name, image } = response.data;
           setInputValues({
-            category_name: category_name || "",
+            name: name || "",
             image: image || "",
             imageReview: image || "",
             isOpen: false,
@@ -73,7 +73,7 @@ const AddCategory = () => {
   const handleSave = async () => {
     setIsLoading(true);
     const payload = {
-      category_name: inputValues.category_name,
+      name: inputValues.name,
       image: inputValues.image,
     };
 
@@ -91,7 +91,7 @@ const AddCategory = () => {
 
         if (isActionAdd) {
           setInputValues({
-            category_name: "",
+            name: "",
             image: "",
             imageReview: "",
             isOpen: false,
@@ -128,14 +128,14 @@ const AddCategory = () => {
           <form>
             {/* Input tên loại công việc */}
             <div className="form-group row">
-              <label className="col-sm-3 col-form-label">
+              <label className="col-sm-2 col-form-label">
                 Tên loại công việc
               </label>
               <div className="col-sm-9">
                 <input
                   type="text"
-                  value={inputValues.category_name}
-                  name="category_name"
+                  value={inputValues.name}
+                  name="name"
                   onChange={handleInputChange}
                   className="form-control"
                 />
@@ -144,7 +144,7 @@ const AddCategory = () => {
 
             {/* Input hình ảnh */}
             <div className="form-group row">
-              <label className="col-sm-3 col-form-label">Hình ảnh</label>
+              <label className="col-sm-2 col-form-label">Hình ảnh</label>
               <div className="col-sm-9">
                 <input
                   type="file"
@@ -157,7 +157,7 @@ const AddCategory = () => {
 
             {/* Preview hình ảnh */}
             <div className="form-group row">
-              <label className="col-sm-3 col-form-label">Preview</label>
+              <label className="col-sm-2 col-form-label">Preview</label>
               <div className="col-sm-9">
                 <div
                   className="box-img-preview"

@@ -1,138 +1,246 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Spinner, Modal } from "reactstrap";
 import "../../../components/modal/modal.css";
 import {
   createSkillService,
-  getAllSkillService,
-  UpdateSkillService,
+  getSkillByIdService,
+  updateSkillService,
 } from "../../../service/SkillService";
 
-const AddSkill = () => {
-  // *** State Management ***
-  const [isActionADD, setIsActionADD] = useState(true); // Xác định là thêm mới hay cập nhật
-  const [isLoading, setIsLoading] = useState(false); // Quản lý trạng thái tải
-  const { id } = useParams(); // Lấy id từ URL để xác định chế độ chỉnh sửa
+import { searchCategoryService } from "../../../service/CategoriesService";
 
-  // Quản lý giá trị các input
+const AddSkill = () => {
+  const [isActionADD, setIsActionADD] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const { id } = useParams();
+  const [dataReady, setDataReady] = useState(false);
+
   const [inputValues, setInputValues] = useState({
-    skillName: "",
+    name: "",
+    category: {
+      id: "",
+    },
   });
 
-  // *** Fetching Data ***
+  const [categories, setCategories] = useState([]); // Danh sách category
+  const [searchKeyword, setSearchKeyword] = useState(""); // Từ khóa nhập vào
+  const [debouncedKeyword, setDebouncedKeyword] = useState(""); // Từ khóa debounce
+
+  // Lấy chi tiết kỹ năng nếu có ID
   useEffect(() => {
     if (id) {
       const fetchDetailSkill = async () => {
-        setIsActionADD(false); // Chuyển chế độ sang cập nhật
+        setIsActionADD(false);
         try {
-          const skill = await getAllSkillService(id);
-          if (skill && skill.errCode === 0) {
+          setIsLoading(true);
+          const response = await getSkillByIdService(id);
+          if (response?.status === "SUCCESS") {
             setInputValues({
-              skillName: skill.data.skillName,
+              name: response.data.name || "",
+              category: {
+                id: response.data.category?.id || "",
+              },
             });
+          } else {
+            toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
           }
         } catch (error) {
-          console.error("Error fetching job level details:", error);
+          toast.error("Không thể tải dữ liệu!");
+          console.error("Error fetching skill details:", error);
+        } finally {
+          setDataReady(true);
+          setIsLoading(false);
         }
       };
       fetchDetailSkill();
+    } else {
+      setDataReady(true);
     }
   }, [id]);
 
-  // *** Event Handlers ***
-  // Xử lý thay đổi trong các input
+  // Debounce logic cho tìm kiếm
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedKeyword(searchKeyword);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchKeyword]);
+
+  // Gọi API tìm kiếm khi `debouncedKeyword` thay đổi
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (!debouncedKeyword.trim()) {
+        setCategories([]);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const response = await searchCategoryService({
+          page: 0,
+          size: 10,
+          keyword: debouncedKeyword.trim(),
+        });
+
+        if (response?.status === "SUCCESS" && response.data?.content) {
+          setCategories(response.data.content); // Gán danh sách từ API
+        } else {
+          setCategories([]); // Không có dữ liệu, gán mảng trống
+          toast.warn("Không tìm thấy lĩnh vực phù hợp!");
+        }
+      } catch (error) {
+        toast.error("Đã xảy ra lỗi khi tìm kiếm!");
+        console.error("Error fetching categories:", error);
+        setCategories([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, [debouncedKeyword]);
+
   const handleOnChange = (event) => {
     const { name, value } = event.target;
-    setInputValues((prev) => ({ ...prev, [name]: value }));
+    if (name === "category") {
+      setInputValues((prev) => ({
+        ...prev,
+        category: { ...prev.category, id: value },
+      }));
+    } else {
+      setInputValues((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  // Lưu cấp bậc mới hoặc cập nhật cấp bậc
   const handleSaveSkill = async () => {
-    setIsLoading(true); // Hiển thị trạng thái tải
+    setIsLoading(true);
+
     const payload = {
-      skillName: inputValues.skillName,
+      name: inputValues.name,
+      category: {
+        id: inputValues.category.id,
+      },
     };
 
     try {
       let response;
+
       if (isActionADD) {
-        response = await createSkillService(payload); // Thêm mới cấp bậc
+        response = await createSkillService(payload);
       } else {
-        response = await UpdateSkillService(payload, id); // Cập nhật cấp bậc
+        response = await updateSkillService(payload, id);
       }
 
-      setIsLoading(false); // Tắt trạng thái tải
-
-      // Xử lý kết quả trả về
-      if (response && response.errCode === 0) {
+      if (response?.status === "SUCCESS") {
         toast.success(
           isActionADD
-            ? "Thêm cấp bậc thành công"
-            : "Cập nhật cấp bậc thành công"
+            ? "Thêm kỹ năng thành công!"
+            : "Cập nhật kỹ năng thành công!"
         );
 
         if (isActionADD) {
-          // Đặt lại giá trị input sau khi thêm thành công
           setInputValues({
-            skillName: "",
+            name: "",
+            category: {
+              id: "",
+            },
           });
         }
       } else {
         toast.error(response?.errMessage || "Đã xảy ra lỗi!");
       }
     } catch (error) {
-      setIsLoading(false);
       toast.error("Đã xảy ra lỗi khi gửi dữ liệu!");
-      console.error(error);
+      console.error("Error saving skill:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // *** Render UI ***
   return (
-    <div className="add-job-level">
+    <div className="add-skill">
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">
-              {isActionADD ? "Thêm mới cấp bậc" : "Cập nhật cấp bậc"}
+              {isActionADD ? "Thêm mới kỹ năng" : "Cập nhật kỹ năng"}
             </h4>
             <form className="form-sample">
-              {/* Input tên cấp bậc */}
+              {/* Input tên kỹ năng */}
               <div className="form-group row">
-                <label className="col-sm-3 col-form-label">Tên cấp bậc</label>
+                <label className="col-sm-2 col-form-label">Tên kỹ năng</label>
                 <div className="col-sm-9">
                   <input
                     type="text"
-                    value={inputValues.skillName}
-                    name="skillName"
+                    value={dataReady ? inputValues.name : ""}
+                    name="name"
                     onChange={handleOnChange}
                     className="form-control"
+                    placeholder="Nhập tên kỹ năng"
+                    disabled={!dataReady || isLoading}
                   />
+                </div>
+              </div>
+
+              {/* Tìm kiếm lĩnh vực */}
+              <div className="form-group row">
+                <label className="col-sm-2 col-form-label">
+                  Tìm kiếm lĩnh vực
+                </label>
+                <div className="col-sm-9">
+                  <input
+                    type="text"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    className="form-control"
+                    placeholder="Nhập từ khóa tìm kiếm"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              {/* Chọn lĩnh vực */}
+              <div className="form-group row">
+                <label className="col-sm-2 col-form-label">Chọn lĩnh vực</label>
+                <div className="col-sm-9">
+                  <select
+                    name="category"
+                    value={inputValues.category.id}
+                    onChange={handleOnChange}
+                    className="form-control"
+                    disabled={!dataReady || isLoading}
+                  >
+                    <option value="">Chọn lĩnh vực</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
               {/* Button lưu */}
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn1 btn1-primary1 btn1-icon-text"
                 onClick={handleSaveSkill}
+                style={{ marginLeft: "90%" }}
+                disabled={isLoading}
               >
-                Lưu
+                <i className="ti-file btn1-icon-prepend"></i>
+                {isLoading ? "Đang lưu..." : "Lưu"}
               </button>
             </form>
           </div>
         </div>
       </div>
-
-      {/* Hiển thị trạng thái loading */}
-      {isLoading && (
-        <Modal isOpen centered>
-          <div className="spinner-container">
-            <Spinner />
-          </div>
-        </Modal>
-      )}
+      <ToastContainer />
     </div>
   );
 };

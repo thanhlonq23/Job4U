@@ -18,7 +18,7 @@ const AddJobLevel = () => {
 
   // Quản lý giá trị các input
   const [inputValues, setInputValues] = useState({
-    jobLevel_name: "",
+    name: "",
   });
 
   // *** Fetching Data ***
@@ -31,7 +31,7 @@ const AddJobLevel = () => {
           const response = await getJobLevelByIdService(id);
           if (response?.status === "SUCCESS") {
             setInputValues({
-              jobLevel_name: response.data.jobLevel_name || "",
+              name: response.data.name || "",
             });
           } else {
             toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
@@ -62,7 +62,7 @@ const AddJobLevel = () => {
     setIsLoading(true); // Hiển thị trạng thái tải
 
     const payload = {
-      jobLevel_name: inputValues.jobLevel_name,
+      name: inputValues.name,
     };
 
     try {
@@ -84,7 +84,7 @@ const AddJobLevel = () => {
         if (isActionADD) {
           // Đặt lại giá trị input sau khi thêm thành công
           setInputValues({
-            jobLevel_name: "",
+            name: "",
           });
         }
       } else {
@@ -110,12 +110,12 @@ const AddJobLevel = () => {
             <form className="form-sample">
               {/* Input tên cấp bậc */}
               <div className="form-group row">
-                <label className="col-sm-3 col-form-label">Tên cấp bậc</label>
+                <label className="col-sm-2 col-form-label">Tên cấp bậc</label>
                 <div className="col-sm-9">
                   <input
                     type="text"
-                    value={dataReady ? inputValues.jobLevel_name : ""}
-                    name="jobLevel_name"
+                    value={dataReady ? inputValues.name : ""}
+                    name="name"
                     onChange={handleOnChange}
                     className="form-control"
                     placeholder="Nhập tên cấp bậc"

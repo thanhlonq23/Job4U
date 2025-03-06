@@ -18,7 +18,7 @@ const AddWorkType = () => {
 
   // Quản lý giá trị các input
   const [inputValues, setInputValues] = useState({
-    workType_name: "",
+    name: "",
   });
 
   // *** Fetching Data ***
@@ -30,7 +30,7 @@ const AddWorkType = () => {
           const response = await getWorkTypeByIdService(id);
           if (response?.status === "SUCCESS") {
             setInputValues({
-              workType_name: response.data.workType_name || "",
+              name: response.data.name || "",
             });
           } else {
             toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
@@ -60,7 +60,7 @@ const AddWorkType = () => {
     setIsLoading(true); // Hiển thị trạng thái tải
 
     const payload = {
-      workType_name: inputValues.workType_name,
+      name: inputValues.name,
     };
 
     try {
@@ -85,7 +85,7 @@ const AddWorkType = () => {
         if (isActionADD) {
           // Đặt lại giá trị input sau khi thêm thành công
           setInputValues({
-            workType_name: "",
+            name: "",
           });
         }
       } else {
@@ -112,14 +112,14 @@ const AddWorkType = () => {
             <form className="form-sample">
               {/* Input tên hình thức làm việc */}
               <div className="form-group row">
-                <label className="col-sm-3 col-form-label">
+                <label className="col-sm-2 col-form-label">
                   Tên hình thức làm việc
                 </label>
                 <div className="col-sm-9">
                   <input
                     type="text"
-                    value={dataReady ? inputValues.workType_name : ""}
-                    name="workType_name"
+                    value={dataReady ? inputValues.name : ""}
+                    name="name"
                     onChange={handleOnChange}
                     className="form-control"
                     placeholder="Nhập tên hình thức làm việc"
