@@ -13,7 +13,7 @@ public class Company {
     private int id;
 
     @Column(name = "name" , nullable = false)
-    private String company_name;
+    private String name;
 
     @Lob
     @Column(name = "thumbnail", columnDefinition = "LONGTEXT")

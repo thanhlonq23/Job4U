@@ -14,7 +14,7 @@ public class Post {
     private int id;
 
     @Column(name = "name", nullable = false)
-    private String post_name;
+    private String name;
 
     @Column(name = "description_HTML", columnDefinition = "LONGTEXT")
     private String description_HTML;
@@ -68,7 +68,7 @@ public class Post {
     }
 
     public Post(String post_name, String descriptionHTML, String descriptionMarkdown, Status status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, User user, Company company) {
-        this.post_name = post_name;
+        this.name = post_name;
         this.description_HTML = descriptionHTML;
         this.description_Markdown = descriptionMarkdown;
         this.status = status;

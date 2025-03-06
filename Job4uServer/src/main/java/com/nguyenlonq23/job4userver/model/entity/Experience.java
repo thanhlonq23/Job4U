@@ -12,6 +12,6 @@ public class Experience {
     private int id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String experience_name;
+    private String name;
 
 }

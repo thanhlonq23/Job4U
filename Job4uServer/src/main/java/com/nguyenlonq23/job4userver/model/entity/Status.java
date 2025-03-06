@@ -12,5 +12,5 @@ public class Status {
     private int id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String status_name;
+    private String name;
 }

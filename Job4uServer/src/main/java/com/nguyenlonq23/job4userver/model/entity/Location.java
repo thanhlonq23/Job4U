@@ -12,5 +12,5 @@ public class Location {
     private int id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String location_name;
+    private String name;
 }

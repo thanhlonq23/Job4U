@@ -13,7 +13,7 @@ public class Category {
     private int id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String category_name;
+    private String name;
 
     @Lob
     @Column(name = "image", columnDefinition = "LONGTEXT")

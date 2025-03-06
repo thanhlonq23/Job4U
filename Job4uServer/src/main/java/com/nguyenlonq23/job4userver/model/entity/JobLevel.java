@@ -12,5 +12,5 @@ public class JobLevel {
     private int id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String jobLevel_name;
+    private String name;
 }

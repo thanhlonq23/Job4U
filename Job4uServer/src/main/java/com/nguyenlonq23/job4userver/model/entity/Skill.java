@@ -12,7 +12,7 @@ public class Skill {
     private int id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String skill_name;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
