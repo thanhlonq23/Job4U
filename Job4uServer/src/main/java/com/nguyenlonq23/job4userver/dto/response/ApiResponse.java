@@ -1,4 +1,4 @@
-package com.nguyenlonq23.job4userver.model.response;
+package com.nguyenlonq23.job4userver.dto.response;
 
 public class ApiResponse<T> {
     private String status;
