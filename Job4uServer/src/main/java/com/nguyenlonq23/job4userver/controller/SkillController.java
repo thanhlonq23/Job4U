@@ -1,8 +1,7 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.model.entity.Salary;
 import com.nguyenlonq23.job4userver.model.entity.Skill;
-import com.nguyenlonq23.job4userver.model.response.ApiResponse;
+import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

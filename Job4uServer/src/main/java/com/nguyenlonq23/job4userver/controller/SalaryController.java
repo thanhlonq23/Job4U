@@ -1,16 +1,13 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.Salary;
-import com.nguyenlonq23.job4userver.model.response.ApiResponse;
+import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/salaries")
@@ -55,7 +52,7 @@ public class SalaryController {
     // Create a new salary
     @PostMapping
     public ResponseEntity<ApiResponse<Salary>> createSalary(@RequestBody Salary salary) {
-        if (salary.getSalaryRange() == null || salary.getSalaryRange().isEmpty()) {
+        if (salary.getName() == null || salary.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
                     "ERROR",
                     "Salary range is required",
