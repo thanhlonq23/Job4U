@@ -16,29 +16,16 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // Lấy tất cả categories
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
-    }
-
-    // Lấy tất cả categories kèm phân trang
-    public Page<Category> getCategorysWithPagination(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size); // Tạo Pageable (pageIndex, pageSize)
-        return categoryRepository.findAll(pageable);
-    }
-
-    // Lấy tất cả categories kèm phân trang và từ khóa tìm kiếm
-    public Page<Category> getCategoriesWithPaginationAndFilter(int page, int size, String keyword) {
-        Pageable pageable = PageRequest.of(page, size);
-
+    // Lấy tất cả categories kèm phân trang và từ khóa tìm kiếm,sort
+    public Page<Category> getCategoriesWithPaginationAndFilter(String keyword, Pageable pageable) {
+        // Lọc dữ liệu bằng từ khóa nếu keyword không rỗng
         if (keyword != null && !keyword.isEmpty()) {
-            // Lọc dữ liệu bằng từ khóa nếu keyword không rỗng
             return categoryRepository.findByNameContainingIgnoreCase(keyword, pageable);
         }
-
         // Trả về toàn bộ nếu không có keyword
         return categoryRepository.findAll(pageable);
     }
+
 
     // Lấy category theo ID
     public Category getCategoryById(int id) {

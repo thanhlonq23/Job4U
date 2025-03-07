@@ -1,4 +1,6 @@
 package com.nguyenlonq23.job4userver.service;
+
+import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.Experience;
 import com.nguyenlonq23.job4userver.repository.ExperienceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +16,12 @@ public class ExperienceService {
     @Autowired
     private ExperienceRepository experienceRepository;
 
-    // Lấy tất cả experiences
-    public List<Experience> getAllExperiences() {
-        return experienceRepository.findAll();
-    }
-
-    public Page<Experience> getExperiencesWithPagination(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size); // Tạo Pageable (pageIndex, pageSize)
+    public Page<Experience> getExperiences(String keyword, Pageable pageable) {
+        // Lọc dữ liệu bằng từ khóa nếu keyword không rỗng
+        if (keyword != null && !keyword.isEmpty()) {
+            return experienceRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        }
+        // Trả về toàn bộ nếu không có keyword
         return experienceRepository.findAll(pageable);
     }
 

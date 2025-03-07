@@ -1,10 +1,12 @@
 package com.nguyenlonq23.job4userver.controller;
 
+import com.nguyenlonq23.job4userver.model.entity.Experience;
 import com.nguyenlonq23.job4userver.model.entity.JobLevel;
 import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.JobLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +22,10 @@ public class JobLevelController {
     // Get all job levels
     @GetMapping
     public ResponseEntity<ApiResponse<Page<JobLevel>>> getAllWorkTypes(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
+            Pageable pageable // Thông tin phân trang và sắp xếp từ URL
     ) {
-        Page<JobLevel> workTypes = jobLevelService.getJobLevelWithPagination(page, size);
+        Page<JobLevel> workTypes = jobLevelService.getJobLevels(keyword, pageable);
 
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",

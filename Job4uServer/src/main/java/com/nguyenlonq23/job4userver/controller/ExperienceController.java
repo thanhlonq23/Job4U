@@ -1,16 +1,17 @@
 package com.nguyenlonq23.job4userver.controller;
 
+import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.Experience;
 import com.nguyenlonq23.job4userver.model.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.ExperienceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -22,10 +23,10 @@ public class ExperienceController {
     // Get all experiences
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Experience>>> getAllWorkTypes(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
+            Pageable pageable // Thông tin phân trang và sắp xếp từ URL
     ) {
-        Page<Experience> experiences = experienceService.getExperiencesWithPagination(page, size);
+        Page<Experience> experiences = experienceService.getExperiences(keyword, pageable);
 
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",

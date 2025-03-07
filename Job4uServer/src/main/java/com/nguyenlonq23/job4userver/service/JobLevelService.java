@@ -1,4 +1,5 @@
 package com.nguyenlonq23.job4userver.service;
+import com.nguyenlonq23.job4userver.model.entity.Experience;
 import com.nguyenlonq23.job4userver.model.entity.JobLevel;
 import com.nguyenlonq23.job4userver.model.entity.WorkType;
 import com.nguyenlonq23.job4userver.repository.JobLevelRepository;
@@ -16,13 +17,12 @@ public class JobLevelService {
     private JobLevelRepository jobLevelRepository;
 
     // Lấy tất cả job levels
-    public List<JobLevel> getAllJobLevels() {
-        return jobLevelRepository.findAll();
-    }
-
-    // Lấy dữ liệu phân trang
-    public Page<JobLevel> getJobLevelWithPagination(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size); // Tạo Pageable (pageIndex, pageSize)
+    public Page<JobLevel> getJobLevels(String keyword, Pageable pageable) {
+        // Lọc dữ liệu bằng từ khóa nếu keyword không rỗng
+        if (keyword != null && !keyword.isEmpty()) {
+            return jobLevelRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        }
+        // Trả về toàn bộ nếu không có keyword
         return jobLevelRepository.findAll(pageable);
     }
 
