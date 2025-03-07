@@ -12,5 +12,5 @@ public class Salary {
     private int id;
 
     @Column(name = "salary_range", nullable = false, unique = true)
-    private String salaryRange;
+    private String name;
 }
