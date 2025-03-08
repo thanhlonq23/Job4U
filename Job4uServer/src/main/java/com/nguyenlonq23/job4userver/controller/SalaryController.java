@@ -21,14 +21,31 @@ public class SalaryController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        Page<Salary> workTypes = salaryService.getSalariesWithPagination(page, size);
+        try {
+            Page<Salary> workTypes = salaryService.getSalariesWithPagination(page, size);
 
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the list of salary",
-                workTypes // Trả về toàn bộ đối tượng Page
-        ));
+            if (workTypes.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No salaries found",
+                        workTypes // Trả về đối tượng Page rỗng
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of salary",
+                    workTypes // Trả về toàn bộ đối tượng Page
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving salaries: " + e.getMessage(),
+                    null // Không trả về dữ liệu khi lỗi
+            ));
+        }
     }
+
 
     // Get salary by ID
     @GetMapping("/{id}")

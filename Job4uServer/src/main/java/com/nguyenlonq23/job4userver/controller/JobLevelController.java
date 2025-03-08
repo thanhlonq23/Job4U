@@ -22,14 +22,31 @@ public class JobLevelController {
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
             Pageable pageable // Thông tin phân trang và sắp xếp từ URL
     ) {
-        Page<JobLevel> workTypes = jobLevelService.getJobLevels(keyword, pageable);
+        try {
+            Page<JobLevel> workTypes = jobLevelService.getJobLevels(keyword, pageable);
 
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the list of job levels",
-                workTypes // Trả về toàn bộ đối tượng Page
-        ));
+            if (workTypes.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No job levels found matching the criteria",
+                        workTypes // Trả về đối tượng rỗng
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of job levels",
+                    workTypes // Trả về toàn bộ đối tượng Page
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving job levels: " + e.getMessage(),
+                    null // Không trả về dữ liệu khi lỗi
+            ));
+        }
     }
+
 
     // Get job level by ID
     @GetMapping("/{id}")

@@ -23,13 +23,29 @@ public class SkillController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        Page<Skill> workTypes = skillService.getSkillsWithPagination(page, size);
+        try {
+            Page<Skill> workTypes = skillService.getSkillsWithPagination(page, size);
 
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the list of skill",
-                workTypes // Trả về toàn bộ đối tượng Page
-        ));
+            if (workTypes.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No skills found",
+                        workTypes // Trả về đối tượng Page rỗng
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of skills",
+                    workTypes // Trả về toàn bộ đối tượng Page
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving skills: " + e.getMessage(),
+                    null // Không trả về dữ liệu khi lỗi
+            ));
+        }
     }
 
 

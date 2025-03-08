@@ -1,5 +1,6 @@
 package com.nguyenlonq23.job4userver.controller;
 
+import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.dto.response.AuthResponse;
 import com.nguyenlonq23.job4userver.dto.request.LoginRequest;
 import com.nguyenlonq23.job4userver.dto.request.RegisterRequest;
@@ -17,12 +18,44 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest registerRequest) {
-        return ResponseEntity.ok(authService.register(registerRequest));
+    public ResponseEntity<ApiResponse<AuthResponse>> register(@RequestBody RegisterRequest registerRequest) {
+        try {
+            AuthResponse authResponse = authService.register(registerRequest);
+            ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                    "SUCCESS",
+                    "User registered successfully",
+                    authResponse
+            );
+            return ResponseEntity.ok(apiResponse);
+        } catch (Exception e) {
+            ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                    "ERROR",
+                    e.getMessage(),
+                    null
+            );
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.login(loginRequest));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            AuthResponse authResponse = authService.login(loginRequest);
+            ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                    "SUCCESS",
+                    "User logged in successfully",
+                    authResponse
+            );
+            return ResponseEntity.ok(apiResponse);
+        } catch (Exception e) {
+            ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                    "ERROR",
+                    e.getMessage(),
+                    null
+            );
+            return ResponseEntity.status(401).body(apiResponse); // 401 Unauthorized
+        }
     }
+
+
 }

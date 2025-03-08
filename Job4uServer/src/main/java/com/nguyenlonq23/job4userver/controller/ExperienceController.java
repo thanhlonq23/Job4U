@@ -22,14 +22,31 @@ public class ExperienceController {
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
             Pageable pageable // Thông tin phân trang và sắp xếp từ URL
     ) {
-        Page<Experience> experiences = experienceService.getExperiences(keyword, pageable);
+        try {
+            Page<Experience> experiences = experienceService.getExperiences(keyword, pageable);
 
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the list of experience",
-                experiences // Trả về toàn bộ đối tượng Page
-        ));
+            if (experiences.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No experiences found matching the criteria",
+                        experiences // Trả về đối tượng rỗng
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of experiences",
+                    experiences // Trả về toàn bộ đối tượng Page
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving experiences: " + e.getMessage(),
+                    null // Không trả về dữ liệu khi lỗi
+            ));
+        }
     }
+
 
     // Get experience by ID
     @GetMapping("/{id}")

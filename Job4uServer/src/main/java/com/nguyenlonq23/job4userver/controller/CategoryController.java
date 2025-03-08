@@ -22,14 +22,31 @@ public class CategoryController {
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
             Pageable pageable // Thông tin phân trang và sắp xếp từ URL
     ) {
-        Page<Category> categories = categoryService.getCategoriesWithPaginationAndFilter(keyword, pageable);
+        try {
+            Page<Category> categories = categoryService.getCategoriesWithPaginationAndFilter(keyword, pageable);
 
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the list of categories",
-                categories // Trả về toàn bộ đối tượng Page
-        ));
+            if (categories.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No categories found matching the criteria",
+                        categories // Trả về đối tượng rỗng
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of categories",
+                    categories // Trả về toàn bộ đối tượng Page
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving categories: " + e.getMessage(),
+                    null // Không trả về dữ liệu khi lỗi
+            ));
+        }
     }
+
 
 
     // Get category by ID
