@@ -6,8 +6,8 @@ import "./header.scss";
 const Header = () => {
   const [user, setUser] = useState({});
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    setUser(userData);
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    setUser(userInfo);
   }, []);
 
   let scrollHeader = () => {
@@ -101,11 +101,11 @@ const Header = () => {
                                   borderRadius: "50%",
                                   marginLeft: "15px",
                                 }}
-                                src={user.image}
+                                src="/assets/img/icon/ava.png"
                                 alt="profile"
                               />
                               <span className="header-name-user">
-                                {user.firstName + " " + user.lastName}
+                                {user.fullName}
                               </span>
                             </a>
                             <div
@@ -119,6 +119,15 @@ const Header = () => {
                                 <i className="far fa-user text-primary" />
                                 Thông tin
                               </Link>
+                              {user &&
+                                (user.role === "ROLE_ADMIN" ||
+                                  user.role === "ROLE_EMPLOYER_OWNER" ||
+                                  user.role === "ROLE_EMPLOYER_STAFF") && (
+                                  <Link to="/admin/" className="dropdown-item">
+                                    <i className="far fa-file-word text-primary"></i>
+                                    Trang quản trị
+                                  </Link>
+                                )}
                               <Link
                                 to="/candidate/cv-post/"
                                 className="dropdown-item"
@@ -136,9 +145,10 @@ const Header = () => {
                               <NavLink
                                 to="/login"
                                 className="dropdown-item"
-                                isActive={(match, location) => {
-                                  if (match)
-                                    localStorage.removeItem("userData");
+                                onClick={() => {
+                                  localStorage.removeItem("userInfo");
+                                  localStorage.removeItem("authToken");
+                                  window.location.reload();
                                 }}
                               >
                                 <i className="ti-power-off text-primary" />

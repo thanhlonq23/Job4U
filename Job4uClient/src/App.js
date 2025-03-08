@@ -6,6 +6,8 @@ import Header from "./container/header/header";
 import Footer from "./container/footer/Footer";
 import HomeAdmin, { adminRoutes } from "./container/system/HomeAdmin";
 import ABC from "./container/system/ABC";
+import Login from "./container/login/Login";
+import Register from "./container/login/Register";
 
 function App() {
   return (
@@ -30,6 +32,28 @@ function App() {
             <>
               <Header />
               <JobPage />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/login"
+          element={
+            <>
+              <Header />
+              <Login />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <>
+              <Header />
+              <Register />
               <Footer />
             </>
           }

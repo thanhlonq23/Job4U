@@ -6,6 +6,21 @@ const instance = axios.create({
   // withCredentials: true
 });
 
+// Interceptor cho request để thêm token
+instance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`; // Thêm token vào header
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor cho response để xử lý lỗi
 instance.interceptors.response.use(
   (response) => {
     // Handle successful response

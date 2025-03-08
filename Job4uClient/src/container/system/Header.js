@@ -8,7 +8,8 @@ const Header = () => {
   });
 
   const handleLogout = () => {
-    localStorage.removeItem("userData");
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("authToken");
     window.location.href = "/login";
   };
 
