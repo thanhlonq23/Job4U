@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "./header.scss";
+import AuthPopup from "../../components/auth/AuthPopup";
 
 const Header = () => {
   const [user, setUser] = useState({});
@@ -19,6 +20,16 @@ const Header = () => {
     });
   };
   scrollHeader();
+
+  const [isAuthPopupOpen, setIsAuthPopupOpen] = useState(false);
+
+  const openAuthPopup = () => {
+    setIsAuthPopupOpen(true);
+  };
+
+  const closeAuthPopup = () => {
+    setIsAuthPopupOpen(false);
+  };
 
   return (
     <>
@@ -120,9 +131,9 @@ const Header = () => {
                                 Thông tin
                               </Link>
                               {user &&
-                                (user.role === "ROLE_ADMIN" ||
-                                  user.role === "ROLE_EMPLOYER_OWNER" ||
-                                  user.role === "ROLE_EMPLOYER_STAFF") && (
+                                (user.role === "ADMIN" ||
+                                  user.role === "EMPLOYER_OWNER" ||
+                                  user.role === "EMPLOYER_STAFF") && (
                                   <Link to="/admin/" className="dropdown-item">
                                     <i className="far fa-file-word text-primary"></i>
                                     Trang quản trị
@@ -159,12 +170,15 @@ const Header = () => {
                         </ul>
                       ) : (
                         <>
-                          <Link to={"/register"} class="btn head-btn1">
-                            Đăng kí
-                          </Link>
-                          <Link to={"/login"} class="btn head-btn2">
-                            Đăng nhập
-                          </Link>
+                          <div className="header__actions">
+                            {/* Nút để mở AuthPopup */}
+                            <button
+                              className="header__auth-btn"
+                              onClick={openAuthPopup}
+                            >
+                              Đăng nhập / Đăng ký
+                            </button>
+                          </div>
                         </>
                       )}
                     </div>
@@ -178,6 +192,7 @@ const Header = () => {
             </div>
           </div>
         </div>
+        <AuthPopup isOpen={isAuthPopupOpen} onClose={closeAuthPopup} />
         {/* <!-- Header End --> */}
       </header>
     </>

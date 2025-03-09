@@ -1,0 +1,442 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+// Variables
+$primary-color: #4361b4;
+$text-color: #333;
+$light-text: #888;
+$background-color: #fff;
+$light-background: #eee;
+$border-radius-large: 30px;
+$border-radius-medium: 8px;
+$box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+$font-family: "Poppins", sans-serif;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin position-absolute($top: null, $right: null, $bottom: null, $left: null) {
+  position: absolute;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}
+
+// Auth Popup Block
+.auth-popup {
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; // Đảm bảo hiển thị trên tất cả các phần tử khác
+    font-family: $font-family;
+  }
+
+  &__wrapper {
+    @include flex-center;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+  }
+
+  &__container {
+    position: relative;
+    width: 1200px; // Tăng kích thước từ 1000px lên 1200px
+    height: 700px; // Tăng kích thước từ 620px lên 700px
+    background: $background-color;
+    border-radius: $border-radius-large;
+    box-shadow: $box-shadow;
+    overflow: hidden;
+    font-family: $font-family;
+
+    // Reset styles
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    a {
+      text-decoration: none;
+      list-style: none;
+    }
+
+    &--active {
+      .auth-popup__form-box {
+        right: 50%;
+
+        &--register {
+          visibility: visible;
+        }
+      }
+
+      .auth-popup__toggle-box {
+        &::before {
+          left: 50%;
+        }
+      }
+
+      .auth-popup__toggle-panel {
+        &--left {
+          left: -50%;
+          transition-delay: 0.6s;
+        }
+
+        &--right {
+          right: 0;
+          transition-delay: 1.2s;
+        }
+      }
+    }
+
+    .text-black {
+      color: rgb(70, 63, 63);
+    }
+
+    h1 {
+      font-size: 46px; // Tăng từ 40px lên 46px
+      margin: -10px 0 10px; // Thêm margin bottom
+      color: #fdf6f6;
+      font-family: "Poppins", sans-serif;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 16px; // Tăng từ 14.5px lên 16px
+      margin: 15px 0 25px; // Thêm margin bottom
+      font-family: "Poppins", sans-serif;
+      font-weight: 400;
+      color: #e4e0e0;
+    }
+  }
+
+  &__close-btn {
+    position: absolute;
+    top: 20px; // Tăng từ 15px lên 20px
+    right: 20px; // Tăng từ 15px lên 20px
+    background: transparent;
+    border: none;
+    font-size: 36px; // Tăng từ 30px lên 36px
+    color: $text-color;
+    cursor: pointer;
+    z-index: 10;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  // Form Box
+  &__form-box {
+    @include position-absolute(null, 0, null, null);
+    width: 50%;
+    height: 100%;
+    background: $background-color;
+    display: flex;
+    align-items: center;
+    color: $text-color;
+    text-align: center;
+    padding: 50px 70px; // Tăng từ 40px 50px lên 50px 70px
+    z-index: 1;
+    transition: 0.6s ease-in-out 1.2s, visibility 0s 1s;
+    overflow-y: auto;
+
+    &--register {
+      visibility: hidden;
+    }
+
+    form {
+      width: 100%;
+    }
+  }
+
+  // Input Row
+  &__input-row {
+    display: flex;
+    gap: 20px; // Tăng từ 15px lên 20px
+    margin: 35px 0; // Tăng từ 30px lên 35px
+  }
+
+  // Input Box
+  &__input-box {
+    position: relative;
+    margin: 35px 0; // Tăng từ 30px lên 35px
+
+    &--half {
+      flex: 1;
+      margin: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px 50px 16px 20px; // Tăng từ 13px lên 16px
+      background: $light-background;
+      border-radius: $border-radius-medium;
+      border: none;
+      outline: none;
+      font-size: 17px; // Tăng từ 16px lên 17px
+      color: $text-color;
+      font-weight: 500;
+
+      &::placeholder {
+        color: $light-text;
+        font-weight: 400;
+      }
+    }
+
+    i {
+      @include position-absolute(50%, 20px, null, null);
+      transform: translateY(-50%);
+      font-size: 22px; // Tăng từ 20px lên 22px
+    }
+  }
+
+  // Select
+  &__select {
+    width: 100%;
+    padding: 16px 20px; // Tăng từ 13px lên 16px
+    background: $light-background;
+    border-radius: $border-radius-medium;
+    border: none;
+    outline: none;
+    font-size: 17px; // Tăng từ 16px lên 17px
+    color: $text-color;
+    font-weight: 500;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+
+    option {
+      color: $text-color;
+      background-color: $background-color;
+    }
+  }
+
+  // Forgot Link
+  &__forgot-link {
+    margin: -15px 0 20px; // Tăng bottom margin từ 15px lên 20px
+
+    a {
+      font-size: 16px; // Tăng từ 14.5px lên 16px
+      color: $text-color;
+    }
+  }
+
+  // Button
+  &__btn {
+    width: 100%;
+    height: 54px; // Tăng từ 48px lên 54px
+    background: $primary-color;
+    border-radius: $border-radius-medium;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    font-size: 18px; // Tăng từ 16px lên 18px
+    color: $background-color;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+
+    &--transparent {
+      width: 180px; // Tăng từ 160px lên 180px
+      height: 54px; // Tăng từ 46px lên 54px
+      background: transparent;
+      border: 2px solid $background-color;
+      box-shadow: none;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  // Social Icons
+  &__social-icons {
+    display: flex;
+    justify-content: center;
+
+    a {
+      display: inline-flex;
+      padding: 12px; // Tăng từ 10px lên 12px
+      border: 2px solid #ccc;
+      border-radius: $border-radius-medium;
+      font-size: 26px; // Tăng từ 24px lên 26px
+      color: $text-color;
+      margin: 0 10px; // Tăng từ 8px lên 10px
+      transition: border-color 0.3s ease;
+
+      &:hover {
+        border-color: $primary-color;
+      }
+    }
+  }
+
+  // Toggle Box
+  &__toggle-box {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    &::before {
+      content: "";
+      @include position-absolute(null, null, null, -250%);
+      width: 300%;
+      height: 100%;
+      background: $primary-color;
+      border-radius: 150px;
+      z-index: 2;
+      transition: 1.8s ease-in-out;
+    }
+  }
+
+  // Toggle Panel
+  &__toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    color: $background-color;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    transition: 0.6s ease-in-out;
+    padding: 0 60px; // Tăng từ 40px lên 60px
+    text-align: center;
+
+    p {
+      margin-bottom: 25px; // Tăng từ 20px lên 25px
+    }
+
+    &--left {
+      left: 0;
+      transition-delay: 1.2s;
+    }
+
+    &--right {
+      right: -50%;
+      transition-delay: 0.6s;
+    }
+  }
+}
+
+// Responsive styling - Điều chỉnh breakpoint để phù hợp với kích thước mới
+@media screen and (max-width: 1280px) {
+  .auth-popup__container {
+    width: 90%;
+    max-width: 1200px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .auth-popup {
+    &__container {
+      height: 80vh;
+      max-height: 700px;
+    }
+
+    &__form-box {
+      bottom: 0;
+      width: 100%;
+      height: 70%;
+      padding: 50px 40px;
+    }
+
+    &__container--active {
+      .auth-popup__form-box {
+        right: 0;
+        bottom: 30%;
+      }
+
+      .auth-popup__toggle-box {
+        &::before {
+          left: 0;
+          top: 70%;
+        }
+      }
+
+      .auth-popup__toggle-panel {
+        &--left {
+          left: 0;
+          top: -30%;
+        }
+
+        &--right {
+          bottom: 0;
+        }
+      }
+    }
+
+    &__toggle-box {
+      &::before {
+        left: 0;
+        top: -270%;
+        width: 100%;
+        height: 300%;
+        border-radius: 20vw;
+      }
+    }
+
+    &__toggle-panel {
+      width: 100%;
+      height: 30%;
+
+      &--left {
+        top: 0;
+      }
+
+      &--right {
+        right: 0;
+        bottom: -30%;
+      }
+    }
+
+    &__input-row {
+      flex-direction: column;
+      gap: 35px;
+      margin: 0;
+    }
+
+    &__input-box--half {
+      margin: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .auth-popup {
+    &__form-box {
+      padding: 30px;
+    }
+
+    &__toggle-panel {
+      h1 {
+        font-size: 36px;
+      }
+      
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+.auth-popup__btn--loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
