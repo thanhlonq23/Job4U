@@ -7,7 +7,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.nguyenlonq23.job4userver.security.JwtAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -36,6 +40,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/categories").hasRole("ADMIN")
+                        .requestMatchers("/api/experiences").hasRole("ADMIN")
+                        .requestMatchers("/api/job-levels").hasRole("ADMIN")
+                        .requestMatchers("/api/salaries").hasRole("ADMIN")
+                        .requestMatchers("/api/skills").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+                        .requestMatchers("/api/work-types").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -46,6 +56,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

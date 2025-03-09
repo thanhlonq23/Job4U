@@ -1,5 +1,6 @@
 package com.nguyenlonq23.job4userver.service;
 
+import com.nguyenlonq23.job4userver.exception.ResourceNotFoundException;
 import com.nguyenlonq23.job4userver.exception.UserAlreadyExistsException;
 import com.nguyenlonq23.job4userver.model.entity.Company;
 import com.nguyenlonq23.job4userver.model.entity.Role;
@@ -45,9 +46,6 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
-    /**
-     * Đăng ký người dùng mới
-     */
     public AuthResponse register(RegisterRequest registerRequest) {
         // Kiểm tra xem email đã tồn tại chưa
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
@@ -55,20 +53,12 @@ public class AuthService {
         }
 
         // Lấy role dựa vào loại tài khoản được chọn
-        Role role;
-        if (registerRequest.isEmployer()) {
-            // Nếu là nhà tuyển dụng, lấy role "EMPLOYER_OWNER"
-            role = roleRepository.findByName("EMPLOYER_OWNER")
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò nhà tuyển dụng"));
-        } else {
-            // Nếu là người tìm việc, lấy role "JOB_SEEKER"
-            role = roleRepository.findByName("JOB_SEEKER")
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò người tìm việc"));
-        }
+        Role role = roleRepository.findByName(registerRequest.isEmployer() ? "EMPLOYER_OWNER" : "JOB_SEEKER")
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy vai trò phù hợp"));
 
         // Lấy status "ACTIVE"
         Status status = statusRepository.findByName("ACTIVE")
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái hoạt động"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy trạng thái hoạt động"));
 
         // Tạo người dùng mới
         User user = new User();
@@ -114,9 +104,6 @@ public class AuthService {
         );
     }
 
-    /**
-     * Đăng nhập người dùng
-     */
     public AuthResponse login(LoginRequest loginRequest) {
         // Xác thực người dùng
         Authentication authentication = authenticationManager.authenticate(
@@ -131,7 +118,7 @@ public class AuthService {
 
         // Lấy thông tin người dùng
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại"));
 
         // Tạo token JWT
         String token = jwtService.generateToken(user);
@@ -145,4 +132,6 @@ public class AuthService {
                 user.getRole().getName()
         );
     }
+
+
 }

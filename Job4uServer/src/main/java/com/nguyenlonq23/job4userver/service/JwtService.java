@@ -37,7 +37,7 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
-        claims.put("role", user.getRole().getName());
+        claims.put("role", "ROLE_" + user.getRole().getName());
         return createToken(claims, user.getEmail());
     }
 
@@ -67,8 +67,24 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        final String tokenRole = extractRole(token); // Trả về đúng vai trò từ token (có hoặc không có "ROLE_")
+
+        // So sánh username và kiểm tra token còn hạn không
+        if (!username.equals(userDetails.getUsername()) || isTokenExpired(token)) {
+            return false;
+        }
+
+        // So sánh role giữa token và UserDetails
+        boolean isRoleMatching = userDetails.getAuthorities().stream()
+                .map(auth -> auth.getAuthority()) // Lấy danh sách vai trò
+                .anyMatch(role -> role.equals(tokenRole));
+        System.out.println("isRoleMatching: " + isRoleMatching);
+        System.out.println("userDetails: " + userDetails);
+        System.out.println("tokenRole: " + tokenRole);
+
+        return isRoleMatching;
     }
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -77,4 +93,9 @@ public class JwtService {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
 }
