@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 // import Categories from '../../components/home/Categories'
 // import FeatureJobs from '../../components/home/FeaturesJobs'
 import { getListPostService } from "../../service/userService";
+
+import "./home.scss";
+
 const Home = () => {
   const [dataFeature, setDataFeature] = useState([]);
 
@@ -59,11 +62,40 @@ const Home = () => {
                 <div class="row">
                   <div class="col-xl-6 col-lg-9 col-md-10">
                     <div class="hero__caption">
-                      <h1>NƠI KHỞI ĐẦU CHO HÀNH TRÌNH SỰ NGHIỆP CỦA BẠN </h1>
+                      {/* <h1>NƠI KHỞI ĐẦU CHO HÀNH TRÌNH SỰ NGHIỆP CỦA BẠN </h1> */}
+                      <h1>TÌM CÔNG VIỆC PHÙ HỢP VỚI BẠN</h1>
                     </div>
                   </div>
                 </div>
                 {/* <!-- Search Box --> */}
+                <div class="row">
+                  <div class="col-xl-8">
+                    <form action="#" class="search-box">
+                      <div class="input-form">
+                        <input
+                          type="text"
+                          placeholder="Job Tittle or keyword"
+                        />
+                      </div>
+                      <div class="select-form">
+                        <div class="select-itms">
+                          <select
+                            class="form-select form-select-lg mb-3"
+                            aria-label=".form-select-lg example"
+                          >
+                            <option selected>Địa điểm</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="search-form">
+                        <a href="#">Find job</a>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
