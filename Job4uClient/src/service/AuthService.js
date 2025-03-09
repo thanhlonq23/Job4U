@@ -4,4 +4,8 @@ const handleLoginService = (data) => {
   return axios.post(`/api/auth/login`, data);
 };
 
-export { handleLoginService };
+const handleRegisterService = (data) => {
+  return axios.post(`/api/auth/login`, data);
+};
+
+export { handleLoginService, handleRegisterService };

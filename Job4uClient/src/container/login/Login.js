@@ -46,9 +46,9 @@ const Login = () => {
         );
 
         if (
-          user.role === "ROLE_ADMIN" ||
-          user.role === "ROLE_EMPLOYER_OWNER" ||
-          user.role === "ROLE_EMPLOYER_STAFF"
+          user.role === "ADMIN" ||
+          user.role === "EMPLOYER_OWNER" ||
+          user.role === "EMPLOYER_STAFF"
         ) {
           window.location.href = "/admin/";
         } else {
