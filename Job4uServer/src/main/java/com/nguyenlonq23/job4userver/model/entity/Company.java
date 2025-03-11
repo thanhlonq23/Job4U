@@ -1,7 +1,12 @@
 package com.nguyenlonq23.job4userver.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.nguyenlonq23.job4userver.model.enums.CompanyStatus;
+import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.util.Date;
 
 @Data
@@ -44,16 +49,16 @@ public class Company {
     @Column(name = "taxnumber")
     private String taxNumber;
 
-    @Column(name = "is_approved", nullable = false)
-    private boolean isApproved;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private CompanyStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private Status status;
-
-    @Column(name = "createdAt", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date createdAt;
 
-    @Column(name = "updatedAt", nullable = false)
+    @UpdateTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "updatedAt", nullable = true, columnDefinition = "TIMESTAMP(0)")
     private Date updatedAt;
 }

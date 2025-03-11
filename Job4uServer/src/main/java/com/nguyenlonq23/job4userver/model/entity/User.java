@@ -1,8 +1,13 @@
 package com.nguyenlonq23.job4userver.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nguyenlonq23.job4userver.model.enums.CompanyStatus;
 import com.nguyenlonq23.job4userver.model.enums.Gender;
+import com.nguyenlonq23.job4userver.model.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -14,9 +19,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "email" , nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -29,6 +35,8 @@ public class User {
     @Column(name = "address")
     private String address;
 
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "dob")
     private Date dob;
 
@@ -40,18 +48,26 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+//    @ManyToOne
+//    @JoinColumn(name = "status_id")
+//    private Status status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private UserStatus status;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(name = "createdAt", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date createdAt;
 
-    @Column(name = "updatedAt", nullable = false)
+    @UpdateTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "updatedAt", nullable = true, columnDefinition = "TIMESTAMP(0)")
     private Date updatedAt;
+
 
 }

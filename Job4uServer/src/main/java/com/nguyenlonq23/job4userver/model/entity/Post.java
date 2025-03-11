@@ -1,5 +1,7 @@
 package com.nguyenlonq23.job4userver.model.entity;
 
+import com.nguyenlonq23.job4userver.model.enums.Gender;
+import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,9 +24,9 @@ public class Post {
     @Column(name = "description_Markdown", columnDefinition = "LONGTEXT")
     private String description_Markdown;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private PostStatus status;
 
     @ManyToOne
     @JoinColumn(name = "category_job_id")
@@ -67,7 +69,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(String post_name, String descriptionHTML, String descriptionMarkdown, Status status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, User user, Company company) {
+    public Post(String post_name, String descriptionHTML, String descriptionMarkdown, PostStatus status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, User user, Company company) {
         this.name = post_name;
         this.description_HTML = descriptionHTML;
         this.description_Markdown = descriptionMarkdown;
