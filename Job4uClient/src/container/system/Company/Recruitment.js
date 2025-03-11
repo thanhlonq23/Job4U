@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { RecruitmentService } from '../../../service/userService';
+import { RecruitmentService } from '../../../service/userService1';
 const Recruitment = () => {
 
     const [inputValues, setInputValues] = useState({

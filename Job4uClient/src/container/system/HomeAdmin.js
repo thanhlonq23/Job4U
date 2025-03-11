@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import Home from "./Home";
 import ABC from "./ABC";
 import ManageUser from "./User/ManageUser";
-import AddUser from "./User/AddUser";
+import UpdateUser from "./User/UpdateUser";
 import AddCategory from "./Category/AddCategory";
 import ManageCategory from "./Category/ManageCategory";
 import AddJobLevel from "./JobLevel/AddJobLevel";
@@ -57,8 +57,8 @@ export const adminRoutes = [
   { path: "", element: <ABC /> },
 
   { path: "list-user", element: <ManageUser /> },
-  { path: "add-user", element: <AddUser /> },
-  { path: "edit-user/:id", element: <AddUser /> },
+  { path: "add-user", element: <UpdateUser /> },
+  { path: "edit-user/:id", element: <UpdateUser /> },
 
   { path: "add-job-type", element: <AddCategory /> },
   { path: "list-job-type", element: <ManageCategory /> },

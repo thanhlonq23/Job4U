@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import { handleChangePassword } from '../../../service/userService';
+import { handleChangePassword } from '../../../service/userService1';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 const ChangePassword = (props) => {

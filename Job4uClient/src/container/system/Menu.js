@@ -63,11 +63,6 @@ const Menu = () => {
                   Danh sách người dùng
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/admin/add-user/">
-                  Thêm người dùng
-                </Link>
-              </li>
             </ul>
           </div>
         </li>
@@ -161,7 +156,7 @@ const Menu = () => {
             </ul>
           </div>
         </li>
-        
+
         {/* Menu Quản lý kỹ năng */}
         <li className="nav-item">
           <a
@@ -192,7 +187,7 @@ const Menu = () => {
             </ul>
           </div>
         </li>
-        
+
         {/* Menu Quản lý hình thức làm việc */}
         <li className="nav-item">
           <a

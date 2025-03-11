@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 // import Categories from '../../components/home/Categories'
 // import FeatureJobs from '../../components/home/FeaturesJobs'
-import { getListPostService } from "../../service/userService";
+import { getListPostService } from "../../service/userService1";
 
 import "./home.scss";
 

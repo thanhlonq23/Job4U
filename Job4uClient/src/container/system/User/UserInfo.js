@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import { createNewUser, getDetailUserById, UpdateUserService } from '../../../service/userService';
+import { createNewUser, getDetailUserById, UpdateUserService } from '../../../service/userService1';
 import { useFetchAllcode } from '../../../util/fetch';
 import DatePicker from '../../../components/input/DatePicker';
 import { toast } from 'react-toastify';

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import { banPostService, getAllPostByAdminService, activePostService } from '../../../service/userService';
+import { banPostService, getAllPostByAdminService, activePostService } from '../../../service/userService1';
 import moment from 'moment';
 import { PAGINATION } from '../../../util/constant';
 import ReactPaginate from 'react-paginate';

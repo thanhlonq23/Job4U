@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { getStatisticalTypePost } from "../../service/userService";
+import { getStatisticalTypePost } from "../../service/userService1";
 import { PieChart } from "react-minimal-pie-chart";
 const Home = () => {
   const [user, setUser] = useState({});

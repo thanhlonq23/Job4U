@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import { getAllUserByCompanyIdService, QuitCompanyService } from '../../../service/userService';
+import { getAllUserByCompanyIdService, QuitCompanyService } from '../../../service/userService1';
 import moment from 'moment';
 import { PAGINATION } from '../../../util/constant';
 import ReactPaginate from 'react-paginate';
@@ -18,7 +18,6 @@ const ManageEmployer = () => {
         if (userData && userData.company_id) {
             fetchAllUser(userData.company_id)
         }
-
 
     }, [])
     let fetchAllUser = async (userId) => {

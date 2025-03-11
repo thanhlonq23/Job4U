@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from '../../../components/input/DatePicker';
-import { createPostService, updatePostService, getDetailPostByIdService } from '../../../service/userService';
+import { createPostService, updatePostService, getDetailPostByIdService } from '../../../service/userService1';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';

@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import CommonUtils from '../../../util/CommonUtils';
-import { createCompanyService, getDetailCompanyByUserId, updateCompanyService } from '../../../service/userService';
+import { createCompanyService, getDetailCompanyByUserId, updateCompanyService } from '../../../service/userService1';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
