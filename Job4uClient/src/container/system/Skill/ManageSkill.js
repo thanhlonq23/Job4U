@@ -114,7 +114,7 @@ const ManageSkill = () => {
                             style={{ color: "#4B49AC" }}
                             to={`/admin/edit-skill-type/${item.id}/`}
                           >
-                            Edit
+                            Cập nhật
                           </Link>
                           &nbsp; &nbsp;
                           <a
@@ -124,7 +124,7 @@ const ManageSkill = () => {
                               handleDeleteSkill(event, item.id)
                             }
                           >
-                            Delete
+                            Xóa
                           </a>
                         </td>
                       </tr>

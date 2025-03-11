@@ -161,7 +161,14 @@ const AddCategory = () => {
               <div className="col-sm-9">
                 <div
                   className="box-img-preview"
-                  style={{ backgroundImage: `url(${inputValues.imageReview})` }}
+                  style={{
+                    backgroundImage: `url(${inputValues.imageReview})`,
+                    width: "50px",
+                    height: "50px",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    border: "none",
+                  }}
                   onClick={openPreviewImage}
                 ></div>
               </div>

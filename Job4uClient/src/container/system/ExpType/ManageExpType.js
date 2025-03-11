@@ -112,7 +112,7 @@ const ManageExperience = () => {
                             style={{ color: "#4B49AC" }}
                             to={`/admin/edit-exp-type/${item.id}/`}
                           >
-                            Edit
+                            Cập nhật
                           </Link>
                           &nbsp; &nbsp;
                           <a
@@ -122,7 +122,7 @@ const ManageExperience = () => {
                               handleDeleteExperience(event, item.id)
                             }
                           >
-                            Delete
+                            Xóa
                           </a>
                         </td>
                       </tr>

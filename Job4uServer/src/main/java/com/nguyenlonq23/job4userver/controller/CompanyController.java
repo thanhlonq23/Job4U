@@ -68,20 +68,28 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<Company>> createCompany(@RequestBody Company company) {
-        if (company.getName() == null || company.getName().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
+        try {
+            if (company.getName() == null || company.getName().isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse<>(
+                        "ERROR",
+                        "Company name cannot be empty",
+                        null
+                ));
+            }
+
+            Company savedCompany = companyService.saveCompany(company);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully created the company",
+                    savedCompany
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
                     "ERROR",
-                    "Company name cannot be empty",
+                    "An error occurred while create company: " + e.getMessage(),
                     null
             ));
         }
-
-        Company savedCompany = companyService.saveCompany(company);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully created the company",
-                savedCompany
-        ));
     }
 
     // Update a company

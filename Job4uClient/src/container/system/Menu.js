@@ -66,6 +66,31 @@ const Menu = () => {
             </ul>
           </div>
         </li>
+        {/* Menu Quản lý Công ty */}
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            onClick={() => toggleMenu("companies")}
+            aria-expanded={expandedMenu["companies"] || false}
+            href="#"
+          >
+            <i className="far fa-building menu-icon" />
+            <span className="menu-title">Quản lý Công ty</span>
+            <i className="menu-arrow" />
+          </a>
+          <div
+            className={`collapse ${expandedMenu["companies"] ? "show" : ""}`}
+            id="companies"
+          >
+            <ul className="nav flex-column sub-menu">
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/list-companies/">
+                  Danh sách người dùng
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </li>
         {/* Menu Quản lý loại công việc */}
         <li className="nav-item">
           <a
@@ -74,7 +99,8 @@ const Menu = () => {
             aria-expanded={expandedMenu["jobtype"] || false}
             href="#"
           >
-            <i className="far fa-building menu-icon" />
+            <i className="fa fa-briefcase menu-icon" />
+
             <span className="menu-title">Quản lý loại công việc</span>
             <i className="menu-arrow" />
           </a>

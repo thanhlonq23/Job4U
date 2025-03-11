@@ -118,7 +118,13 @@ const ManageJobType = () => {
                       <tr key={item.id}>
                         <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
                         <td>{item.name}</td>
-                        <td style={{ width: "30%" }}>
+                        <td
+                          style={{
+                            width: "30%",
+                            textAlign: "center",
+                            verticalAlign: "middle",
+                          }}
+                        >
                           <div
                             onClick={() => openPreviewImage(item.image)}
                             className="box-img-preview"
@@ -126,19 +132,22 @@ const ManageJobType = () => {
                               backgroundImage: `url(${
                                 item.image || "default-image-url.jpg"
                               })`,
-                              width: "100%",
-                              height: "100px",
+                              width: "50px",
+                              height: "50px",
                               backgroundSize: "cover",
                               backgroundPosition: "center",
+                              border: "none",
+                              margin: "0 auto", // Đảm bảo căn giữa chính xác
                             }}
                           ></div>
                         </td>
+
                         <td>
                           <Link
                             style={{ color: "#4B49AC" }}
                             to={`/admin/edit-job-type/${item.id}/`}
                           >
-                            Edit
+                            Cập nhật
                           </Link>
                           &nbsp; &nbsp;
                           <a
@@ -148,7 +157,7 @@ const ManageJobType = () => {
                               handleDeleteJobType(event, item.id)
                             }
                           >
-                            Delete
+                            Xóa
                           </a>
                         </td>
                       </tr>

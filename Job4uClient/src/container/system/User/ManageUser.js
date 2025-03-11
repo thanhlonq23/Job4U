@@ -133,9 +133,10 @@ const ManageUser = () => {
                   <tr>
                     <th>STT</th>
                     <th>Họ và Tên</th>
+                    <th>Địa chỉ</th>
                     <th>Email</th>
-                    <th>Vai trò</th>
                     <th>Giới tính</th>
+                    <th>Vai trò</th>
                     <th>Ngày sinh</th>
                     <th>Thao tác</th>
                   </tr>
@@ -146,9 +147,10 @@ const ManageUser = () => {
                       <tr key={item.id}>
                         <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
                         <td>{`${item.first_name} ${item.last_name}`}</td>
+                        <td>{item.address || "N/A"}</td>
                         <td>{item.email || "N/A"}</td>
-                        <td>{formatRole(item.role.name)}</td>
                         <td>{formatGender(item.gender)}</td>
+                        <td>{formatRole(item.role.name)}</td>
                         <td>{formatDate(item.dob)}</td>
                         <td>
                           <Link

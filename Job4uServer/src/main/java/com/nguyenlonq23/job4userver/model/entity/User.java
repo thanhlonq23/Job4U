@@ -48,10 +48,6 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-//    @ManyToOne
-//    @JoinColumn(name = "status_id")
-//    private Status status;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private UserStatus status;
@@ -60,14 +56,21 @@ public class User {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "createdAt", updatable = false, nullable = false)
     private Date createdAt;
 
     @UpdateTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "updatedAt", nullable = true, columnDefinition = "TIMESTAMP(0)")
     private Date updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = new Date();
+        }
+    }
 
 
 }

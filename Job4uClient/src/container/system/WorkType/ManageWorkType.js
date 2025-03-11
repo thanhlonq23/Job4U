@@ -107,7 +107,7 @@ const ManageWorkType = () => {
                             style={{ color: "#4B49AC" }}
                             to={`/admin/edit-work-type/${item.id}/`}
                           >
-                            Edit
+                            Cập nhật
                           </Link>
                           &nbsp; &nbsp;
                           <a
@@ -117,7 +117,7 @@ const ManageWorkType = () => {
                               handleDeleteJobLevel(event, item.id)
                             }
                           >
-                            Delete
+                            Xóa
                           </a>
                         </td>
                       </tr>

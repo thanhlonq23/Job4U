@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllCodeService } from '../service/userService';
+import { getAllCodeService } from '../service/userService1';
 const useFetchAllcode = (type) => {
     const [data, setdata] = useState([])
     useEffect(() => {

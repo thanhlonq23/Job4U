@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import { useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { Spinner, Modal } from "reactstrap";
@@ -8,7 +8,6 @@ import {
   updateUserService,
 } from "../../../service/UserService";
 import { getAllRoleService } from "../../../service/RoleService";
-import { getAllStatusService } from "../../../service/StatusService";
 import DatePicker from "../../../components/input/DatePicker";
 import moment from "moment";
 import "moment/locale/vi";
@@ -31,7 +30,6 @@ const UpdateUser = () => {
     status: "",
   });
   const [roleOptions, setRoleOptions] = useState([]);
-  const [statusOptions, setStatusOptions] = useState([]);
 
   const genderOptions = [
     { code: "MALE", value: "Nam" },
@@ -47,14 +45,13 @@ const UpdateUser = () => {
     EMPLOYER_STAFF: "Nhân viên",
   };
 
-  // Mapping của status từ tiếng Anh sang tiếng Việt
-  const statusTranslations = {
-    ACTIVE: "Đang hoạt động",
-    INACTIVE: "Không hoạt động",
-    SUSPENDED: "Tạm đình chỉ",
-    BANNED: "Cấm",
-    // Thêm các trạng thái khác nếu cần
-  };
+  // Trạng thái được định nghĩa tĩnh
+  const statusOptions = [
+    { code: "ACTIVE", value: "Đang hoạt động" },
+    { code: "INACTIVE", value: "Không hoạt động" },
+    { code: "SUSPENDED", value: "Tạm đình chỉ" },
+    { code: "BANNED", value: "Cấm" },
+  ];
 
   useEffect(() => {
     if (!id) return;
@@ -72,7 +69,7 @@ const UpdateUser = () => {
             dob: userData.dob || "",
             gender: userData.gender || "",
             role: userData.role?.name || "",
-            status: userData.status?.name || "",
+            status: userData.status || "",
           });
 
           if (userData.dob) {
@@ -104,29 +101,8 @@ const UpdateUser = () => {
       }
     };
 
-    const fetchStatusOptions = async () => {
-      try {
-        const response = await getAllStatusService();
-        if (response?.status === "SUCCESS") {
-          const statuses = response.data.map((status) => ({
-            id: status.id,
-            code: status.name,
-            value: statusTranslations[status.name] || status.name, // Sử dụng bản dịch tiếng Việt nếu có
-          }));
-          setStatusOptions(statuses);
-        } else {
-          toast.error(
-            response?.message || "Không thể lấy danh sách trạng thái"
-          );
-        }
-      } catch (error) {
-        toast.error("Đã xảy ra lỗi khi lấy danh sách trạng thái");
-      }
-    };
-
     fetchUserDetails();
     fetchRoleOptions();
-    fetchStatusOptions();
   }, [id]);
 
   const handleInputChange = ({ target: { name, value } }) => {
@@ -156,11 +132,7 @@ const UpdateUser = () => {
             roleOptions.find((role) => role.code === inputValues.role)?.id ||
             "",
         },
-        status: {
-          id:
-            statusOptions.find((status) => status.code === inputValues.status)
-              ?.id || "",
-        },
+        status: inputValues.status,
       };
 
       console.log("Payload gửi đi:", payload);

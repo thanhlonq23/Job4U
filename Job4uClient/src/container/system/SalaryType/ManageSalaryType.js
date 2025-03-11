@@ -112,7 +112,7 @@ const ManageSalary = () => {
                             style={{ color: "#4B49AC" }}
                             to={`/admin/edit-job-level/${item.id}/`}
                           >
-                            Edit
+                            Cập nhật
                           </Link>
                           &nbsp; &nbsp;
                           <a
@@ -122,7 +122,7 @@ const ManageSalary = () => {
                               handleDeleteSalary(event, item.id)
                             }
                           >
-                            Delete
+                            Xóa
                           </a>
                         </td>
                       </tr>
