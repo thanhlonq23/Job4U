@@ -1,6 +1,5 @@
 package com.nguyenlonq23.job4userver.security;
 
-import com.nguyenlonq23.job4userver.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

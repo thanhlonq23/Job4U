@@ -22,7 +22,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<User>>> getAllUsersWithPaginationAndFilter(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
-            Pageable pageable // Thông tin phân trang và sắp xếp từ URL
+            Pageable pageable
     ) {
         try {
             Page<User> users = userService.getUsersWithPaginationAndFilter(keyword, pageable);
@@ -31,20 +31,20 @@ public class UserController {
                 return ResponseEntity.ok(new ApiResponse<>(
                         "SUCCESS",
                         "No users found matching the criteria",
-                        users // Trả về đối tượng rỗng
+                        users
                 ));
             }
 
             return ResponseEntity.ok(new ApiResponse<>(
                     "SUCCESS",
                     "Successfully retrieved the list of users",
-                    users // Trả về toàn bộ đối tượng Page
+                    users
             ));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(
                     "ERROR",
                     "An error occurred while retrieving users: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
+                    null
             ));
         }
     }
@@ -53,7 +53,6 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable int id) {
         Optional<User> user = userService.getUserById(id);
-//        System.out.println(user.get());
         return user.map(value -> ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
                 "Successfully retrieved the user",
@@ -66,7 +65,6 @@ public class UserController {
     }
 
 
-    // Update a user
     // Update a user
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable int id, @RequestBody User user) {
