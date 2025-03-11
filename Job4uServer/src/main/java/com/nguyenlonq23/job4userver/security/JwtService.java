@@ -1,4 +1,4 @@
-package com.nguyenlonq23.job4userver.service;
+package com.nguyenlonq23.job4userver.security;
 
 import com.nguyenlonq23.job4userver.model.entity.User;
 import io.jsonwebtoken.Claims;
