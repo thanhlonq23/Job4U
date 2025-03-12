@@ -90,7 +90,7 @@ const ManageJobType = () => {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4 className="card-title">Danh sách loại công việc</h4>
+            <h4 className="card-title">DANH SÁCH LOẠI CÔNG VIỆC</h4>
 
             {/* BẢNG DANH SÁCH LOẠI CÔNG VIỆC */}
             <div className="table-responsive pt-2">
