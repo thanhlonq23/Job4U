@@ -77,7 +77,7 @@ const ChangePassword = (props) => {
                                     </div>
                                 </div>
                             </div>
-                            <button onClick={() => handleSave()} type="button" className="btn1 btn1-primary1 btn1-icon-text" >
+                            <button onClick={() => handleSave()} type="button" className="btn btn-primary mr-2" >
                                 <i class="ti-file btn1-icon-prepend"></i>
                                 Lưu
                             </button>

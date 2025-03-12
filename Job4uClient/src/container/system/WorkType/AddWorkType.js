@@ -106,8 +106,8 @@ const AddWorkType = () => {
           <div className="card-body">
             <h4 className="card-title">
               {isActionADD
-                ? "Thêm mới hình thức làm việc"
-                : "Cập nhật hình thức làm việc"}
+                ? "THÊM MỚI HÌNH THỨC LÀM VIỆC"
+                : "CẬP NHẬT HÌNH THỨC LÀM VIỆC"}
             </h4>
             <form className="form-sample">
               {/* Input tên hình thức làm việc */}
@@ -130,7 +130,7 @@ const AddWorkType = () => {
               {/* Button lưu */}
               <button
                 type="button"
-                className="btn1 btn1-primary1 btn1-icon-text"
+                className="btn btn-primary mr-2"
                 onClick={handleSaveWorkType}
                 style={{ marginLeft: "90%" }}
               >

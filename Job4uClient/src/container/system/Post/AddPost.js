@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from '../../../components/input/DatePicker';
 import { createPostService, updatePostService, getDetailPostByIdService } from '../../../service/userService1';
-import MarkdownIt from 'markdown-it';
+// import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useFetchAllcode } from '../../../util/fetch';
@@ -13,7 +13,7 @@ import localization from 'moment/locale/vi';
 import moment from 'moment';
 import '../../../components/modal/modal.css'
 const AddPost = () => {
-    const mdParser = new MarkdownIt();
+    // const mdParser = new MarkdownIt();
     const [user, setUser] = useState({})
     const [timeEnd, settimeEnd] = useState('');
     const [isChangeDate, setisChangeDate] = useState(false)
@@ -336,7 +336,7 @@ const AddPost = () => {
 
                                             <MdEditor
                                                 style={{ height: '500px' }}
-                                                renderHTML={text => mdParser.render(text)}
+                                                // renderHTML={text => mdParser.render(text)}
                                                 onChange={handleEditorChange}
                                                 value={inputValues.descriptionMarkdown}
                                             />
@@ -344,7 +344,7 @@ const AddPost = () => {
                                     </div>
 
                                 </div>
-                                <button onClick={() => handleSavePost()} type="button" className="btn1 btn1-primary1 btn1-icon-text">
+                                <button onClick={() => handleSavePost()} type="button" className="btn btn-primary mr-2">
                                     <i class="ti-file btn1-icon-prepend"></i>
                                     Lưu
                                 </button>

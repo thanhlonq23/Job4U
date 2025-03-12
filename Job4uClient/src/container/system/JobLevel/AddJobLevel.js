@@ -105,7 +105,7 @@ const AddJobLevel = () => {
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">
-              {isActionADD ? "Thêm mới cấp bậc" : "Cập nhật cấp bậc"}
+              {isActionADD ? "THÊM MỚI CẤP BẬC" : "CẬP NHẬT CẤP BẬC"}
             </h4>
             <form className="form-sample">
               {/* Input tên cấp bậc */}
@@ -127,7 +127,7 @@ const AddJobLevel = () => {
               {/* Button lưu */}
               <button
                 type="button"
-                className="btn1 btn1-primary1 btn1-icon-text"
+                className="btn btn-primary mr-2"
                 onClick={handleSaveJobLevel}
                 style={{ marginLeft: "90%" }}
                 disabled={isLoading}

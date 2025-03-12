@@ -105,7 +105,7 @@ const AddExperience = () => {
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">
-              {isActionADD ? "Thêm mới kinh nghiệm" : "Cập nhật kinh nghiệm"}
+              {isActionADD ? "THÊM MỚI KINH NGHIỆM" : "CẬP NHẬT KINH NGHIỆM"}
             </h4>
             <form className="form-sample">
               {/* Input tên kinh nghiệm */}
@@ -129,7 +129,7 @@ const AddExperience = () => {
               {/* Button lưu */}
               <button
                 type="button"
-                className="btn1 btn1-primary1 btn1-icon-text"
+                className="btn btn-primary mr-2"
                 onClick={handleSaveExperience}
                 style={{ marginLeft: "90%" }}
                 disabled={isLoading}

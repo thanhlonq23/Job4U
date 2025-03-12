@@ -81,7 +81,7 @@ const ManageExperience = () => {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4 className="card-title">Danh sách kinh nghiệm </h4>
+            <h4 className="card-title">DANH SÁCH KINH NGHIỆM </h4>
             <div className="table-responsive pt-2">
               <table className="table table-bordered">
                 <thead>

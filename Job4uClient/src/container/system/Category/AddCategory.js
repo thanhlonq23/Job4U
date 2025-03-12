@@ -121,8 +121,8 @@ const AddCategory = () => {
         <div className="card-body">
           <h4 className="card-title">
             {isActionAdd
-              ? "Thêm mới loại công việc"
-              : "Cập nhật loại công việc"}
+              ? "THÊM MỚI CÔNG VIỆC"
+              : "CẬP NHẬT CÔNG VIỆC"}
           </h4>
 
           <form>
@@ -177,7 +177,7 @@ const AddCategory = () => {
             {/* Button lưu */}
             <button
               type="button"
-              className="btn1 btn1-primary1 btn1-icon-text"
+              className="btn btn-primary mr-2"
               onClick={handleSave}
               style={{ marginLeft: "90%" }}
             >

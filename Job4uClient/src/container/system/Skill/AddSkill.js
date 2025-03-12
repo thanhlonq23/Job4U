@@ -168,7 +168,7 @@ const AddSkill = () => {
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">
-              {isActionADD ? "Thêm mới kỹ năng" : "Cập nhật kỹ năng"}
+              {isActionADD ? "THÊM MỚI KỸ NĂNG" : "CẬP NHẬT KỸ NĂNG"}
             </h4>
             <form className="form-sample">
               {/* Input tên kỹ năng */}
@@ -228,7 +228,7 @@ const AddSkill = () => {
               {/* Button lưu */}
               <button
                 type="button"
-                className="btn1 btn1-primary1 btn1-icon-text"
+                className="btn btn-primary mr-2"
                 onClick={handleSaveSkill}
                 style={{ marginLeft: "90%" }}
                 disabled={isLoading}

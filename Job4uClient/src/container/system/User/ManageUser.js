@@ -105,7 +105,7 @@ const ManageUser = () => {
     <div className="col-12 grid-margin">
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">Danh sách người dùng</h4>
+          <h4 className="card-title">DANH SÁCH NGƯỜI DÙNG</h4>
           {/* Search form */}
           <div className="d-flex mb-3 align-items-center gap-2">
             <input
@@ -116,7 +116,7 @@ const ManageUser = () => {
               onChange={(e) => setKeyword(e.target.value)}
               style={{ flex: 1 }} // Chiếm toàn bộ chiều ngang còn lại
             />
-            <button className="btn1 btn1-primary1 btn1-icon-text" type="submit">
+            <button className="btn btn-primary mr-2" type="submit">
               <i className="bi bi-search me-1"></i> Tìm kiếm
             </button>
           </div>

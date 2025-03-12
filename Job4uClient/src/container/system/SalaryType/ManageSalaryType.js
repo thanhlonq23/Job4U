@@ -106,11 +106,11 @@ const ManageSalary = () => {
                       <tr key={item.id}>
                         {/* Số thứ tự chính xác dựa trên trang hiện tại */}
                         <td>{currentPage * PAGINATION.pagerow + index + 1}</td>
-                        <td>{item.salaryRange}</td>
+                        <td>{item.name}</td>
                         <td>
                           <Link
                             style={{ color: "#4B49AC" }}
-                            to={`/admin/edit-job-level/${item.id}/`}
+                            to={`/admin/edit-salary-type/${item.id}/`}
                           >
                             Cập nhật
                           </Link>

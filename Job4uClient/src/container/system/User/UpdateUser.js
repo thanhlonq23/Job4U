@@ -196,7 +196,7 @@ const UpdateUser = () => {
     <div className="container mt-4">
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title mb-4">Cập nhật người dùng</h4>
+          <h4 className="card-title mb-4">CẬP NHẬT THÔNG TIN NGƯỜI DÙNG</h4>
           {isLoading ? (
             <div className="text-center">
               <Spinner />
@@ -274,7 +274,7 @@ const UpdateUser = () => {
               <div className="text-right">
                 <button
                   type="button"
-                  className="btn1 btn1-primary1 btn1-icon-text"
+                  className="btn btn-primary mr-2"
                   onClick={handleSave}
                 >
                   Lưu

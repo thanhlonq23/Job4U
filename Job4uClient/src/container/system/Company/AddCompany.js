@@ -1,278 +1,405 @@
-import React from 'react'
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
-import CommonUtils from '../../../util/CommonUtils';
-import { createCompanyService, getDetailCompanyByUserId, updateCompanyService } from '../../../service/userService1';
-import MarkdownIt from 'markdown-it';
-import MdEditor from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
-import { Spinner, Modal } from 'reactstrap'
-import '../../../components/modal/modal.css'
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import Lightbox from "react-image-lightbox";
+import { toast, ToastContainer } from "react-toastify";
+import "react-image-lightbox/style.css";
+import CommonUtils from "../../../util/CommonUtils";
+import { Spinner, Modal, Row, Col, Card, CardBody } from "reactstrap";
+import "./AddCompany.scss";
+import {
+  updateCompanyService,
+  createCompanyService,
+  getCompanyByIdService,
+} from "../../../service/CompanyService";
+import MDEditor from "@uiw/react-md-editor";
+
 const AddCompany = () => {
-    const mdParser = new MarkdownIt();
-    const [user, setUser] = useState({})
-    const [isLoading, setIsLoading] = useState(false)
-    const [inputValues, setInputValues] = useState({
-        image: '', coverImage: '', imageReview: '', coverImageReview: '', isOpen: false, name: '', phonenumber: '', address: '', website: '',
-        amountemployer: '', taxnumber: '', descriptionHTML: '', descriptionMarkdown: '', isActionADD: true, id: ''
-    });
-    useEffect(() => {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        if (userData) {
+  const { id } = useParams();
+  const [isActionAdd, setIsActionAdd] = useState(!id);
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputValues, setInputValues] = useState({
+    name: "",
+    thumbnail: "",
+    thumbnailReview: "",
+    coverImage: "",
+    coverImageReview: "",
+    description_Markdown: "",
+    website: "",
+    address: "",
+    email: "",
+    taxNumber: "",
+    isThumbnailOpen: false,
+    isCoverOpen: false,
+  });
 
-            fetchCompany(userData.id)
-        }
-        setUser(userData)
-    }, [])
-    let fetchCompany = async (userId) => {
-        let res = await getDetailCompanyByUserId(userId)
-        if (res && res.errCode === 0) {
+  useEffect(() => {
+    if (!id) return;
+    const fetchCompanyDetails = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getCompanyByIdService(id);
+        if (response?.status === "SUCCESS") {
+          const {
+            name,
+            thumbnail,
+            coverImage,
+            description_Markdown,
+            website,
+            address,
+            email,
+            taxNumber,
+          } = response.data;
 
-            setInputValues({
-                ...inputValues,
-                ["name"]: res.data.name,
-                ["phonenumber"]: res.data.phonenumber,
-                ["address"]: res.data.address,
-                ["image"]: res.data.thumbnail,
-                ["coverImage"]: res.data.coverimage,
-                ["descriptionHTML"]: res.data.descriptionHTML,
-                ["descriptionMarkdown"]: res.data.descriptionMarkdown,
-                ["amountemployer"]: res.data.amountemployer,
-                ["taxnumber"]: res.data.taxnumber,
-                ["website"]: res.data.website,
-                ["imageReview"]: res.data.thumbnail,
-                ["coverImageReview"]: res.data.coverimage,
-                ["isActionADD"]: false,
-                ["id"]: res.data.id
-            })
-        }
-    }
-    const handleOnChange = event => {
-        const { name, value } = event.target;
-        setInputValues({ ...inputValues, [name]: value });
-
-    };
-    let handleOnChangeImage = async (event) => {
-        let data = event.target.files;
-        let file = data[0];
-        const { name } = event.target;
-        if (file) {
-            let base64 = await CommonUtils.getBase64(file);
-            let objectUrl = URL.createObjectURL(file)
-            console.log(base64)
-            setInputValues({ ...inputValues, [name]: base64, [`${name}Review`]: objectUrl })
-
-        }
-
-    }
-    let openPreviewImage = () => {
-        if (!inputValues.imageReview) return;
-
-        setInputValues({ ...inputValues, ["isOpen"]: true })
-    }
-    let handleSaveCompany = async () => {
-        setIsLoading(true)
-        if (inputValues.isActionADD === true) {
-            let res = await createCompanyService({
-                name: inputValues.name,
-                phonenumber: inputValues.phonenumber,
-                address: inputValues.address,
-                thumbnail: inputValues.image,
-                coverimage: inputValues.coverImage,
-                descriptionHTML: inputValues.descriptionHTML,
-                descriptionMarkdown: inputValues.descriptionMarkdown,
-                amountemployer: inputValues.amountemployer,
-                taxnumber: inputValues.taxnumber,
-                website: inputValues.website,
-                userId: user.id
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Tạo mới công ty thành công")
-                    fetchCompany(user.id)
-
-                } else {
-                    toast.error(res.errMessage)
-                }
-            }, 1000);
+          setInputValues({
+            name: name || "",
+            thumbnail: thumbnail || "",
+            thumbnailReview: thumbnail || "",
+            coverImage: coverImage || "",
+            coverImageReview: coverImage || "",
+            description_Markdown: description_Markdown || "",
+            website: website || "",
+            address: address || "",
+            email: email || "",
+            taxNumber: taxNumber || "",
+            isThumbnailOpen: false,
+            isCoverOpen: false,
+          });
         } else {
-            let res = await updateCompanyService({
-                name: inputValues.name,
-                phonenumber: inputValues.phonenumber,
-                address: inputValues.address,
-                thumbnail: inputValues.image,
-                coverimage: inputValues.coverImage,
-                descriptionHTML: inputValues.descriptionHTML,
-                descriptionMarkdown: inputValues.descriptionMarkdown,
-                amountemployer: inputValues.amountemployer,
-                taxnumber: inputValues.taxnumber,
-                website: inputValues.website,
-                id: inputValues.id
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Cập nhật công ty thành công")
-                } else {
-                    toast.error(res.errMessage)
-                }
-            }, 1000);
+          toast.error(response?.message || "Không thể lấy dữ liệu");
         }
+      } catch (error) {
+        toast.error("Đã xảy ra lỗi khi lấy dữ liệu");
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCompanyDetails();
+  }, [id]);
+
+  const handleInputChange = ({ target: { name, value } }) => {
+    setInputValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleThumbnailChange = async ({ target: { files } }) => {
+    if (files?.[0]) {
+      const base64 = await CommonUtils.getBase64(files[0]);
+      const objectUrl = URL.createObjectURL(files[0]);
+      setInputValues((prev) => ({
+        ...prev,
+        thumbnail: base64,
+        thumbnailReview: objectUrl,
+      }));
     }
-    let handleEditorChange = ({ html, text }) => {
-        setInputValues({
-            ...inputValues,
-            ["descriptionMarkdown"]: text,
-            ["descriptionHTML"]: html
-        })
+  };
+
+  const handleCoverChange = async ({ target: { files } }) => {
+    if (files?.[0]) {
+      const base64 = await CommonUtils.getBase64(files[0]);
+      const objectUrl = URL.createObjectURL(files[0]);
+      setInputValues((prev) => ({
+        ...prev,
+        coverImage: base64,
+        coverImageReview: objectUrl,
+      }));
     }
-    return (
-        <>
-            <div className=''>
-                <div className="col-12 grid-margin">
-                    <div className="card">
-                        <div className="card-body">
-                            <h4 className="card-title">{inputValues.isActionADD === true ? 'Thêm mới công ty' : 'Cập nhật công ty'}</h4>
-                            <br></br>
-                            <form className="form-sample">
+  };
 
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Tên</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.name} name="name" onChange={(event) => handleOnChange(event)} type="text" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Số điện thoại</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.phonenumber} name="phonenumber" onChange={(event) => handleOnChange(event)} type="number" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Mã số thuế</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.taxnumber} name="taxnumber" onChange={(event) => handleOnChange(event)} type="text" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Số nhân viên</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.amountemployer} name="amountemployer" onChange={(event) => handleOnChange(event)} type="number" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Địa chỉ</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.address} name="address" onChange={(event) => handleOnChange(event)} type="text" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Link website</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.website} name="website" onChange={(event) => handleOnChange(event)} type="text" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Ảnh đại diện</label>
-                                            <div className="col-sm-9">
-                                                <input name='image' onChange={(event) => handleOnChangeImage(event)} accept='image/*' type="file" className="form-control form-file" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Hiển thị</label>
-                                            <div className="col-sm-9">
-                                                <div style={{ backgroundImage: `url(${inputValues.imageReview})` }} onClick={() => openPreviewImage()} className="box-img-preview"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Ảnh bìa</label>
-                                            <div className="col-sm-9">
-                                                <input name='coverImage' onChange={(event) => handleOnChangeImage(event)} accept='image/*' type="file" className="form-control form-file" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Hiển thị</label>
-                                            <div className="col-sm-9">
-                                                <div style={{ backgroundImage: `url(${inputValues.coverImageReview})` }} onClick={() => openPreviewImage()} className="box-img-preview"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <label className="form-label">Giới thiệu công ty</label>
-                                        <div className="form-group">
+  // Cập nhật handler cho Markdown Editor mới
+  const handleMarkdownChange = (value) => {
+    setInputValues((prev) => ({
+      ...prev,
+      description_Markdown: value || "",
+    }));
+  };
 
-                                            <MdEditor
-                                                style={{ height: '500px' }}
-                                                renderHTML={text => mdParser.render(text)}
-                                                onChange={handleEditorChange}
-                                                value={inputValues.descriptionMarkdown}
-                                            />
-                                        </div>
-                                    </div>
+  const handleSave = async () => {
+    setIsLoading(true);
+    const payload = {
+      name: inputValues.name,
+      thumbnail: inputValues.thumbnail,
+      coverImage: inputValues.coverImage,
+      description_Markdown: inputValues.description_Markdown,
+      website: inputValues.website,
+      address: inputValues.address,
+      email: inputValues.email,
+      taxNumber: inputValues.taxNumber,
+    };
 
-                                </div>
-                                <button onClick={() => handleSaveCompany()} type="button" className="btn1 btn1-primary1 btn1-icon-text">
-                                    <i class="ti-file btn1-icon-prepend"></i>
-                                    Lưu
-                                </button>
-                            </form>
+    try {
+      const response = isActionAdd
+        ? await createCompanyService(payload)
+        : await updateCompanyService(id, payload);
+
+      if (response?.errCode === 0) {
+        toast.success(
+          isActionAdd
+            ? "Thêm công ty thành công"
+            : "Cập nhật công ty thành công"
+        );
+
+        if (isActionAdd) {
+          setInputValues({
+            name: "",
+            thumbnail: "",
+            thumbnailReview: "",
+            coverImage: "",
+            coverImageReview: "",
+            description_Markdown: "",
+            website: "",
+            address: "",
+            email: "",
+            taxNumber: "",
+            isThumbnailOpen: false,
+            isCoverOpen: false,
+          });
+        }
+      } else {
+        toast.error(response?.errMessage || "Đã xảy ra lỗi");
+      }
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi lưu dữ liệu");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const openThumbnailPreview = () => {
+    if (inputValues.thumbnailReview) {
+      setInputValues((prev) => ({ ...prev, isThumbnailOpen: true }));
+    }
+  };
+
+  const openCoverPreview = () => {
+    if (inputValues.coverImageReview) {
+      setInputValues((prev) => ({ ...prev, isCoverOpen: true }));
+    }
+  };
+
+  return (
+    <div className="add-company-container">
+      <Row>
+        <Col md={12}>
+          <Card className="main-card">
+            <CardBody>
+              <h4 className="card-title">
+                {isActionAdd ? "THÊM MỚI CÔNG TY" : "CẬP NHẬT CÔNG TY"}
+              </h4>
+              <form className="company-form">
+                <Row>
+                  {/* Phần thông tin cơ bản */}
+                  <Col md={6}>
+                    <Card className="section-card">
+                      <CardBody>
+                        <h4 className="section-title">Thông tin cơ bản</h4>
+                        <div className="form-group">
+                          <label>
+                            Tên công ty <span className="required">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={inputValues.name}
+                            name="name"
+                            onChange={handleInputChange}
+                            className="form-control"
+                            placeholder="Nhập tên công ty"
+                          />
                         </div>
-                    </div>
+
+                        <div className="form-group">
+                          <label>Website</label>
+                          <input
+                            type="text"
+                            value={inputValues.website}
+                            name="website"
+                            onChange={handleInputChange}
+                            className="form-control"
+                            placeholder="https://example.com"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>
+                            Email <span className="required">*</span>
+                          </label>
+                          <input
+                            type="email"
+                            value={inputValues.email}
+                            name="email"
+                            onChange={handleInputChange}
+                            className="form-control"
+                            placeholder="contact@example.com"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Địa chỉ</label>
+                          <input
+                            type="text"
+                            value={inputValues.address}
+                            name="address"
+                            onChange={handleInputChange}
+                            className="form-control"
+                            placeholder="Địa chỉ công ty"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Mã số thuế</label>
+                          <input
+                            type="text"
+                            value={inputValues.taxNumber}
+                            name="taxNumber"
+                            onChange={handleInputChange}
+                            className="form-control"
+                            placeholder="VD: 0123456789"
+                          />
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
+
+                  {/* Phần hình ảnh */}
+                  <Col md={6}>
+                    <Card className="section-card">
+                      <CardBody>
+                        <h4 className="section-title">Hình ảnh</h4>
+
+                        <div className="form-group">
+                          <label>
+                            Logo công ty <span className="required">*</span>
+                          </label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleThumbnailChange}
+                            className="form-control"
+                          />
+                          {inputValues.thumbnailReview && (
+                            <div className="preview-container mt-2">
+                              <div
+                                className="thumbnail-preview"
+                                style={{
+                                  backgroundImage: `url(${inputValues.thumbnailReview})`,
+                                }}
+                                onClick={openThumbnailPreview}
+                              >
+                                <div className="preview-overlay">
+                                  <span>Xem</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="form-group">
+                          <label>Ảnh bìa</label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleCoverChange}
+                            className="form-control"
+                          />
+                          {inputValues.coverImageReview && (
+                            <div className="preview-container mt-2">
+                              <div
+                                className="cover-preview"
+                                style={{
+                                  backgroundImage: `url(${inputValues.coverImageReview})`,
+                                }}
+                                onClick={openCoverPreview}
+                              >
+                                <div className="preview-overlay">
+                                  <span>Xem</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
+
+                  <Col md={12}>
+                    <Card className="section-card mt-4">
+                      <CardBody>
+                        <h4 className="section-title">Mô tả công ty</h4>
+                        <div className="markdown-editor-container">
+                          <MDEditor
+                            value={inputValues.description_Markdown}
+                            onChange={handleMarkdownChange}
+                            height={400}
+                            preview="edit"
+                            previewOptions={{
+                              style: { padding: "20px" },
+                            }}
+                          />
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </Row>
+
+                {/* Nút lưu */}
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => window.history.back()}
+                  >
+                    <i className="ti-arrow-left"></i> Quay lại
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-save"
+                    onClick={handleSave}
+                  >
+                    <i className="ti-save"></i>{" "}
+                    {isActionAdd ? "Thêm mới" : "Cập nhật"}
+                  </button>
                 </div>
-                {
-                    inputValues.isOpen === true &&
-                    <Lightbox mainSrc={inputValues.imageReview}
-                        onCloseRequest={() => setInputValues({ ...inputValues, ["isOpen"]: false })}
-                    />
-                }
-            </div>
-            {isLoading &&
-                <Modal isOpen='true' centered contentClassName='closeBorder' >
+              </form>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
 
-                    <div style={{
-                        position: 'absolute', right: '50%',
-                        justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <Spinner animation="border"  ></Spinner>
-                    </div>
+      {/* Lightbox cho thumbnail */}
+      {inputValues.isThumbnailOpen && (
+        <Lightbox
+          mainSrc={inputValues.thumbnailReview}
+          onCloseRequest={() =>
+            setInputValues((prev) => ({ ...prev, isThumbnailOpen: false }))
+          }
+        />
+      )}
 
-                </Modal>
-            }
-        </>
-    )
-}
+      {/* Lightbox cho cover */}
+      {inputValues.isCoverOpen && (
+        <Lightbox
+          mainSrc={inputValues.coverImageReview}
+          onCloseRequest={() =>
+            setInputValues((prev) => ({ ...prev, isCoverOpen: false }))
+          }
+        />
+      )}
 
-export default AddCompany
+      {/* Modal loading */}
+      {isLoading && (
+        <Modal isOpen centered className="loading-modal">
+          <div className="spinner-container">
+            <Spinner color="primary" />
+            <p className="mt-2">Đang xử lý...</p>
+          </div>
+        </Modal>
+      )}
+
+      {/* ToastContainer để hiển thị thông báo */}
+      <ToastContainer />
+    </div>
+  );
+};
+
+export default AddCompany;

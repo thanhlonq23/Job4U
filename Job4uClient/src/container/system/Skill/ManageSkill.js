@@ -81,7 +81,7 @@ const ManageSkill = () => {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4 className="card-title">Danh sách kỹ năng</h4>
+            <h4 className="card-title">DANH SÁCH KỸ NĂNG</h4>
             <div className="table-responsive pt-2">
               <table className="table table-bordered">
                 <thead>

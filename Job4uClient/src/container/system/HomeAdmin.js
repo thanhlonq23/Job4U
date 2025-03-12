@@ -28,6 +28,9 @@ import ChangePassword from "./User/ChangePassword";
 import UserInfo from "./User/UserInfo";
 import ManageSkill from "./Skill/ManageSkill";
 import AddSkill from "./Skill/AddSkill";
+import ManageCompany from "./Company/ManagerCompany";
+import CompanyDetail from "./Company/CompanyDetail";
+import IdentifyCompany from "./Company/IdentifyCompany";
 
 const HomeAdmin = () => {
   return (
@@ -84,7 +87,12 @@ export const adminRoutes = [
   { path: "list-skill-type", element: <ManageSkill /> },
   { path: "edit-skill-type/:id", element: <AddSkill /> },
 
+  { path: "list-companies", element: <ManageCompany /> },
+  { path: "view-company/:id", element: <CompanyDetail /> },
+  { path: "identify-company/:id", element: <IdentifyCompany /> },
+  { path: "edit-company/:id", element: <AddCompany /> },
   { path: "add-company", element: <AddCompany /> },
+
   { path: "recruitment", element: <Recruitment /> },
   { path: "list-employer", element: <ManageEmployer /> },
   { path: "add-post", element: <AddPost /> },

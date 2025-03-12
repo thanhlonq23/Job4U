@@ -54,7 +54,7 @@ const Recruitment = () => {
                                 </div>
                             </div>
 
-                            <button onClick={() => handleSubmit()} type="button" className="btn1 btn1-primary1 btn1-icon-text" >
+                            <button onClick={() => handleSubmit()} type="button" className="btn btn-primary mr-2" >
                                 <i class="ti-file btn1-icon-prepend"></i>
                                 Gửi
                             </button>

@@ -18,7 +18,7 @@ const AddSalary = () => {
 
   // Quản lý giá trị các input
   const [inputValues, setInputValues] = useState({
-    salaryRange: "",
+    name: "",
   });
 
   // *** Fetching Data ***
@@ -31,7 +31,7 @@ const AddSalary = () => {
           const response = await getSalaryByIdService(id);
           if (response?.status === "SUCCESS") {
             setInputValues({
-              salaryRange: response.data.salaryRange || "",
+              name: response.data.name || "",
             });
           } else {
             toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
@@ -62,7 +62,7 @@ const AddSalary = () => {
     setIsLoading(true); // Hiển thị trạng thái tải
 
     const payload = {
-      salaryRange: inputValues.salaryRange,
+      name: inputValues.name,
     };
 
     try {
@@ -84,7 +84,7 @@ const AddSalary = () => {
         if (isActionADD) {
           // Đặt lại giá trị input sau khi thêm thành công
           setInputValues({
-            salaryRange: "",
+            name: "",
           });
         }
       } else {
@@ -105,17 +105,19 @@ const AddSalary = () => {
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">
-              {isActionADD ? "Thêm mới khoảng lương" : "Cập nhật khoảng lương"}
+              {isActionADD ? "THÊM MỚI KHOẢNG LƯƠNG" : "CẬP NHẬT KHOẢNG LƯƠNG"}
             </h4>
             <form className="form-sample">
               {/* Input tên khoảng lương */}
               <div className="form-group row">
-                <label className="col-sm-2 col-form-label">Tên khoảng lương</label>
+                <label className="col-sm-2 col-form-label">
+                  Tên khoảng lương
+                </label>
                 <div className="col-sm-9">
                   <input
                     type="text"
-                    value={dataReady ? inputValues.salaryRange : ""}
-                    name="salaryRange"
+                    value={dataReady ? inputValues.name : ""}
+                    name="name"
                     onChange={handleOnChange}
                     className="form-control"
                     placeholder="Nhập tên khoảng lương"
@@ -127,7 +129,7 @@ const AddSalary = () => {
               {/* Button lưu */}
               <button
                 type="button"
-                className="btn1 btn1-primary1 btn1-icon-text"
+                className="btn btn-primary mr-2"
                 onClick={handleSaveSalary}
                 style={{ marginLeft: "90%" }}
                 disabled={isLoading}
