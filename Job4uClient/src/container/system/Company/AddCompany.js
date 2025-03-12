@@ -134,9 +134,7 @@ const AddCompany = () => {
 
       if (response?.errCode === 0) {
         toast.success(
-          isActionAdd
-            ? "Thêm công ty thành công"
-            : "Cập nhật công ty thành công"
+          isActionAdd ? "Tạo công ty thành công" : "Cập nhật công ty thành công"
         );
 
         if (isActionAdd) {

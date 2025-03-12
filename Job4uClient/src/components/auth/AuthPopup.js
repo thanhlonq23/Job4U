@@ -5,6 +5,7 @@ import {
 } from "../../service/AuthService";
 import { toast } from "react-toastify";
 import "./AuthPopup.scss";
+import { getCompanyIdByIdService } from "../../service/UserService";
 
 const AuthPopup = ({ isOpen, onClose }) => {
   const [isActive, setIsActive] = useState(false);
@@ -34,8 +35,6 @@ const AuthPopup = ({ isOpen, onClose }) => {
     };
 
     checkAuth();
-    // Không thêm dependencies vào đây để tránh vòng lặp vô hạn
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Reset form khi đóng popup
@@ -60,42 +59,56 @@ const AuthPopup = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      let response = await handleLoginService({
+      const response = await handleLoginService({
         email: loginData.email,
         password: loginData.password,
       });
 
-      if (response && response.data) {
-        const user = response.data;
-        localStorage.setItem("authToken", user.token);
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify({
-            userId: user.userId,
-            email: user.email,
-            fullName: user.fullName,
-            role: user.role,
-          })
-        );
-
-        toast.success("Đăng nhập thành công!");
-        onClose(); // Đóng popup trước khi chuyển hướng
-
-        // Dùng setTimeout để tránh việc render lại nhiều lần
-        setTimeout(() => {
-          if (
-            user.role === "ADMIN" ||
-            user.role === "EMPLOYER_OWNER" ||
-            user.role === "EMPLOYER_STAFF"
-          ) {
-            window.location.href = "/admin/";
-          } else {
-            window.location.href = "/";
-          }
-        }, 100);
-      } else {
-        toast.error(response.errMessage || "Đăng nhập thất bại!");
+      if (!response?.data) {
+        toast.error(response?.errMessage || "Đăng nhập thất bại!");
+        return;
       }
+
+      const user = response.data;
+      localStorage.setItem("authToken", user.token);
+
+      // Tạo đối tượng userInfo cơ bản
+      const userInfo = {
+        userId: user.userId,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role,
+      };
+
+      // Xác định trang chuyển hướng dựa trên vai trò
+      const redirectPath = [
+        "ADMIN",
+        "EMPLOYER_OWNER",
+        "EMPLOYER_STAFF",
+      ].includes(user.role)
+        ? "/admin/"
+        : "/";
+
+      // Xử lý lấy companyId có
+      if (["EMPLOYER_STAFF", "EMPLOYER_OWNER"].includes(user.role)) {
+        try {
+          const companyResponse = await getCompanyIdByIdService(user.userId);
+          userInfo.companyId = companyResponse.data;
+        } catch (error) {
+          console.error("Error fetching company ID:", error);
+        }
+      }
+
+      // Lưu thông tin người dùng
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+      toast.success("Đăng nhập thành công!");
+      onClose();
+
+      // Chuyển hướng người dùng
+      setTimeout(() => {
+        window.location.href = redirectPath;
+      }, 100);
     } catch (error) {
       toast.error("Không thể kết nối đến máy chủ. Vui lòng thử lại sau!");
       console.error("Error during login:", error);

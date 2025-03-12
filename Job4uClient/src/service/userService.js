@@ -16,6 +16,10 @@ const getUserByIdService = (id) => {
   return axios.get(`/api/users/${id}`);
 };
 
+const getCompanyIdByIdService = (id) => {
+  return axios.get(`/api/users/get-company-id/${id}`);
+};
+
 const createNewUser = (data) => {
   return axios.post(`/api/create-new-user`, data);
 };
@@ -34,4 +38,5 @@ export {
   createNewUser,
   updateUserService,
   deleteUserService,
+  getCompanyIdByIdService,
 };
