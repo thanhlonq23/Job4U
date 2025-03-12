@@ -85,7 +85,7 @@ const Menu = () => {
             <ul className="nav flex-column sub-menu">
               <li className="nav-item">
                 <Link className="nav-link" to="/admin/list-companies/">
-                  Danh sách người dùng
+                  Danh sách công ty
                 </Link>
               </li>
             </ul>
@@ -274,6 +274,37 @@ const Menu = () => {
             </ul>
           </div>
         </li>
+        {/* Menu Quản lý bài đăng */}
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            onClick={() => toggleMenu("post")}
+            aria-expanded={expandedMenu["post"] || false}
+            href="#"
+          >
+            <i className="fa-regular fa-pen-to-square menu-icon"></i>
+            <span className="menu-title">Quản lý bài đăng</span>
+            <i className="menu-arrow" />
+          </a>
+          <div
+            className={`collapse ${expandedMenu["post"] ? "show" : ""}`}
+            id="post"
+          >
+            <ul className="nav flex-column sub-menu">
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/list-salary-type/">
+                  Danh sách bài đăng
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/add-salary-type/">
+                  Thêm khoảng lương
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </li>
+
         {/* Menu Quản lý công ty */}
         <li className="nav-item">
           <a
@@ -282,7 +313,7 @@ const Menu = () => {
             aria-expanded={expandedMenu["company"] || false}
             href="#"
           >
-            <i className="far fa-clock menu-icon"></i>
+            <i className="far fa-building menu-icon"></i>
             <span className="menu-title">Quản lý công ty</span>
             <i className="menu-arrow" />
           </a>

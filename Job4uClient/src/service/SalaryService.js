@@ -14,7 +14,7 @@ const getAllSalaryService = ({ page = 0, size = 10 }) => {
 };
 
 const getSalaryByIdService = (id) => {
-  return axios.get(`/api/job-levels/${id}`);
+  return axios.get(`/api/salaries/${id}`);
 };
 
 const updateSalaryService = (data, id) => {
