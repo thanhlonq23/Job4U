@@ -106,7 +106,7 @@ public class CompanyController {
         }
 
         company.setId(id);
-        Company updatedCompany = companyService.saveCompany(company);
+        Company updatedCompany = companyService.updateCompany(company);
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
                 "Successfully updated the company",

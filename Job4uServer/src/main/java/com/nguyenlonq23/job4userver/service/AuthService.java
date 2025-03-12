@@ -15,6 +15,7 @@ import com.nguyenlonq23.job4userver.repository.RoleRepository;
 import com.nguyenlonq23.job4userver.repository.UserRepository;
 import com.nguyenlonq23.job4userver.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@Lazy
 @Service
 public class AuthService {
     @Autowired

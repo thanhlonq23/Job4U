@@ -28,9 +28,6 @@ public class Company {
     @Column(name = "coverimage", columnDefinition = "LONGTEXT")
     private String coverImage;
 
-    @Column(name = "description_HTML", columnDefinition = "LONGTEXT")
-    private String description_HTML;
-
     @Column(name = "description_Markdown", columnDefinition = "LONGTEXT")
     private String description_Markdown;
 
