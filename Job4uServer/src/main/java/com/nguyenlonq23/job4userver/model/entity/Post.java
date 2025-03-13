@@ -1,6 +1,5 @@
 package com.nguyenlonq23.job4userver.model.entity;
 
-import com.nguyenlonq23.job4userver.model.enums.Gender;
 import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,9 +16,6 @@ public class Post {
 
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "description_HTML", columnDefinition = "LONGTEXT")
-    private String description_HTML;
 
     @Column(name = "description_Markdown", columnDefinition = "LONGTEXT")
     private String description_Markdown;
@@ -60,27 +56,12 @@ public class Post {
     @JoinColumn(name = "company_id")
     private Company company;
 
+    @Column(name = "expiration_date", nullable = false)
+    private Date expiration_date;
+
     @Column(name = "createdAt", nullable = false)
     private Date createdAt;
 
     @Column(name = "updatedAt", nullable = false)
     private Date updatedAt;
-
-    public Post() {
-    }
-
-    public Post(String post_name, String descriptionHTML, String descriptionMarkdown, PostStatus status, Category category, Location location, Salary salary, JobLevel jobLevel, WorkType workType, Experience experience, User user, Company company) {
-        this.name = post_name;
-        this.description_HTML = descriptionHTML;
-        this.description_Markdown = descriptionMarkdown;
-        this.status = status;
-        this.category = category;
-        this.location = location;
-        this.salary = salary;
-        this.jobLevel = jobLevel;
-        this.workType = workType;
-        this.experience = experience;
-        this.user = user;
-        this.company = company;
-    }
 }
