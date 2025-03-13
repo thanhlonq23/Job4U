@@ -56,6 +56,10 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public Optional<Integer> getCompanyIdByUserId(int id) {
+       return userRepository.getCompanyIdByUserId(id);
+    }
+
     // Lấy user theo ID
     public Optional<User> getUserById(int id) {
         return userRepository.findById(id);

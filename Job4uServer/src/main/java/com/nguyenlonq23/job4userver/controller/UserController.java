@@ -123,4 +123,23 @@ public class UserController {
                 null
         ));
     }
+
+    @GetMapping("/get-company-id/{id}")
+    public ResponseEntity<ApiResponse<Integer>> getCompanyId(@PathVariable int id) {
+        Optional<Integer> companyId = userService.getCompanyIdByUserId(id);
+
+        if (companyId.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    "CompanyId with user ID: " + id + " not found",
+                    null
+            ));
+        }
+        return ResponseEntity.ok(new ApiResponse<>(
+                "SUCCESS",
+                "Successfully retrieved the companyId",
+                companyId.get()
+        ));
+    }
+
 }

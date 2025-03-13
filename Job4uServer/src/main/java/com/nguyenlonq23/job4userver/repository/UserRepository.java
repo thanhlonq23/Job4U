@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Page<User> findByEmailContainingIgnoreCase(String keyword, Pageable pageable);
 
+    @Query("SELECT u.company.id FROM User u WHERE u.id = :id")
+    Optional<Integer> getCompanyIdByUserId(@Param("id") int id);
+
 }
