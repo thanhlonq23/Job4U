@@ -1,372 +1,513 @@
-import React from 'react'
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import DatePicker from '../../../components/input/DatePicker';
-import { createPostService, updatePostService, getDetailPostByIdService } from '../../../service/userService1';
-// import MarkdownIt from 'markdown-it';
-import MdEditor from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
-import { useFetchAllcode } from '../../../util/fetch';
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Spinner, Modal } from 'reactstrap'
-import localization from 'moment/locale/vi';
-import moment from 'moment';
-import '../../../components/modal/modal.css'
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Spinner, Modal, Row, Col, Card, CardBody } from "reactstrap";
+import MDEditor from "@uiw/react-md-editor";
+import "./AddPost.scss";
+import {
+  updatePostService,
+  createPostService,
+  getPostByIdService,
+} from "../../../service/PostService.js";
+import {
+  getAllCategoriesService,
+  getAllLocationsService,
+  getAllSalariesService,
+  getAllJobLevelsService,
+  getAllWorkTypesService,
+  getAllExperiencesService,
+} from "../../../service/DataService.js";
+
 const AddPost = () => {
-    // const mdParser = new MarkdownIt();
-    const [user, setUser] = useState({})
-    const [timeEnd, settimeEnd] = useState('');
-    const [isChangeDate, setisChangeDate] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const { id } = useParams();
+  const { id } = useParams();
+  const [isActionAdd, setIsActionAdd] = useState(!id);
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState({});
 
-    const [inputValues, setInputValues] = useState({
-        name: '', category_job_id: '', address_id: '', salary_job_id: '', amount: '', time_end: '', category_joblevel_id: '', category_worktype_id: '', experience_job_id: '',
-        genderId: '', descriptionHTML: '', descriptionMarkdown: '', isActionADD: true, id: ''
-    });
+  // State cho dữ liệu select options
+  const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [salaries, setSalaries] = useState([]);
+  const [jobLevels, setJobLevels] = useState([]);
+  const [workTypes, setWorkTypes] = useState([]);
+  const [experiences, setExperiences] = useState([]);
 
-    useEffect(() => {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        if (id) {
-            fetchPost(id)
-        }
-        setUser(userData)
-    }, [])
-    let fetchPost = async (id) => {
-        let res = await getDetailPostByIdService(id)
-        if (res && res.errCode === 0) {
-            setStatePost(res.data)
-        }
-    }
-    let setStatePost = (data) => {
-        setInputValues({
-            ...inputValues,
-            ["name"]: data.name,
-            ["category_job_id"]: data.category_job_id,
-            ["address_id"]: data.address_id,
-            ["salary_job_id"]: data.salary_job_id,
-            ["amount"]: data.amount,
-            ["time_end"]: data.time_end,
-            ["category_joblevel_id"]: data.category_joblevel_id,
-            ["category_worktype_id"]: data.category_worktype_id,
-            ["experience_job_id"]: data.experience_job_id,
-            ["genderId"]: data.genderPostCode,
-            ["descriptionHTML"]: data.descriptionHTML,
-            ["descriptionMarkdown"]: data.descriptionMarkdown,
-            ["isActionADD"]: false,
-            ["id"]: data.id
+  // Lấy userInfo từ localStorage
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
-        })
-        settimeEnd(moment.unix(+data.time_end / 1000).locale('vi').format('DD/MM/YYYY'))
-    }
+  // Khởi tạo user từ userInfo trong useEffect
+  useEffect(() => {
+    setUser(userInfo);
+  }, []);
 
+  // State cho form input (status luôn là "PENDING")
+  const [inputValues, setInputValues] = useState({
+    name: "",
+    description_Markdown: "",
+    status: "PENDING",
+    expiration_date: "",
+    amount: 1,
+    category: { id: "" },
+    location: { id: "" },
+    salary: { id: "" },
+    jobLevel: { id: "" },
+    workType: { id: "" },
+    experience: { id: "" },
+    user: { id: userInfo.userId || "" },
+    company: { id: userInfo.companyId || "" },
+  });
 
-    const { data: dataGenderPost } = useFetchAllcode('GENDERPOST');
-    const { data: dataJobType } = useFetchAllcode('JOBTYPE');
-    const { data: dataJobLevel } = useFetchAllcode('JOBLEVEL');
-    const { data: dataSalaryType } = useFetchAllcode('SALARYTYPE');
-    const { data: dataExpType } = useFetchAllcode('EXPTYPE');
-    const { data: dataWorkType } = useFetchAllcode('WORKTYPE');
-    const { data: dataProvince } = useFetchAllcode('PROVINCE');
+  // Lấy dữ liệu cho các dropdown
+  useEffect(() => {
+    const fetchDropdownData = async () => {
+      try {
+        setIsLoading(true);
+        const [
+          categoriesResponse,
+          locationsResponse,
+          salariesResponse,
+          jobLevelsResponse,
+          workTypesResponse,
+          experiencesResponse,
+        ] = await Promise.all([
+          getAllCategoriesService(),
+          getAllLocationsService(),
+          getAllSalariesService(),
+          getAllJobLevelsService(),
+          getAllWorkTypesService(),
+          getAllExperiencesService(),
+        ]);
 
-    if (dataGenderPost && dataGenderPost.length > 0 && inputValues.genderId === '' && dataJobType && dataJobType.length > 0 && inputValues.category_job_id === '' && dataJobLevel && dataJobLevel.length > 0 && inputValues.category_joblevel_id === '' &&
-        dataSalaryType && dataSalaryType.length > 0 && inputValues.salary_job_id === '' && dataExpType && dataExpType.length > 0 && inputValues.experience_job_id === '' &&
-        dataWorkType && dataWorkType.length > 0 && inputValues.category_worktype_id === '' && dataProvince && dataProvince.length > 0 && inputValues.address_id === ''
-    ) {
-
-        setInputValues({
-            ...inputValues, ["genderId"]: dataGenderPost[0].code, ["category_job_id"]: dataJobType[0].code,
-            ["category_joblevel_id"]: dataJobLevel[0].code, ["salary_job_id"]: dataSalaryType[0].code, ["experience_job_id"]: dataExpType[0].code,
-            ["category_worktype_id"]: dataWorkType[0].code
-        })
-    }
-    const handleOnChange = event => {
-        const { name, value } = event.target;
-        setInputValues({ ...inputValues, [name]: value });
-
+        setCategories(categoriesResponse?.data || []);
+        setLocations(locationsResponse?.data || []);
+        setSalaries(salariesResponse?.data || []);
+        setJobLevels(jobLevelsResponse?.data || []);
+        setWorkTypes(workTypesResponse?.data || []);
+        setExperiences(experiencesResponse?.data || []);
+      } catch (error) {
+        toast.error("Đã xảy ra lỗi khi lấy dữ liệu dropdown");
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
+    fetchDropdownData();
+  }, []);
 
-    let handleEditorChange = ({ html, text }) => {
-        setInputValues({
-            ...inputValues,
-            ["descriptionMarkdown"]: text,
-            ["descriptionHTML"]: html
-        })
-    }
-    let handleOnChangeDatePicker = (date) => {
-        settimeEnd(date[0])
-        setisChangeDate(true)
+  // Lấy dữ liệu bài đăng nếu là chế độ cập nhật
+  useEffect(() => {
+    if (!id) return;
 
-    }
-    let handleSavePost = async () => {
-        setIsLoading(true)
-        if (inputValues.isActionADD === true) {
-            let res = await createPostService({
-                name: inputValues.name,
-                descriptionHTML: inputValues.descriptionHTML,
-                descriptionMarkdown: inputValues.descriptionMarkdown,
-                category_job_id: inputValues.category_job_id,
-                address_id: inputValues.address_id,
-                salary_job_id: inputValues.salary_job_id,
-                amount: inputValues.amount,
-                time_end: new Date(timeEnd).getTime(),
-                category_joblevel_id: inputValues.category_joblevel_id,
-                category_worktype_id: inputValues.category_worktype_id,
-                experience_job_id: inputValues.experience_job_id,
-                genderId: inputValues.genderId,
-                companyId: user.company_id,
+    const fetchPostDetails = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getPostByIdService(id);
 
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Thêm mới bài đăng thành công")
-                    setInputValues({
-                        ...inputValues,
-                        ["name"]: '',
-                        ["descriptionHTML"]: '',
-                        ["descriptionMarkdown"]: '',
-                        ["category_job_id"]: '',
-                        ["address_id"]: '',
-                        ["salary_job_id"]: '',
-                        ["amount"]: '',
-                        ["time_end"]: '',
-                        ["category_joblevel_id"]: '',
-                        ["category_worktype_id"]: '',
-                        ["experience_job_id"]: '',
-                        ["genderId"]: '',
+        if (response?.status === "SUCCESS") {
+          const {
+            name,
+            description,
+            expirationDate,
+            amount,
+            category,
+            location,
+            salary,
+            jobLevel,
+            workType,
+            experience,
+          } = response.data;
 
-                    })
-                    settimeEnd('')
-                } else {
-                    toast.error(res.errMessage)
-                }
-            }, 1000);
+          const formattedDate = expirationDate
+            ? new Date(expirationDate).toISOString().split("T")[0]
+            : "";
+
+          setInputValues({
+            name: name || "",
+            description_Markdown: description || "",
+            status: "PENDING",
+            expiration_date: formattedDate,
+            amount: amount || 1,
+            category: { id: category?.id || "" },
+            location: { id: location?.id || "" },
+            salary: { id: salary?.id || "" },
+            jobLevel: { id: jobLevel?.id || "" },
+            workType: { id: workType?.id || "" },
+            experience: { id: experience?.id || "" },
+            user: { id: userInfo.userId || "" },
+            company: { id: userInfo.companyId || "" },
+          });
         } else {
-            let res = await updatePostService({
-                name: inputValues.name,
-                descriptionHTML: inputValues.descriptionHTML,
-                descriptionMarkdown: inputValues.descriptionMarkdown,
-                category_job_id: inputValues.category_job_id,
-                address_id: inputValues.address_id,
-                salary_job_id: inputValues.salary_job_id,
-                amount: inputValues.amount,
-                time_end: isChangeDate === false ? inputValues.time_end : new Date(timeEnd).getTime(),
-                category_joblevel_id: inputValues.category_joblevel_id,
-                category_worktype_id: inputValues.category_worktype_id,
-                experience_job_id: inputValues.experience_job_id,
-                genderId: inputValues.genderId,
-                id: inputValues.id
-            })
-            setTimeout(() => {
-                setIsLoading(false)
-                if (res && res.errCode === 0) {
-                    toast.success("Cập nhật bài đăng thành công")
-
-                } else {
-                    toast.error(res.errMessage)
-                }
-            }, 1000);
+          toast.error(response?.message || "Không thể lấy dữ liệu bài đăng");
         }
+      } catch (error) {
+        toast.error("Đã xảy ra lỗi khi lấy dữ liệu bài đăng");
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPostDetails();
+  }, [id, userInfo.userId, userInfo.companyId]);
+
+  // Xử lý thay đổi input text thông thường
+  const handleInputChange = ({ target: { name, value } }) => {
+    setInputValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Xử lý thay đổi cho input số lượng
+  const handleAmountChange = ({ target: { value } }) => {
+    const numValue = parseInt(value, 10);
+    if (isNaN(numValue) || numValue < 1) return;
+
+    setInputValues((prev) => ({ ...prev, amount: numValue }));
+  };
+
+  // Xử lý thay đổi cho các select (dropdown)
+  const handleSelectChange = (name, value) => {
+    setInputValues((prev) => ({
+      ...prev,
+      [name]: { id: value },
+    }));
+  };
+
+  // Xử lý thay đổi cho Markdown Editor
+  const handleMarkdownChange = (value) => {
+    setInputValues((prev) => ({
+      ...prev,
+      description_Markdown: value || "",
+    }));
+  };
+
+  // Xử lý lưu dữ liệu với validation ngày hết hạn
+  const handleSave = async () => {
+    if (!inputValues.name) {
+      toast.error("Vui lòng nhập tên bài đăng");
+      return;
     }
-    return (
-        <>
-            <div className=''>
-                <div className="col-12 grid-margin">
-                    <div className="card">
-                        <div className="card-body">
-                            <h4 className="card-title">{inputValues.isActionADD === true ? 'Thêm mới bài đăng' : 'Cập nhật bài đăng'}</h4>
-                            <br></br>
-                            <form className="form-sample">
 
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Tên bài đăng</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.name} name="name" onChange={(event) => handleOnChange(event)} type="text" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Địa chỉ</label>
-                                            <div className="col-sm-9">
-                                                <select className="form-control" value={inputValues.address_id} name="address_id" onChange={(event) => handleOnChange(event)}>
-                                                    {dataProvince && dataProvince.length > 0 &&
-                                                        dataProvince.map((item, index) => {
-                                                            return (
-                                                                <option key={index} value={item.code}>{item.value}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">SL nhân viên</label>
-                                            <div className="col-sm-9">
-                                                <input value={inputValues.amount} name="amount" onChange={(event) => handleOnChange(event)} type="number" className="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Thời gian KT</label>
-                                            <div className="col-sm-9">
-                                                <DatePicker className="form-control" onChange={handleOnChangeDatePicker}
-                                                    value={timeEnd}
+    if (!inputValues.description_Markdown) {
+      toast.error("Vui lòng nhập mô tả bài đăng");
+      return;
+    }
 
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Giới tính</label>
-                                            <div className="col-sm-9">
-                                                <select className="form-control" value={inputValues.genderId} name="genderId" onChange={(event) => handleOnChange(event)}>
-                                                    {dataGenderPost && dataGenderPost.length > 0 &&
-                                                        dataGenderPost.map((item, index) => {
-                                                            return (
-                                                                <option key={index} value={item.code}>{item.value}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Kinh nghiệm</label>
-                                            <div className="col-sm-9">
-                                                <select className="form-control" value={inputValues.experience_job_id} name="experience_job_id" onChange={(event) => handleOnChange(event)}>
-                                                    {dataExpType && dataExpType.length > 0 &&
-                                                        dataExpType.map((item, index) => {
-                                                            return (
-                                                                <option key={index} value={item.code}>{item.value}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Ngành</label>
-                                            <div className="col-sm-9">
-                                                <select className="form-control" value={inputValues.category_job_id} name="category_job_id" onChange={(event) => handleOnChange(event)}>
-                                                    {dataJobType && dataJobType.length > 0 &&
-                                                        dataJobType.map((item, index) => {
-                                                            return (
-                                                                <option key={index} value={item.code}>{item.value}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Chức vụ</label>
-                                            <div className="col-sm-9">
-                                                <select className="form-control" value={inputValues.category_joblevel_id} name="category_joblevel_id" onChange={(event) => handleOnChange(event)}>
-                                                    {dataJobLevel && dataJobLevel.length > 0 &&
-                                                        dataJobLevel.map((item, index) => {
-                                                            return (
-                                                                <option key={index} value={item.code}>{item.value}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Lương</label>
-                                            <div className="col-sm-9">
-                                                <select className="form-control" value={inputValues.salary_job_id} name="salary_job_id" onChange={(event) => handleOnChange(event)}>
-                                                    {dataSalaryType && dataSalaryType.length > 0 &&
-                                                        dataSalaryType.map((item, index) => {
-                                                            return (
-                                                                <option key={index} value={item.code}>{item.value}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label">Hình thức LV</label>
-                                            <div className="col-sm-9">
-                                                <select className="form-control" value={inputValues.category_worktype_id} name="category_worktype_id" onChange={(event) => handleOnChange(event)}>
-                                                    {dataWorkType && dataWorkType.length > 0 &&
-                                                        dataWorkType.map((item, index) => {
-                                                            return (
-                                                                <option key={index} value={item.code}>{item.value}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <label className="form-label">Mô tả công việc</label>
-                                        <div className="form-group">
+    if (!inputValues.expiration_date) {
+      toast.error("Vui lòng chọn ngày hết hạn");
+      return;
+    }
 
-                                            <MdEditor
-                                                style={{ height: '500px' }}
-                                                // renderHTML={text => mdParser.render(text)}
-                                                onChange={handleEditorChange}
-                                                value={inputValues.descriptionMarkdown}
-                                            />
-                                        </div>
-                                    </div>
+    // Validation ngày hết hạn
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để so sánh chính xác ngày
+    const expirationDate = new Date(inputValues.expiration_date);
 
-                                </div>
-                                <button onClick={() => handleSavePost()} type="button" className="btn btn-primary mr-2">
-                                    <i class="ti-file btn1-icon-prepend"></i>
-                                    Lưu
-                                </button>
-                            </form>
+    if (expirationDate <= today) {
+      toast.error("Ngày hết hạn phải sau ngày hiện tại");
+      return;
+    }
+
+    if (!inputValues.category.id) {
+      toast.error("Vui lòng chọn danh mục");
+      return;
+    }
+
+    if (!inputValues.company.id) {
+      toast.error("Thông tin công ty không hợp lệ, vui lòng đăng nhập lại");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = isActionAdd
+        ? await createPostService(inputValues)
+        : await updatePostService(id, inputValues);
+
+      if (response?.status === "SUCCESS") {
+        toast.success(
+          isActionAdd
+            ? "Tạo bài đăng thành công"
+            : "Cập nhật bài đăng thành công"
+        );
+
+        if (isActionAdd) {
+          setInputValues({
+            name: "",
+            description_Markdown: "",
+            status: "PENDING",
+            expiration_date: "",
+            amount: 1,
+            category: { id: "" },
+            location: { id: "" },
+            salary: { id: "" },
+            jobLevel: { id: "" },
+            workType: { id: "" },
+            experience: { id: "" },
+            user: { id: userInfo.userId || "" },
+            company: { id: userInfo.companyId || "" },
+          });
+        }
+      } else {
+        console.log("Data:", inputValues);
+        toast.error(response?.errMessage || "Đã xảy ra lỗi");
+      }
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi lưu dữ liệu");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="add-post-container">
+      <Row>
+        <Col md={12}>
+          <Card className="main-card">
+            <CardBody>
+              <h4 className="card-title">
+                {isActionAdd ? "THÊM MỚI BÀI ĐĂNG" : "CẬP NHẬT BÀI ĐĂNG"}
+              </h4>
+              <form className="post-form">
+                <Card className="section-card mb-4">
+                  <CardBody>
+                    <h4 className="section-title">Thông tin cơ bản</h4>
+                    <Row>
+                      <Col md={6}>
+                        <div className="form-group">
+                          <label>
+                            Tiêu đề bài đăng <span className="required">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={inputValues.name}
+                            name="name"
+                            onChange={handleInputChange}
+                            className="form-control"
+                            placeholder="Nhập tiêu đề bài đăng"
+                          />
                         </div>
+                      </Col>
+                      <Col md={3}>
+                        <div className="form-group">
+                          <label>
+                            Ngày hết hạn <span className="required">*</span>
+                          </label>
+                          <input
+                            type="date"
+                            value={inputValues.expiration_date}
+                            name="expiration_date"
+                            onChange={handleInputChange}
+                            className="form-control"
+                          />
+                        </div>
+                      </Col>
+                      <Col md={3}>
+                        <div className="form-group">
+                          <label>
+                            Số lượng cần tuyển{" "}
+                            <span className="required">*</span>
+                          </label>
+                          <input
+                            type="number"
+                            value={inputValues.amount}
+                            name="amount"
+                            onChange={handleAmountChange}
+                            min="1"
+                            className="form-control"
+                            placeholder="Nhập số lượng cần tuyển"
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+
+                <Card className="section-card mb-4">
+                  <CardBody>
+                    <h4 className="section-title">Phân loại</h4>
+                    <Row>
+                      <Col md={6}>
+                        <div className="form-group">
+                          <label>
+                            Danh mục <span className="required">*</span>
+                          </label>
+                          <select
+                            value={inputValues.category.id}
+                            onChange={(e) =>
+                              handleSelectChange("category", e.target.value)
+                            }
+                            className="form-control"
+                          >
+                            <option value="">-- Chọn danh mục --</option>
+                            {categories.map((category) => (
+                              <option key={category.id} value={category.id}>
+                                {category.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>
+                            Địa điểm <span className="required">*</span>
+                          </label>
+                          <select
+                            value={inputValues.location.id}
+                            onChange={(e) =>
+                              handleSelectChange("location", e.target.value)
+                            }
+                            className="form-control"
+                          >
+                            <option value="">-- Chọn địa điểm --</option>
+                            {locations.map((location) => (
+                              <option key={location.id} value={location.id}>
+                                {location.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>
+                            Mức lương <span className="required">*</span>
+                          </label>
+                          <select
+                            value={inputValues.salary.id}
+                            onChange={(e) =>
+                              handleSelectChange("salary", e.target.value)
+                            }
+                            className="form-control"
+                          >
+                            <option value="">-- Chọn mức lương --</option>
+                            {salaries.map((salary) => (
+                              <option key={salary.id} value={salary.id}>
+                                {salary.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </Col>
+
+                      <Col md={6}>
+                        <div className="form-group">
+                          <label>
+                            Cấp bậc <span className="required">*</span>
+                          </label>
+                          <select
+                            value={inputValues.jobLevel.id}
+                            onChange={(e) =>
+                              handleSelectChange("jobLevel", e.target.value)
+                            }
+                            className="form-control"
+                          >
+                            <option value="">-- Chọn cấp bậc --</option>
+                            {jobLevels.map((level) => (
+                              <option key={level.id} value={level.id}>
+                                {level.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>
+                            Loại công việc <span className="required">*</span>
+                          </label>
+                          <select
+                            value={inputValues.workType.id}
+                            onChange={(e) =>
+                              handleSelectChange("workType", e.target.value)
+                            }
+                            className="form-control"
+                          >
+                            <option value="">-- Chọn loại công việc --</option>
+                            {workTypes.map((type) => (
+                              <option key={type.id} value={type.id}>
+                                {type.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>
+                            Kinh nghiệm <span className="required">*</span>
+                          </label>
+                          <select
+                            value={inputValues.experience.id}
+                            onChange={(e) =>
+                              handleSelectChange("experience", e.target.value)
+                            }
+                            className="form-control"
+                          >
+                            <option value="">-- Chọn kinh nghiệm --</option>
+                            {experiences.map((exp) => (
+                              <option key={exp.id} value={exp.id}>
+                                {exp.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+
+                <Card className="section-card mb-4">
+                  <CardBody>
+                    <h4 className="section-title">Mô tả công việc</h4>
+                    <div className="markdown-editor-container">
+                      <MDEditor
+                        value={inputValues.description_Markdown}
+                        onChange={handleMarkdownChange}
+                        height={400}
+                        preview="edit"
+                        previewOptions={{
+                          style: { padding: "20px" },
+                        }}
+                      />
                     </div>
+                  </CardBody>
+                </Card>
+
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => window.history.back()}
+                  >
+                    <i className="ti-arrow-left"></i> Quay lại
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-save"
+                    onClick={handleSave}
+                  >
+                    <i className="ti-save"></i>{" "}
+                    {isActionAdd ? "Thêm mới" : "Cập nhật"}
+                  </button>
                 </div>
-            </div>
-            {isLoading &&
-                <Modal isOpen='true' centered contentClassName='closeBorder' >
+              </form>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
 
-                    <div style={{
-                        position: 'absolute', right: '50%',
-                        justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <Spinner animation="border"  ></Spinner>
-                    </div>
+      {isLoading && (
+        <Modal isOpen centered className="loading-modal">
+          <div className="spinner-container">
+            <Spinner color="primary" />
+            <p className="mt-2">Đang xử lý...</p>
+          </div>
+        </Modal>
+      )}
 
-                </Modal>
-            }
-        </>
-    )
-}
+      <ToastContainer />
+    </div>
+  );
+};
 
-export default AddPost
+export default AddPost;

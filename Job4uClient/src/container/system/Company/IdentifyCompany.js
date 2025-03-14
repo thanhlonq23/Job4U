@@ -18,7 +18,7 @@ const IdentifyCompany = () => {
 
   // Danh sách trạng thái
   const statusOptions = [
-    { value: "APPROVED", label: "Đã duyệt", color: "#28a745" },
+    { value: "APPROVED", label: "Đang hoạt động", color: "#28a745" },
     { value: "PENDING", label: "Đang chờ duyệt", color: "#ffc107" },
     { value: "REJECTED", label: "Từ chối", color: "#dc3545" },
     { value: "SUSPENDED", label: "Tạm ngưng", color: "#fd7e14" },
@@ -143,33 +143,6 @@ const IdentifyCompany = () => {
                 <div className="form-group">
                   <label className="font-weight-bold">Mã số thuế:</label>
                   <p className="mb-0">{company.taxNumber}</p>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label className="font-weight-bold">Logo:</label>
-                  <td
-                    style={{
-                      width: "15%",
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    <div
-                      className="box-img-preview"
-                      style={{
-                        backgroundImage: `url(${
-                          company.thumbnail || "default-image-url.jpg"
-                        })`,
-                        width: "50px",
-                        height: "50px",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        border: "none",
-                        margin: "0 auto",
-                      }}
-                    ></div>
-                  </td>
                 </div>
               </div>
 

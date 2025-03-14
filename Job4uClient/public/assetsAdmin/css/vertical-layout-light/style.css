@@ -15748,7 +15748,7 @@ button.bg-warning:focus,
 }
 
 .bg-danger, .settings-panel .color-tiles .tiles.danger {
-  background-color: #4B49AC !important;
+  background-color: #dc3545 !important;
 }
 
 a.bg-danger:hover, .settings-panel .color-tiles a.tiles.danger:hover, a.bg-danger:focus, .settings-panel .color-tiles a.tiles.danger:focus,

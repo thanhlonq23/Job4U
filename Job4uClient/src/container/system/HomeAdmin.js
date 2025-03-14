@@ -1,5 +1,5 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Menu from "./Menu";
 import Footer from "./Footer";
@@ -22,6 +22,8 @@ import Recruitment from "./Company/Recruitment";
 import ManageEmployer from "./Company/ManageEmployer";
 import AddPost from "./Post/AddPost";
 import ManagePost from "./Post/ManagePost";
+import ManagePostAdmin from "./Post/ManagePostAdmin";
+import PostDetail from "./Post/PostDetail";
 import ManageCv from "./Cv/ManageCv";
 import UserCv from "./Cv/UserCv";
 import ChangePassword from "./User/ChangePassword";
@@ -33,6 +35,22 @@ import CompanyDetail from "./Company/CompanyDetail";
 import IdentifyCompany from "./Company/IdentifyCompany";
 
 const HomeAdmin = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (!userInfo) {
+      // Nếu chưa đăng nhập, chuyển về trang chủ
+      navigate("/");
+    } else if (
+      !["ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF"].includes(userInfo.role)
+    ) {
+      // Nếu không có quyền truy cập, chuyển về trang đăng nhập
+      navigate("/login");
+    }
+  }, [navigate]);
+
   return (
     <div className="container-scroller">
       {/* Navbar */}
@@ -93,11 +111,15 @@ export const adminRoutes = [
   { path: "edit-company/:id", element: <AddCompany /> },
   { path: "add-company", element: <AddCompany /> },
 
-  { path: "recruitment", element: <Recruitment /> },
-  { path: "list-employer", element: <ManageEmployer /> },
+  { path: "list-post-admin", element: <ManagePostAdmin /> },
+  { path: "post-detail/:id", element: <PostDetail /> },
+  { path: "list-post", element: <ManagePost /> },
   { path: "add-post", element: <AddPost /> },
   { path: "edit-post/:id", element: <AddPost /> },
-  { path: "list-post", element: <ManagePost /> },
+
+  { path: "recruitment", element: <Recruitment /> },
+  { path: "list-employer", element: <ManageEmployer /> },
+
   { path: "list-cv/:id", element: <ManageCv /> },
   { path: "user-cv/:id", element: <UserCv /> },
   { path: "changepassword", element: <ChangePassword /> },

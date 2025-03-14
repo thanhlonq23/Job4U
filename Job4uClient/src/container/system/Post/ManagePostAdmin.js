@@ -10,15 +10,12 @@ import {
   banPostService,
   activePostService,
 } from "../../../service/userService1";
-import {
-  getPostByCompanyIdService,
-} from "../../../service/PostService";
+import { getAllPostService } from "../../../service/PostService";
 
 const ManagePost = () => {
   const [dataPost, setDataPost] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,34 +32,25 @@ const ManagePost = () => {
     const controller = new AbortController();
     try {
       setIsLoading(true);
-      const userData = JSON.parse(localStorage.getItem("userInfo") || "{}");
-      if (!userData || !userData.companyId) {
-        toast.error("Thông tin người dùng không hợp lệ!");
-        return;
+
+      // Tạo params cho API call - không cần companyId vì đây là admin
+      const params = {
+        page,
+        size: PAGINATION.pagerow,
+      };
+
+      // Chỉ thêm tham số status nếu không phải "all"
+      if (filterStatus !== "all") {
+        params.status = filterStatus;
       }
 
-      if (userData) {
-        // Tạo params cho API call
-        const params = {
-          page,
-          size: PAGINATION.pagerow,
-          companyId: userData.companyId,
-        };
+      const response = await getAllPostService(params, {
+        signal: controller.signal,
+      });
 
-        // Chỉ thêm tham số status nếu không phải "all"
-        if (filterStatus !== "all") {
-          params.status = filterStatus;
-        }
-
-        const response = await getPostByCompanyIdService(params, {
-          signal: controller.signal,
-        });
-
-        if (response && response.data) {
-          setDataPost(response.data.content || []);
-          setTotalPages(response.data.totalPages || 0);
-        }
-        setUser(userData);
+      if (response && response.data) {
+        setDataPost(response.data.content || []);
+        setTotalPages(response.data.totalPages || 0);
       }
     } catch (error) {
       if (error.name !== "AbortError") {
@@ -153,10 +141,7 @@ const ManagePost = () => {
           <Card className="main-card">
             <CardBody>
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <h4 className="card-title">QUẢN LÝ BÀI ĐĂNG</h4>
-                <Link to="/admin/add-post" className="btn btn-primary">
-                  <i className="ti-plus"></i> Thêm mới bài đăng
-                </Link>
+                <h4 className="card-title">QUẢN LÝ BÀI ĐĂNG - ADMIN</h4>
               </div>
 
               <Row className="mb-3">
@@ -196,7 +181,7 @@ const ManagePost = () => {
                       <th>Ngành</th>
                       <th>Vị trí</th>
                       <th>Hình thức làm việc</th>
-                      <th>Người đăng</th>
+                      <th>Công ty</th>
                       <th className="text-center">Ngày kết thúc</th>
                       <th className="text-center">Trạng thái</th>
                       <th className="text-center">Thao tác</th>
@@ -229,9 +214,7 @@ const ManagePost = () => {
                             <td>{item.category}</td>
                             <td>{item.jobLevel}</td>
                             <td>{item.workType}</td>
-                            <td>
-                              {item.posterFistName + " " + item.posterLastName}
-                            </td>
+                            <td>{item.companyName}</td>
                             <td className="text-center">{expirationDate}</td>
                             <td className="text-center">
                               <span className={`badge ${statusInfo.className}`}>
@@ -242,9 +225,9 @@ const ManagePost = () => {
                               <div className="btn-group">
                                 <Link
                                   style={{ color: "#4B49AC" }}
-                                  to={`/admin/list-cv/${item.id}`}
+                                  to={`/admin/post-detail/${item.id}`}
                                 >
-                                  Xem CV
+                                  Chi tiết bài đăng
                                 </Link>
                                 &nbsp; &nbsp;
                                 <Link
@@ -253,23 +236,6 @@ const ManagePost = () => {
                                 >
                                   Cập nhật
                                 </Link>
-                                {/* {item.status === "ACTIVE" ? (
-                                  <Button
-                                    color="outline-danger"
-                                    size="sm"
-                                    onClick={() => handleBanPost(item.id)}
-                                  >
-                                    <i className="ti-na"></i>
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    color="outline-success"
-                                    size="sm"
-                                    onClick={() => handleActivePost(item.id)}
-                                  >
-                                    <i className="ti-check"></i>
-                                  </Button>
-                                )} */}
                               </div>
                             </td>
                           </tr>

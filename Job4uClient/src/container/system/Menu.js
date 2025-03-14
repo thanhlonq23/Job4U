@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { getCompanyStatusByIdService } from "../../service/CompanyService";
 
 const Menu = () => {
   const location = useLocation();
   const [user, setUser] = useState({});
   const [expandedMenu, setExpandedMenu] = useState({});
+  const [companyStatus, setCompanyStatus] = useState(null);
 
   // Lấy thông tin user từ localStorage
   useEffect(() => {
@@ -21,6 +23,21 @@ const Menu = () => {
       [currentMenu]: true,
     }));
   }, [location.pathname]);
+
+  // Lấy trạng thái của công ty dựa vào ID
+  useEffect(() => {
+    const fetchCompanyStatus = async () => {
+      try {
+        if (user?.companyId) {
+          const status = await getCompanyStatusByIdService(user.companyId);
+          setCompanyStatus(status);
+        }
+      } catch (error) {
+        console.error("Error fetching company status:", error);
+      }
+    };
+    fetchCompanyStatus();
+  }, [user]);
 
   // Hàm toggle menu
   const toggleMenu = (menuId) => {
@@ -283,8 +300,8 @@ const Menu = () => {
             <li className="nav-item">
               <a
                 className="nav-link"
-                onClick={() => toggleMenu("post")}
-                aria-expanded={expandedMenu["post"] || false}
+                onClick={() => toggleMenu("post-admin")}
+                aria-expanded={expandedMenu["post-admin"] || false}
                 href="#"
               >
                 <i className="fa-regular fa-pen-to-square menu-icon"></i>
@@ -292,18 +309,15 @@ const Menu = () => {
                 <i className="menu-arrow" />
               </a>
               <div
-                className={`collapse ${expandedMenu["post"] ? "show" : ""}`}
-                id="post"
+                className={`collapse ${
+                  expandedMenu["post-admin"] ? "show" : ""
+                }`}
+                id="post-admin"
               >
                 <ul className="nav flex-column sub-menu">
                   <li className="nav-item">
-                    <Link className="nav-link" to="/admin/list-salary-type/">
+                    <Link className="nav-link" to="/admin/list-post-admin/">
                       Danh sách bài đăng
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/admin/add-salary-type/">
-                      Thêm khoảng lương
                     </Link>
                   </li>
                 </ul>
@@ -313,54 +327,89 @@ const Menu = () => {
         )}
 
         {/* Menu Quản lý công ty */}
-        {(user.role === "EMPLOYER_STAFF" || user.role === "EMPLOYER_OWNER") && (
-          <li className="nav-item">
-            <a
-              className="nav-link"
-              onClick={() => toggleMenu("company")}
-              aria-expanded={expandedMenu["company"] || false}
-              href="#"
-            >
-              <i className="far fa-building menu-icon"></i>
-              <span className="menu-title">Quản lý công ty</span>
-              <i className="menu-arrow" />
-            </a>
-            <div
-              className={`collapse ${expandedMenu["company"] ? "show" : ""}`}
-              id="company"
-            >
-              <ul className="nav flex-column sub-menu">
-                {user.role === "EMPLOYER_OWNER" && (
+        {user.role === "EMPLOYER_OWNER" && (
+          <>
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                onClick={() => toggleMenu("company")}
+                aria-expanded={expandedMenu["company"] || false}
+                href="#"
+              >
+                <i className="far fa-building menu-icon"></i>
+                <span className="menu-title">Quản lý công ty</span>
+                <i className="menu-arrow" />
+              </a>
+              <div
+                className={`collapse ${expandedMenu["company"] ? "show" : ""}`}
+                id="company"
+              >
+                <ul className="nav flex-column sub-menu">
+                  {user.role === "EMPLOYER_OWNER" && (
+                    <li className="nav-item">
+                      <Link
+                        className="nav-link"
+                        to={
+                          user.companyId
+                            ? `/admin/edit-company/${user.companyId}/`
+                            : "/admin/add-company/"
+                        }
+                      >
+                        {user.companyId
+                          ? "Cập nhật thông tin công ty"
+                          : "Tạo mới công ty"}
+                      </Link>
+                    </li>
+                  )}
+
                   <li className="nav-item">
-                    <Link
-                      className="nav-link"
-                      to={
-                        user.companyId
-                          ? `/admin/edit-company/${user.companyId}/`
-                          : "/admin/add-company/"
-                      }
-                    >
-                      {user.companyId
-                        ? "Cập nhật thông tin công ty"
-                        : "Tạo mới công ty"}
+                    <Link className="nav-link" to="/admin/recruitment/">
+                      Tuyển dụng vào công ty
                     </Link>
                   </li>
-                )}
-
-                <li className="nav-item">
-                  <Link className="nav-link" to="/admin/recruitment/">
-                    Tuyển dụng vào công ty
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/admin/list-employer/">
-                    Danh sách nhân viên
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/admin/list-employer/">
+                      Danh sách nhân viên
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </>
         )}
+        {(user.role === "EMPLOYER_STAFF" || user.role === "EMPLOYER_OWNER") &&
+          companyStatus &&
+          companyStatus.data == "APPROVED" && (
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                data-toggle="collapse"
+                href="#post"
+                aria-expanded="false"
+                aria-controls="post"
+              >
+                <i className="fa-regular fa-pen-to-square menu-icon"></i>
+                <span className="menu-title">Quản lý bài đăng</span>
+                <i className="menu-arrow" />
+              </a>
+              <div className="collapse" id="post">
+                <ul className="nav flex-column sub-menu">
+                  <li className="nav-item">
+                    {" "}
+                    <Link className="nav-link" to="/admin/add-post/">
+                      Tạo mới bài đăng
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    {" "}
+                    <Link className="nav-link" to="/admin/list-post/">
+                      Danh sách bài đăng
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          )}
       </ul>
     </nav>
   );

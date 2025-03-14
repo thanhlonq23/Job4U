@@ -1,0 +1,124 @@
+.add-post-container {
+    padding: 15px;
+  
+    .main-card {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+  
+    .card-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  
+    .section-card {
+      border: 1px solid #eee;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+  
+    .section-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+  
+    .form-group {
+      margin-bottom: 20px;
+  
+      label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #555;
+  
+        .required {
+          color: #ff4d4f;
+        }
+      }
+  
+      .form-control {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: all 0.3s;
+  
+        &:focus {
+          border-color: #40a9ff;
+          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+          outline: none;
+        }
+      }
+  
+      select.form-control {
+        height: 38px;
+      }
+    }
+  
+    .markdown-editor-container {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+  
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      padding: 15px 0;
+      
+      button {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        
+        i {
+          margin-right: 5px;
+        }
+      }
+      
+      .btn-cancel {
+        background-color: #f5f5f5;
+        border: 1px solid #d9d9d9;
+        color: #666;
+        margin-right: 10px;
+        
+        &:hover {
+          background-color: #e8e8e8;
+        }
+      }
+      
+      .btn-save {
+        background-color: #1890ff;
+        border: 1px solid #1890ff;
+        color: white;
+        
+        &:hover {
+          background-color: #40a9ff;
+        }
+      }
+    }
+  
+    // Modal loading
+    .loading-modal {
+      .spinner-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+    }
+  }

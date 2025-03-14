@@ -91,7 +91,7 @@ const ManagerCompany = () => {
 
     const statusMap = {
       PENDING: { text: "Đang chờ duyệt", color: "#ffc107" },
-      APPROVED: { text: "Đã duyệt", color: "#28a745" },
+      APPROVED: { text: "Đang hoạt động", color: "#28a745" },
       REJECTED: { text: "Đã từ chối", color: "#dc3545" },
       SUSPENDED: { text: "Ngừng hoạt động", color: "#6610f2" },
       BANNED: { text: "Cấm hoạt động", color: "#fd7e14" },
