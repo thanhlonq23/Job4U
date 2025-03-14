@@ -5,7 +5,7 @@ const createSalaryService = (data) => {
 };
 
 const getAllSalaryService = ({ page = 0, size = 10 }) => {
-  return axios.get(`/api/salaries`, {
+  return axios.get(`/api/salaries/page`, {
     params: {
       page,
       size,

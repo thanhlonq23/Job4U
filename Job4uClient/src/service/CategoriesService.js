@@ -5,7 +5,7 @@ const createCategoryService = (data) => {
 };
 
 const getAllCategoryService = ({ page = 0, size = 10 }) => {
-  return axios.get(`/api/categories`, {
+  return axios.get(`/api/categories/page`, {
     params: {
       page,
       size,

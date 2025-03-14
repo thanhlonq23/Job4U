@@ -5,7 +5,7 @@ const createExperienceService = (data) => {
 };
 
 const getAllExperienceService = ({ page = 0, size = 10 }) => {
-  return axios.get(`/api/experiences`, {
+  return axios.get(`/api/experiences/page`, {
     params: {
       page,
       size,

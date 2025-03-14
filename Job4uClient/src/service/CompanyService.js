@@ -27,6 +27,14 @@ const getCompanyByIdService = (id) => {
   return axios.get(`/api/companies/${id}`);
 };
 
+const getCompanyStatusByIdService = (id) => {
+  return axios.get(`/api/companies/company-status`, {
+    params: {
+      id,
+    },
+  });
+};
+
 const updateCompanyService = (id, data) => {
   return axios.put(`/api/companies/${id}`, data);
 };
@@ -42,4 +50,5 @@ export {
   deleteCompanyService,
   getCompanyByIdService,
   searchCompanyService,
+  getCompanyStatusByIdService,
 };

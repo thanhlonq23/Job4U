@@ -5,7 +5,7 @@ const createWorkTypeService = (data) => {
 };
 
 const getAllWorkTypeService = ({ page = 0, size = 10 }) => {
-  return axios.get(`/api/work-types`, {
+  return axios.get(`/api/work-types/page`, {
     params: {
       page, // Số trang (bắt đầu từ 0)
       size, // Số lượng phần tử mỗi trang
