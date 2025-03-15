@@ -10,9 +10,7 @@ import {
   banPostService,
   activePostService,
 } from "../../../service/userService1";
-import {
-  getPostByCompanyIdService,
-} from "../../../service/PostService";
+import { getPostByCompanyIdService } from "../../../service/PostService";
 
 const ManagePost = () => {
   const [dataPost, setDataPost] = useState([]);
@@ -253,23 +251,6 @@ const ManagePost = () => {
                                 >
                                   Cập nhật
                                 </Link>
-                                {/* {item.status === "ACTIVE" ? (
-                                  <Button
-                                    color="outline-danger"
-                                    size="sm"
-                                    onClick={() => handleBanPost(item.id)}
-                                  >
-                                    <i className="ti-na"></i>
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    color="outline-success"
-                                    size="sm"
-                                    onClick={() => handleActivePost(item.id)}
-                                  >
-                                    <i className="ti-check"></i>
-                                  </Button>
-                                )} */}
                               </div>
                             </td>
                           </tr>
@@ -314,17 +295,6 @@ const ManagePost = () => {
           </Card>
         </Col>
       </Row>
-
-      {/* Loading Modal */}
-      {isLoading && (
-        <Modal isOpen centered className="loading-modal">
-          <div className="spinner-container">
-            <Spinner color="primary" />
-            <p className="mt-2">Đang xử lý...</p>
-          </div>
-        </Modal>
-      )}
-
       {/* ToastContainer để hiển thị thông báo */}
       <ToastContainer />
     </div>

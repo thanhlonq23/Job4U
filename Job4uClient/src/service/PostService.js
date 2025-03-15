@@ -4,11 +4,7 @@ const createPostService = (data) => {
   return axios.post(`api/posts`, data);
 };
 
-const getAllPostService = ({
-  page = 0,
-  size = 10,
-  status,
-}) => {
+const getAllPostService = ({ page = 0, size = 10, status }) => {
   return axios.get(`/api/posts`, {
     params: {
       page,
@@ -17,7 +13,6 @@ const getAllPostService = ({
     },
   });
 };
-
 
 const getPostByCompanyIdService = ({
   page = 0,
@@ -57,8 +52,14 @@ const getPostByIdService = (id) => {
   });
 };
 
-const getCategoryByIdService = (id) => {
-  return axios.get(`/api/posts/${id}`);
+const updatePostStatusService = ({ id, status }) => {
+  return axios.put(
+    `/api/posts/update-status`, // URL endpoint
+    {}, // Không có payload trong body
+    {
+      params: { id, status }, // Truyền `id` và `status` vào query parameters
+    }
+  );
 };
 
 export {
@@ -67,4 +68,5 @@ export {
   getPostByCompanyIdService,
   getAllPostService,
   getPostByIdService,
+  updatePostStatusService,
 };

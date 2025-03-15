@@ -135,7 +135,7 @@ const ManagerCompany = () => {
                 <tr>
                   <th>STT</th>
                   <th>Tên công ty</th>
-                  <th>Hình ảnh</th>
+                  <th>Logo</th>
                   <th>Email</th>
                   <th>Website</th>
                   <th>Số lượng nhân viên</th>

@@ -232,9 +232,9 @@ const ManagePost = () => {
                                 &nbsp; &nbsp;
                                 <Link
                                   style={{ color: "#4B49AC" }}
-                                  to={`/admin/edit-post/${item.id}`}
+                                  to={`/admin/update-post-status/${item.id}`}
                                 >
-                                  Cập nhật
+                                  Xét duyệt
                                 </Link>
                               </div>
                             </td>

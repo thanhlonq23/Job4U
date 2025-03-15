@@ -5,7 +5,7 @@ const createJobLevelService = (data) => {
 };
 
 const getAllJobLevelService = ({ page = 0, size = 10 }) => {
-  return axios.get(`/api/job-levels`, {
+  return axios.get(`/api/job-levels/page`, {
     params: {
       page,
       size,

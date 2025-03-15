@@ -172,22 +172,6 @@ const PostDetail = () => {
                       </div>
                     </div>
                   </Col>
-
-                  <Col md={12} className="mt-4 d-flex justify-content-center">
-                    <Link
-                      to={`/admin/list-cv/${id}`}
-                      className="btn btn-info mr-3"
-                    >
-                      <i className="ti-file mr-1"></i> Xem danh sách CV ứng
-                      tuyển
-                    </Link>
-                    <Link
-                      to={`/admin/edit-post/${id}`}
-                      className="btn btn-primary"
-                    >
-                      <i className="ti-pencil mr-1"></i> Chỉnh sửa bài đăng
-                    </Link>
-                  </Col>
                 </Row>
               ) : (
                 <div className="text-center py-5">

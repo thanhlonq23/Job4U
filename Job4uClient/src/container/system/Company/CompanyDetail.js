@@ -180,7 +180,13 @@ const ViewCompanyDetail = () => {
                   <div className="col-md-4">
                     <div
                       className="thumbnail-container"
-                      style={{ position: "relative", height: "250px" }}
+                      style={{
+                        position: "relative",
+                        height: "250px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
                     >
                       <div
                         className="thumbnail"
@@ -191,10 +197,15 @@ const ViewCompanyDetail = () => {
                           )})`,
                           width: "100%",
                           height: "100%",
-                          backgroundSize: "cover",
+                          backgroundSize: "contain",
                           backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
                           borderRadius: "8px",
                           cursor: "pointer",
+                          maxWidth: "150px",
+                          maxHeight: "150px",
+                          minWidth: "150px",
+                          minHeight: "50px",
                         }}
                         onClick={() =>
                           openPreviewImage(company.thumbnail, "thumbnail")

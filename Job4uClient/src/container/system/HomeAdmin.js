@@ -24,6 +24,7 @@ import AddPost from "./Post/AddPost";
 import ManagePost from "./Post/ManagePost";
 import ManagePostAdmin from "./Post/ManagePostAdmin";
 import PostDetail from "./Post/PostDetail";
+import UpdatePostStatus from "./Post/UpdatePostStatus";
 import ManageCv from "./Cv/ManageCv";
 import UserCv from "./Cv/UserCv";
 import ChangePassword from "./User/ChangePassword";
@@ -113,6 +114,7 @@ export const adminRoutes = [
 
   { path: "list-post-admin", element: <ManagePostAdmin /> },
   { path: "post-detail/:id", element: <PostDetail /> },
+  { path: "update-post-status/:id", element: <UpdatePostStatus /> },
   { path: "list-post", element: <ManagePost /> },
   { path: "add-post", element: <AddPost /> },
   { path: "edit-post/:id", element: <AddPost /> },

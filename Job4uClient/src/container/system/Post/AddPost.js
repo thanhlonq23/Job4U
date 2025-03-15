@@ -495,16 +495,6 @@ const AddPost = () => {
           </Card>
         </Col>
       </Row>
-
-      {isLoading && (
-        <Modal isOpen centered className="loading-modal">
-          <div className="spinner-container">
-            <Spinner color="primary" />
-            <p className="mt-2">Đang xử lý...</p>
-          </div>
-        </Modal>
-      )}
-
       <ToastContainer />
     </div>
   );

@@ -21,7 +21,7 @@ const LeftBar = (props) => {
                     <div className="select-job-items2">
                         <select name="select" onChange={(e) => {
                             props.recieveJobType(e.target.value)
-                        }}>
+                        }}> 
                             <option value="">Tất cả</option>
                             {dataJobType.map((data, index) => {
                                 return (

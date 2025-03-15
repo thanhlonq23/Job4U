@@ -18,7 +18,7 @@ const IdentifyCompany = () => {
 
   // Danh sách trạng thái
   const statusOptions = [
-    { value: "APPROVED", label: "Đang hoạt động", color: "#28a745" },
+    { value: "APPROVED", label: "Hoạt động", color: "#28a745" },
     { value: "PENDING", label: "Đang chờ duyệt", color: "#ffc107" },
     { value: "REJECTED", label: "Từ chối", color: "#dc3545" },
     { value: "SUSPENDED", label: "Tạm ngưng", color: "#fd7e14" },
