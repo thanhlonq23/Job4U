@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/job-levels")
@@ -16,8 +19,36 @@ public class JobLevelController {
     @Autowired
     private JobLevelService jobLevelService;
 
-    // Get all job levels
     @GetMapping
+    public ResponseEntity<ApiResponse<List<JobLevel>>> getAllWorkTypes() {
+        try {
+            List<JobLevel> jobLevels = jobLevelService.getAllJobLevels();
+
+            if (jobLevels.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No job levels found matching the criteria",
+                        jobLevels
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of job levels",
+                    jobLevels
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving job levels: " + e.getMessage(),
+                    null
+            ));
+        }
+    }
+
+
+    // Get all job levels
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse<Page<JobLevel>>> getAllWorkTypes(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
             Pageable pageable // Thông tin phân trang và sắp xếp từ URL
@@ -69,6 +100,7 @@ public class JobLevelController {
 
     // Create a new job level
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<JobLevel>> createJobLevel(@RequestBody JobLevel jobLevel) {
         if (jobLevel.getName() == null || jobLevel.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
@@ -88,6 +120,7 @@ public class JobLevelController {
 
     // Update a job level
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<JobLevel>> updateJobLevel(
             @PathVariable int id,
             @RequestBody JobLevel jobLevel
@@ -113,6 +146,7 @@ public class JobLevelController {
 
     // Delete a job level
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteJobLevel(@PathVariable int id) {
         JobLevel existingJobLevel = jobLevelService.getJobLevelById(id);
 

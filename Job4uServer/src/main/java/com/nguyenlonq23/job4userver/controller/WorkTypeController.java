@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/work-types")
@@ -17,6 +20,33 @@ public class WorkTypeController {
 
     // Get all work types
     @GetMapping
+    public ResponseEntity<ApiResponse<List<WorkType>>> getAllWorkTypes() {
+        try {
+            List<WorkType> workTypes = workTypeService.getAllWorkTypes();
+
+            if (workTypes.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No work types found",
+                        workTypes
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of work types",
+                    workTypes
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving work types: " + e.getMessage(),
+                    null
+            ));
+        }
+    }
+
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse<Page<WorkType>>> getAllWorkTypes(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
@@ -28,20 +58,20 @@ public class WorkTypeController {
                 return ResponseEntity.ok(new ApiResponse<>(
                         "SUCCESS",
                         "No work types found",
-                        workTypes // Trả về đối tượng Page rỗng
+                        workTypes
                 ));
             }
 
             return ResponseEntity.ok(new ApiResponse<>(
                     "SUCCESS",
                     "Successfully retrieved the list of work types",
-                    workTypes // Trả về toàn bộ đối tượng Page
+                    workTypes
             ));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(
                     "ERROR",
                     "An error occurred while retrieving work types: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
+                    null
             ));
         }
     }
@@ -68,6 +98,7 @@ public class WorkTypeController {
 
     // Create a new work type
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<WorkType>> createWorkType(@RequestBody WorkType workType) {
         if (workType.getName() == null || workType.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
@@ -87,6 +118,7 @@ public class WorkTypeController {
 
     // Update a work type
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<WorkType>> updateWorkType(
             @PathVariable int id,
             @RequestBody WorkType workType) {
@@ -110,6 +142,7 @@ public class WorkTypeController {
 
     // Delete a work type
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteWorkType(@PathVariable int id) {
         WorkType existingWorkType = workTypeService.getWorkTypeById(id);
         if (existingWorkType == null) {

@@ -11,11 +11,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Lazy
 @Service
 public class ExperienceService {
     @Autowired
     private ExperienceRepository experienceRepository;
+
+    public List<Experience> getAllExperiences() {
+        return experienceRepository.findAll();
+    }
 
     public Page<Experience> getExperiences(String keyword, Pageable pageable) {
         // Lọc dữ liệu bằng từ khóa nếu keyword không rỗng

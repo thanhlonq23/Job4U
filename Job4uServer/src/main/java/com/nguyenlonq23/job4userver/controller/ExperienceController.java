@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/experiences")
@@ -18,7 +21,35 @@ public class ExperienceController {
 
     // Get all experiences
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<Experience>>> getAllWorkTypes(
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER', 'EMPLOYER_STAFF')")
+    public ResponseEntity<ApiResponse<List<Experience>>> getAllExperience() {
+        try {
+            List<Experience> experiences = experienceService.getAllExperiences();
+
+            if (experiences.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No experiences found matching the criteria",
+                        experiences // Trả về đối tượng rỗng
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of experiences",
+                    experiences // Trả về toàn bộ đối tượng Page
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving experiences: " + e.getMessage(),
+                    null // Không trả về dữ liệu khi lỗi
+            ));
+        }
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<ApiResponse<Page<Experience>>> getAllExperienceWithPagination(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
             Pageable pageable // Thông tin phân trang và sắp xếp từ URL
     ) {
@@ -68,6 +99,7 @@ public class ExperienceController {
 
     // Create a new experience
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Experience>> createExperience(@RequestBody Experience experience) {
         if (experience.getName() == null || experience.getName().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(
@@ -86,6 +118,7 @@ public class ExperienceController {
 
     // Update an experience
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Experience>> updateExperience(@PathVariable int id, @RequestBody Experience experience) {
         Experience existingExperience = experienceService.getExperienceById(id);
         if (existingExperience == null) {
@@ -106,6 +139,7 @@ public class ExperienceController {
 
     // Delete an experience
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteExperience(@PathVariable int id) {
         Experience existingExperience = experienceService.getExperienceById(id);
         if (existingExperience == null) {

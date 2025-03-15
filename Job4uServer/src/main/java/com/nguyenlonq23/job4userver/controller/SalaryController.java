@@ -7,17 +7,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/salaries")
 public class SalaryController {
-    @Autowired
     private SalaryService salaryService;
 
-    // Get all salaries
+    @Autowired
+    public SalaryController(SalaryService salaryService) {
+        this.salaryService = salaryService;
+    }
+
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<Salary>>> getAllWorkTypes(
+    public ResponseEntity<ApiResponse<List<Salary>>> getAllSalaries() {
+        try {
+            List<Salary> salaries = salaryService.getAllSalaries();
+
+            if (salaries.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No salaries found",
+                        salaries // Trả về đối tượng Page rỗng
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of salary",
+                    salaries // Trả về toàn bộ đối tượng Page
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving salaries: " + e.getMessage(),
+                    null // Không trả về dữ liệu khi lỗi
+            ));
+        }
+    }
+
+    // Get all salaries
+    @GetMapping("/page")
+    public ResponseEntity<ApiResponse<Page<Salary>>> getAllSalariesWithPagination(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
@@ -68,6 +102,7 @@ public class SalaryController {
 
     // Create a new salary
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Salary>> createSalary(@RequestBody Salary salary) {
         if (salary.getName() == null || salary.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
@@ -87,6 +122,7 @@ public class SalaryController {
 
     // Update a salary
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Salary>> updateSalary(@PathVariable int id, @RequestBody Salary salary) {
         Salary existingSalary = salaryService.getSalaryById(id);
 
@@ -109,6 +145,7 @@ public class SalaryController {
 
     // Delete a salary
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteSalary(@PathVariable int id) {
         Salary existingSalary = salaryService.getSalaryById(id);
 

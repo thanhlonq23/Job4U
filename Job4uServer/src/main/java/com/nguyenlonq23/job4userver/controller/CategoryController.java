@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -16,11 +19,42 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    // Get all categories with optional keyword filter
+
+    // Get all categories
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER', 'EMPLOYER_STAFF')")
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories(
+    ) {
+        try {
+            List<Category> categories = categoryService.getAllCategories();
+
+            if (categories.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No categories found matching the criteria",
+                        categories
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved the list of categories",
+                    categories
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving categories: " + e.getMessage(),
+                    null
+            ));
+        }
+    }
+
+    // Get all categories with optional keyword filter
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse<Page<Category>>> getAllCategoriesWithPaginationAndFilter(
-            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
-            Pageable pageable // Thông tin phân trang và sắp xếp từ URL
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+            Pageable pageable
     ) {
         try {
             Page<Category> categories = categoryService.getCategoriesWithPaginationAndFilter(keyword, pageable);
@@ -29,24 +63,23 @@ public class CategoryController {
                 return ResponseEntity.ok(new ApiResponse<>(
                         "SUCCESS",
                         "No categories found matching the criteria",
-                        categories // Trả về đối tượng rỗng
+                        categories
                 ));
             }
 
             return ResponseEntity.ok(new ApiResponse<>(
                     "SUCCESS",
                     "Successfully retrieved the list of categories",
-                    categories // Trả về toàn bộ đối tượng Page
+                    categories
             ));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(
                     "ERROR",
                     "An error occurred while retrieving categories: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
+                    null
             ));
         }
     }
-
 
 
     // Get category by ID
@@ -71,6 +104,7 @@ public class CategoryController {
 
     // Create a new category
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Category>> createCategory(@RequestBody Category category) {
         if (category.getName() == null || category.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
@@ -90,6 +124,7 @@ public class CategoryController {
 
     // Update a category
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Category>> updateCategory(@PathVariable int id, @RequestBody Category category) {
         Category existingCategory = categoryService.getCategoryById(id);
 
@@ -112,6 +147,7 @@ public class CategoryController {
 
     // Delete a category
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable int id) {
         Category category = categoryService.getCategoryById(id);
 

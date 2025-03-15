@@ -20,12 +20,15 @@ public class Post {
     @Column(name = "description_Markdown", columnDefinition = "LONGTEXT")
     private String description_Markdown;
 
+    @Column(name = "amount", nullable = false)
+    private int amount;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PostStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "category_job_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToOne
@@ -33,19 +36,19 @@ public class Post {
     private Location location;
 
     @ManyToOne
-    @JoinColumn(name = "salary_job_id")
+    @JoinColumn(name = "salary_id")
     private Salary salary;
 
     @ManyToOne
-    @JoinColumn(name = "category_joblevel_id")
+    @JoinColumn(name = "joblevel_id")
     private JobLevel jobLevel;
 
     @ManyToOne
-    @JoinColumn(name = "category_worktype_id")
+    @JoinColumn(name = "worktype_id")
     private WorkType workType;
 
     @ManyToOne
-    @JoinColumn(name = "experience_job_id")
+    @JoinColumn(name = "experience_id")
     private Experience experience;
 
     @ManyToOne

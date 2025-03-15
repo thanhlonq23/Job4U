@@ -2,6 +2,7 @@ package com.nguyenlonq23.job4userver.service;
 
 import com.nguyenlonq23.job4userver.model.entity.Company;
 import com.nguyenlonq23.job4userver.model.enums.CompanyStatus;
+import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import com.nguyenlonq23.job4userver.repository.CompanyRepository;
 import com.nguyenlonq23.job4userver.util.UpdateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Lazy
@@ -30,6 +33,12 @@ public class CompanyService {
     public Company getCompanyById(int id) {
         return companyRepository.findById(id).orElse(null);
     }
+
+    public Optional<CompanyStatus> getCompanyStatus(int companyId) {
+        // Ví dụ: Tìm danh sách trạng thái từ một repository
+        return companyRepository.findStatusByCompanyId(companyId);
+    }
+
 
 
     // Tạo mới hoặc cập nhật company

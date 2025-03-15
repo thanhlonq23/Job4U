@@ -2,13 +2,18 @@ package com.nguyenlonq23.job4userver.controller;
 
 import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.model.entity.Company;
+import com.nguyenlonq23.job4userver.model.enums.CompanyStatus;
+import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import com.nguyenlonq23.job4userver.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -66,7 +71,45 @@ public class CompanyController {
         ));
     }
 
+    @GetMapping("/company-status")
+    public ResponseEntity<ApiResponse<Optional<CompanyStatus>>> getCompanyStatuses(
+            @RequestParam(value = "id") int id) {
+        try {
+            Company company = companyService.getCompanyById(id);
+            if (company == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                        "ERROR",
+                        "Company with ID: " + id + " not found",
+                        null
+                ));
+            }
+
+            Optional<CompanyStatus> statuses = companyService.getCompanyStatus(id);
+            if (statuses.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        "SUCCESS",
+                        "No statuses found for company with ID: " + id,
+                        statuses
+                ));
+            }
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved statuses for the company",
+                    statuses
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(
+                    "ERROR",
+                    "An error occurred while retrieving statuses: " + e.getMessage(),
+                    null
+            ));
+        }
+    }
+
+
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Company>> createCompany(@RequestBody Company company) {
         try {
             if (company.getName() == null || company.getName().isEmpty()) {
@@ -94,6 +137,7 @@ public class CompanyController {
 
     // Update a company
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Company>> updateCompany(@PathVariable int id, @RequestBody Company company) {
         Company existingCompany = companyService.getCompanyById(id);
 
@@ -116,6 +160,7 @@ public class CompanyController {
 
     // Delete a company
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteCompany(@PathVariable int id) {
         Company company = companyService.getCompanyById(id);
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -81,6 +82,7 @@ public class SkillController {
 
     // Create a new skill
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Skill>> createSkill(@RequestBody Skill skill) {
         if (skill.getName() == null || skill.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(
@@ -100,6 +102,7 @@ public class SkillController {
 
     // Update a skill
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Skill>> updateSkill(@PathVariable int id, @RequestBody Skill skill) {
         Skill existingSkill = skillService.getSkillById(id);
         if (existingSkill == null) {
@@ -121,6 +124,7 @@ public class SkillController {
 
     // Delete a skill
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteSkill(@PathVariable int id) {
         Skill existingSkill = skillService.getSkillById(id);
         if (existingSkill == null) {

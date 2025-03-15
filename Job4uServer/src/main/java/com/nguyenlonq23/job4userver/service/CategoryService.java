@@ -28,6 +28,10 @@ public class CategoryService {
         return categoryRepository.findAll(pageable);
     }
 
+    public List<Category> getAllCategories( ) {
+        return categoryRepository.findAll();
+    }
+
 
     // Lấy category theo ID
     public Category getCategoryById(int id) {

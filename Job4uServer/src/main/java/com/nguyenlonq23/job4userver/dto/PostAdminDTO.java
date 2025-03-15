@@ -9,7 +9,7 @@ import java.util.Date;
 public class PostAdminDTO {
     private int id;
     private String name;
-    private String userName;
+    private String jobType;
     private String conpanyName;
     private Date expirationDate;
     private PostStatus status;
@@ -17,12 +17,5 @@ public class PostAdminDTO {
     public PostAdminDTO() {
     }
 
-    public PostAdminDTO(int id, String name, String userName, String conpanyName, Date expirationDate, PostStatus status) {
-        this.id = id;
-        this.name = name;
-        this.userName = userName;
-        this.conpanyName = conpanyName;
-        this.expirationDate = expirationDate;
-        this.status = status;
-    }
+
 }

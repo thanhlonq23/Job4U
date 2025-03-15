@@ -18,6 +18,6 @@ public class RegisterRequest {
     private String address;
     private Date dob;
     private Gender gender;
-    private boolean isEmployer;  // true -> tuyển dụng, false -> người tìm việc
-    private String companyName;  // Chỉ cần thiết nếu isEmployer = true
+    private boolean isEmployer;
+    private String companyName;
 }

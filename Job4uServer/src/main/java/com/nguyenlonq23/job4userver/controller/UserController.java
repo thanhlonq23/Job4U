@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -67,6 +68,7 @@ public class UserController {
 
     // Update a user
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable int id, @RequestBody User user) {
         Optional<User> existingUserOptional = userService.getUserById(id);
 
@@ -105,6 +107,7 @@ public class UserController {
 
     // Delete a user
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteUserById(@PathVariable int id) {
         Optional<User> user = userService.getUserById(id);
 

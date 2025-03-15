@@ -1,4 +1,5 @@
 package com.nguyenlonq23.job4userver.service;
+
 import com.nguyenlonq23.job4userver.model.entity.Experience;
 import com.nguyenlonq23.job4userver.model.entity.JobLevel;
 import com.nguyenlonq23.job4userver.model.entity.WorkType;
@@ -11,11 +12,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Lazy
 @Service
 public class JobLevelService {
-    @Autowired
     private JobLevelRepository jobLevelRepository;
+
+    @Autowired
+    public JobLevelService(JobLevelRepository jobLevelRepository) {
+        this.jobLevelRepository = jobLevelRepository;
+    }
+
+    public List<JobLevel> getAllJobLevels() {
+        return jobLevelRepository.findAll();
+    }
 
     // Lấy tất cả job levels
     public Page<JobLevel> getJobLevels(String keyword, Pageable pageable) {
