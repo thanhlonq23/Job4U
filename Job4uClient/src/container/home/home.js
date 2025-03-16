@@ -74,7 +74,7 @@ const Home = () => {
                       <div class="input-form">
                         <input
                           type="text"
-                          placeholder="Job Tittle or keyword"
+                          placeholder="Nhập từ khóa tìm kiếm"
                         />
                       </div>
                       <div class="select-form">
@@ -91,7 +91,7 @@ const Home = () => {
                         </div>
                       </div>
                       <div class="search-form">
-                        <a href="#">Find job</a>
+                        <a href="#">Tìm kiếm</a>
                       </div>
                     </form>
                   </div>

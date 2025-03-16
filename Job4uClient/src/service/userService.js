@@ -24,12 +24,21 @@ const createNewUser = (data) => {
   return axios.post(`/api/create-new-user`, data);
 };
 
-const updateUserService = (id, data) => {
-  return axios.put(`/api/users/${id}`, data);
+const updateUserService = (id, companyId) => {
+  return axios.put(`/api/users/update-company`, null, {
+    params: {
+      userId: id,
+      companyId: companyId,
+    },
+  });
 };
 
 const deleteUserService = (id) => {
   return axios.delete(`/api/users/${id}`);
+};
+
+const getDetailPostByIdService = (id) => {
+  return axios.get(`/api/posts/get-post-detail?id=${id}`);
 };
 
 export {
@@ -39,4 +48,5 @@ export {
   updateUserService,
   deleteUserService,
   getCompanyIdByIdService,
+  getDetailPostByIdService,
 };

@@ -11,6 +11,8 @@ import {
   createCompanyService,
   getCompanyByIdService,
 } from "../../../service/CompanyService";
+
+import { updateUserService } from "../../../service/UserService";
 import MDEditor from "@uiw/react-md-editor";
 
 const AddCompany = () => {
@@ -132,10 +134,34 @@ const AddCompany = () => {
         ? await createCompanyService(payload)
         : await updateCompanyService(id, payload);
 
-      if (response?.errCode === 0) {
+      if (response?.status === "SUCCESS") {
         toast.success(
           isActionAdd ? "Tạo công ty thành công" : "Cập nhật công ty thành công"
         );
+
+        // Lấy ID công ty từ response
+        const companyId = response.data.id;
+
+        // Lấy ID của user hiện tại từ localStorage hoặc redux state
+        const userInfo = JSON.parse(localStorage.getItem("userInfo")); // Hoặc từ Redux state
+        if (userInfo && companyId) {
+          const userUpdateResponse = await updateUserService(
+            userInfo.userId,
+            companyId
+          );
+
+          if (userUpdateResponse?.status === "SUCCESS") {
+            // Cập nhật localStorage
+            const updatedUserInfo = {
+              ...userInfo,
+              companyId,
+            };
+            localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+
+            // Reload lại toàn bộ trang web
+            window.location.reload();
+          }
+        }
 
         if (isActionAdd) {
           setInputValues({

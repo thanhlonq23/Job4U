@@ -4,6 +4,8 @@ import Home from "./container/home/home";
 import JobPage from "./container/JobPage/JobPage";
 import Header from "./container/header/header";
 import Footer from "./container/footer/Footer";
+import JobDetail from "./container/JobDetail/JobDetail";
+
 import HomeAdmin, { adminRoutes } from "./container/system/HomeAdmin";
 
 function App() {
@@ -29,6 +31,18 @@ function App() {
             <>
               <Header />
               <JobPage />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* Route cho trang Job */}
+        <Route
+          path="/detail-job/:id"
+          element={
+            <>
+              <Header />
+              <JobDetail />
               <Footer />
             </>
           }
