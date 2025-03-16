@@ -39,16 +39,31 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource())) // Sử dụng cấu hình CORS
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/posts").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-                        .requestMatchers("/api/categories").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-                        .requestMatchers("/api/experiences").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-                        .requestMatchers("/api/job-levels").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-                        .requestMatchers("/api/salaries").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-                        .requestMatchers("/api/skills").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-                        .requestMatchers("/api/work-types").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/posts/get-post-detail",
+                                "/api/posts/search",
+                                "/api/categories",
+                                "/api/locations",
+                                "/api/salaries",
+                                "/api/job-levels",
+                                "/api/work-types",
+                                "/api/experiences"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
+
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/auth/**").permitAll()
+//                        .requestMatchers("/api/posts").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+//                        .requestMatchers("/api/categories").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+//                        .requestMatchers("/api/experiences").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+//                        .requestMatchers("/api/job-levels").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+//                        .requestMatchers("/api/salaries").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+//                        .requestMatchers("/api/skills").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+//                        .requestMatchers("/api/work-types").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
+//                        .anyRequest().authenticated()
+//                )
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setContentType("application/json;charset=UTF-8");
@@ -57,8 +72,8 @@ public class SecurityConfig {
                         })
                 )
                 .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

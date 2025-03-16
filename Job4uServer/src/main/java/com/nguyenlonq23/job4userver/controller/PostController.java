@@ -1,9 +1,6 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.dto.PostAdminPageDTO;
-import com.nguyenlonq23.job4userver.dto.PostDTO;
-import com.nguyenlonq23.job4userver.dto.PostDetailDTO;
-import com.nguyenlonq23.job4userver.dto.PostEmployerPageDTO;
+import com.nguyenlonq23.job4userver.dto.*;
 import com.nguyenlonq23.job4userver.model.entity.Post;
 import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.model.enums.PostStatus;
@@ -34,6 +31,7 @@ public class PostController {
 
     // Get all posts with pagination
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<PostAdminPageDTO>>> getAllPosts(
             @RequestParam(value = "status", required = false) String status,
             Pageable pageable
@@ -204,6 +202,40 @@ public class PostController {
         )));
     }
 
+    // Get post detail
+    @GetMapping("/get-post-detail")
+    public ResponseEntity<ApiResponse<PostDetailPageDTO>> getPostDetailById(@RequestParam Integer id) {
+        try {
+            if (id == null || id <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse<>(
+                        "ERROR",
+                        "Invalid post ID",
+                        null
+                ));
+            }
+
+            PostDetailPageDTO post = postService.getPostDetailById(id);
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    "SUCCESS",
+                    "Successfully retrieved post information",
+                    post
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    "ERROR",
+                    e.getMessage(),
+                    null
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(
+                    "ERROR",
+                    "An unexpected error occurred: " + e.getMessage(),
+                    null
+            ));
+        }
+    }
+
     // Get posts by user ID
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<Post>>> getPostsByUserId(@PathVariable int userId) {
@@ -226,32 +258,6 @@ public class PostController {
         return ResponseEntity.ok(new ApiResponse<>(
                 "SUCCESS",
                 "Successfully retrieved posts by company ID",
-                posts
-        ));
-    }
-
-    // Get posts by category ID
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<ApiResponse<List<Post>>> getPostsByCategoryId(@PathVariable int categoryId) {
-        List<Post> posts = postService.getPostsByCategoryId(categoryId);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved posts by category ID",
-                posts
-        ));
-    }
-
-    // Get posts by status with pagination
-    @GetMapping("/status/{status}")
-    public ResponseEntity<ApiResponse<Page<Post>>> getPostsByStatus(
-            @PathVariable PostStatus status,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
-    ) {
-        Page<Post> posts = postService.getPostsByStatus(status, page, size);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved posts by status",
                 posts
         ));
     }

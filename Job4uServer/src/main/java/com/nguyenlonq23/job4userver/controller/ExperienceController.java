@@ -21,7 +21,6 @@ public class ExperienceController {
 
     // Get all experiences
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER', 'EMPLOYER_STAFF')")
     public ResponseEntity<ApiResponse<List<Experience>>> getAllExperience() {
         try {
             List<Experience> experiences = experienceService.getAllExperiences();

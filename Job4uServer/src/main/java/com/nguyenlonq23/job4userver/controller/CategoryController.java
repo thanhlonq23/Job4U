@@ -22,7 +22,6 @@ public class CategoryController {
 
     // Get all categories
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER', 'EMPLOYER_STAFF')")
     public ResponseEntity<ApiResponse<List<Category>>> getAllCategories(
     ) {
         try {

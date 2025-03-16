@@ -109,7 +109,7 @@ public class CompanyController {
 
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER')")
     public ResponseEntity<ApiResponse<Company>> createCompany(@RequestBody Company company) {
         try {
             if (company.getName() == null || company.getName().isEmpty()) {
@@ -137,7 +137,7 @@ public class CompanyController {
 
     // Update a company
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER')")
     public ResponseEntity<ApiResponse<Company>> updateCompany(@PathVariable int id, @RequestBody Company company) {
         Company existingCompany = companyService.getCompanyById(id);
 

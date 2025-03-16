@@ -22,15 +22,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findByUserId(int userId);
 
-    List<Post> findByCompanyId(int companyId);
-
-    List<Post> findByCategoryId(int categoryId);
-
-    List<Post> findByStatus(PostStatus status);
-
     Page<Post> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
-
-    Page<Post> findByStatus(PostStatus status, Pageable pageable);
 
     Page<Post> findByCompanyId(int companyId, Pageable pageable);
 

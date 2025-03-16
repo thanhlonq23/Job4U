@@ -1,6 +1,8 @@
 package com.nguyenlonq23.job4userver.service;
 
+import com.nguyenlonq23.job4userver.model.entity.Company;
 import com.nguyenlonq23.job4userver.model.entity.User;
+import com.nguyenlonq23.job4userver.repository.CompanyRepository;
 import com.nguyenlonq23.job4userver.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -9,11 +11,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
 @Lazy
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
 
 
     // Lấy tất cả categories kèm phân trang và từ khóa tìm kiếm,sort
@@ -50,6 +55,19 @@ public class UserService {
         return userRepository.save(currentUser);
     }
 
+    public User updateCompanyForUser(int userId, int companyId) {
+        // Tìm User
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        // Tìm Company
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + companyId));
+
+        // Cập nhật Company
+        user.setCompany(company);
+        return userRepository.save(user);
+    }
 
     // Xóa user theo ID
     public void deleteUser(int id) {
@@ -57,7 +75,7 @@ public class UserService {
     }
 
     public Optional<Integer> getCompanyIdByUserId(int id) {
-       return userRepository.getCompanyIdByUserId(id);
+        return userRepository.getCompanyIdByUserId(id);
     }
 
     // Lấy user theo ID
