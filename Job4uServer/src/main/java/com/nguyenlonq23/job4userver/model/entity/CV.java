@@ -22,7 +22,7 @@ public class CV {
     private Post post;
 
     @Lob
-    @Column(name = "file")
+    @Column(name = "file", columnDefinition = "MEDIUMBLOB")
     private byte[] file;
 
     @Column(name = "description")
@@ -36,16 +36,4 @@ public class CV {
 
     @Column(name = "updatedAt", nullable = false)
     private Date updatedAt;
-
-    public CV() {
-    }
-
-    public CV(User user, Post post, byte[] file, String description, Date createdAt, Date updatedAt) {
-        this.user = user;
-        this.post = post;
-        this.file = file;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 }

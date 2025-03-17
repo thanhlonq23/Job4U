@@ -87,6 +87,7 @@ public class UserController {
         user.setFirst_name(Optional.ofNullable(user.getFirst_name()).orElse(existingUser.getFirst_name()));
         user.setLast_name(Optional.ofNullable(user.getLast_name()).orElse(existingUser.getLast_name()));
         user.setAddress(Optional.ofNullable(user.getAddress()).orElse(existingUser.getAddress()));
+        user.setEmail(Optional.ofNullable(user.getEmail()).orElse(existingUser.getEmail()));
         user.setPassword(Optional.ofNullable(user.getPassword()).orElse(existingUser.getPassword()));
         user.setDob(Optional.ofNullable(user.getDob()).orElse(existingUser.getDob()));
         user.setGender(Optional.ofNullable(user.getGender()).orElse(existingUser.getGender()));
@@ -103,6 +104,17 @@ public class UserController {
                 updatedUser
         ));
     }
+
+    @PutMapping("/update-company")
+    @PreAuthorize("hasRole('EMPLOYER_OWNER')")
+    public ResponseEntity<User> updateUserCompany(
+            @RequestParam int userId,
+            @RequestParam int companyId
+    ) {
+        User updatedUser = userService.updateCompanyForUser(userId, companyId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 
 
     // Delete a user
