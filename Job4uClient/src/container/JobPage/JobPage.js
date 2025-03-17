@@ -200,7 +200,7 @@ const JobPage = () => {
                     const [sort, dir] = sortOption.split("_");
                     setSortBy(sort);
                     setDirection(dir);
-                    handleSearch();
+                    // handleSearch();
                   }}
                   currentSort={`${sortBy}_${direction}`}
                 />

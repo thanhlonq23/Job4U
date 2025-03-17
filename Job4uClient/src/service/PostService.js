@@ -52,12 +52,13 @@ const searchPostService = ({
     params: {
       page,
       size,
-      keyword,
+      keyword: keyword || undefined,
       categoryId: categoryId || undefined, // Nếu rỗng thì gửi undefined
       locationId: locationId || undefined,
       workTypeIds: workTypeIds.length > 0 ? workTypeIds.join(",") : undefined,
       jobLevelIds: jobLevelIds.length > 0 ? jobLevelIds.join(",") : undefined,
-      experienceIds: experienceIds.length > 0 ? experienceIds.join(",") : undefined,
+      experienceIds:
+        experienceIds.length > 0 ? experienceIds.join(",") : undefined,
       salaryIds: salaryIds.length > 0 ? salaryIds.join(",") : undefined,
       sortBy,
       direction,

@@ -31,6 +31,16 @@ const LeftBar = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Thêm state local để theo dõi giá trị được chọn
+  const [localCategory, setLocalCategory] = useState(selectedCategory || "");
+  const [localLocation, setLocalLocation] = useState(selectedLocation || "");
+
+  // Cập nhật state local khi prop thay đổi
+  useEffect(() => {
+    setLocalCategory(selectedCategory || "");
+    setLocalLocation(selectedLocation || "");
+  }, [selectedCategory, selectedLocation]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -102,7 +112,106 @@ const LeftBar = ({
     fetchData();
   }, []);
 
+  // Xử lý thay đổi lĩnh vực
+  const handleCategoryChange = (e) => {
+    const value = e.target.value;
+    setLocalCategory(value);
+    recieveJobType(value);
+  };
+
+  // Xử lý thay đổi vị trí
+  const handleLocationChange = (e) => {
+    const value = e.target.value;
+    setLocalLocation(value);
+    recieveLocation(value);
+  };
+
+  // Xử lý worktype
+  const handleWorkTypeChange = (id) => {
+    if (!selectedWorkTypes) {
+      worktype([id]);
+      return;
+    }
+
+    const isSelected =
+      selectedWorkTypes.includes(id) ||
+      selectedWorkTypes.includes(id.toString());
+
+    if (isSelected) {
+      const updatedTypes = selectedWorkTypes.filter(
+        (item) => item !== id && item !== id.toString()
+      );
+      worktype(updatedTypes);
+    } else {
+      worktype([...selectedWorkTypes, id]);
+    }
+  };
+
+  // Xử lý experience
+  const handleExperienceChange = (id) => {
+    if (!selectedExperiences) {
+      recieveExp([id]);
+      return;
+    }
+
+    const isSelected =
+      selectedExperiences.includes(id) ||
+      selectedExperiences.includes(id.toString());
+
+    if (isSelected) {
+      const updatedExps = selectedExperiences.filter(
+        (item) => item !== id && item !== id.toString()
+      );
+      recieveExp(updatedExps);
+    } else {
+      recieveExp([...selectedExperiences, id]);
+    }
+  };
+
+  // Xử lý job level
+  const handleJobLevelChange = (id) => {
+    if (!selectedJobLevels) {
+      recieveJobLevel([id]);
+      return;
+    }
+
+    const isSelected =
+      selectedJobLevels.includes(id) ||
+      selectedJobLevels.includes(id.toString());
+
+    if (isSelected) {
+      const updatedLevels = selectedJobLevels.filter(
+        (item) => item !== id && item !== id.toString()
+      );
+      recieveJobLevel(updatedLevels);
+    } else {
+      recieveJobLevel([...selectedJobLevels, id]);
+    }
+  };
+
+  // Xử lý salary
+  const handleSalaryChange = (id) => {
+    if (!selectedSalaries) {
+      recieveSalary([id]);
+      return;
+    }
+
+    const isSelected =
+      selectedSalaries.includes(id) || selectedSalaries.includes(id.toString());
+
+    if (isSelected) {
+      const updatedSalaries = selectedSalaries.filter(
+        (item) => item !== id && item !== id.toString()
+      );
+      recieveSalary(updatedSalaries);
+    } else {
+      recieveSalary([...selectedSalaries, id]);
+    }
+  };
+
   const resetFilters = () => {
+    setLocalCategory("");
+    setLocalLocation("");
     recieveJobType("");
     recieveLocation("");
     recieveJobLevel([]);
@@ -136,6 +245,18 @@ const LeftBar = ({
     );
   }
 
+  // Tìm tên của lĩnh vực đã chọn
+  const selectedCategoryName = localCategory
+    ? categories.find((c) => c.id.toString() === localCategory.toString())
+        ?.name || "Đang chọn..."
+    : "Tất cả";
+
+  // Tìm tên của vị trí đã chọn
+  const selectedLocationName = localLocation
+    ? locations.find((l) => l.id.toString() === localLocation.toString())
+        ?.name || "Đang chọn..."
+    : "Tất cả";
+
   return (
     <>
       <div className="job-category-listing mb-50">
@@ -144,24 +265,52 @@ const LeftBar = ({
           <div className="small-section-tittle2">
             <h4>Lĩnh vực</h4>
           </div>
-          {/* <!-- Select job items start --> */}
-          <div className="select-job-items2">
-            <select
-              name="select"
-              value={selectedCategory || ""}
-              onChange={(e) => recieveJobType(e.target.value)}
-              className="form-control"
-            >
-              <option value="">Tất cả</option>
-              {Array.isArray(categories) &&
-                categories.map((category) => (
-                  <option value={category.id} key={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-            </select>
+          {/* <!-- Custom dropdown start --> */}
+          <div className="custom-dropdown mb-4">
+            <div className="">
+              <button
+                className="btn btn-light dropdown-toggle w-100 d-flex justify-content-between align-items-center"
+                type="button"
+                id="dropdownCategoryButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {selectedCategoryName}
+              </button>
+              <div
+                className="dropdown-menu w-100"
+                aria-labelledby="dropdownCategoryButton"
+              >
+                <button
+                  className={`dropdown-item ${!localCategory ? "active" : ""}`}
+                  onClick={() => {
+                    setLocalCategory("");
+                    recieveJobType("");
+                  }}
+                >
+                  Tất cả
+                </button>
+                {Array.isArray(categories) &&
+                  categories.map((category) => (
+                    <button
+                      className={`dropdown-item ${
+                        localCategory === category.id.toString() ? "active" : ""
+                      }`}
+                      key={category.id}
+                      onClick={() => {
+                        setLocalCategory(category.id.toString());
+                        recieveJobType(category.id.toString());
+                      }}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+              </div>
+            </div>
           </div>
-          {/* <!--  Select job items End--> */}
+          {/* <!-- Custom dropdown end --> */}
+
           {/* <!-- select-Categories start --> */}
           <div className="select-Categories pt-80 pb-50">
             <div className="small-section-tittle2">
@@ -173,11 +322,11 @@ const LeftBar = ({
                   {workType.name}
                   <input
                     type="checkbox"
-                    value={workType.id}
-                    checked={selectedWorkTypes?.includes(
-                      workType.id.toString()
+                    checked={selectedWorkTypes?.some(
+                      (item) =>
+                        item === workType.id || item === workType.id.toString()
                     )}
-                    onChange={(e) => worktype(e.target.value)}
+                    onChange={() => handleWorkTypeChange(workType.id)}
                   />
                   <span className="checkmark"></span>
                 </label>
@@ -190,24 +339,52 @@ const LeftBar = ({
           <div className="small-section-tittle2">
             <h4>Vị trí</h4>
           </div>
-          {/* <!-- Select job items start --> */}
-          <div className="select-job-items2">
-            <select
-              name="select"
-              value={selectedLocation || ""}
-              onChange={(e) => recieveLocation(e.target.value)}
-              className="form-control"
-            >
-              <option value="">Tất cả</option>
-              {Array.isArray(locations) &&
-                locations.map((location) => (
-                  <option value={location.id} key={location.id}>
-                    {location.name}
-                  </option>
-                ))}
-            </select>
+          {/* <!-- Custom dropdown start --> */}
+          <div className="custom-dropdown mb-4">
+            <div className="">
+              <button
+                className="btn btn-light dropdown-toggle w-100 d-flex justify-content-between align-items-center"
+                type="button"
+                id="dropdownLocationButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {selectedLocationName}
+              </button>
+              <div
+                className="dropdown-menu w-100"
+                aria-labelledby="dropdownLocationButton"
+              >
+                <button
+                  className={`dropdown-item ${!localLocation ? "active" : ""}`}
+                  onClick={() => {
+                    setLocalLocation("");
+                    recieveLocation("");
+                  }}
+                >
+                  Tất cả
+                </button>
+                {Array.isArray(locations) &&
+                  locations.map((location) => (
+                    <button
+                      className={`dropdown-item ${
+                        localLocation === location.id.toString() ? "active" : ""
+                      }`}
+                      key={location.id}
+                      onClick={() => {
+                        setLocalLocation(location.id.toString());
+                        recieveLocation(location.id.toString());
+                      }}
+                    >
+                      {location.name}
+                    </button>
+                  ))}
+              </div>
+            </div>
           </div>
-          {/* <!--  Select job items End--> */}
+          {/* <!-- Custom dropdown end --> */}
+
           {/* <!-- select-Categories start --> */}
           <div className="select-Categories pt-80 pb-50">
             <div className="small-section-tittle2">
@@ -219,11 +396,12 @@ const LeftBar = ({
                   {experience.name}
                   <input
                     type="checkbox"
-                    value={experience.id}
-                    checked={selectedExperiences?.includes(
-                      experience.id.toString()
+                    checked={selectedExperiences?.some(
+                      (item) =>
+                        item === experience.id ||
+                        item === experience.id.toString()
                     )}
-                    onChange={(e) => recieveExp(e.target.value)}
+                    onChange={() => handleExperienceChange(experience.id)}
                   />
                   <span className="checkmark"></span>
                 </label>
@@ -244,11 +422,11 @@ const LeftBar = ({
                   {jobLevel.name}
                   <input
                     type="checkbox"
-                    value={jobLevel.id}
-                    checked={selectedJobLevels?.includes(
-                      jobLevel.id.toString()
+                    checked={selectedJobLevels?.some(
+                      (item) =>
+                        item === jobLevel.id || item === jobLevel.id.toString()
                     )}
-                    onChange={(e) => recieveJobLevel(e.target.value)}
+                    onChange={() => handleJobLevelChange(jobLevel.id)}
                   />
                   <span className="checkmark"></span>
                 </label>
@@ -268,9 +446,11 @@ const LeftBar = ({
                   {salary.name}
                   <input
                     type="checkbox"
-                    value={salary.id}
-                    checked={selectedSalaries?.includes(salary.id.toString())}
-                    onChange={(e) => recieveSalary(e.target.value)}
+                    checked={selectedSalaries?.some(
+                      (item) =>
+                        item === salary.id || item === salary.id.toString()
+                    )}
+                    onChange={() => handleSalaryChange(salary.id)}
                   />
                   <span className="checkmark"></span>
                 </label>

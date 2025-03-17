@@ -70,7 +70,7 @@ const UpdatePostStatus = () => {
                     className="form-control"
                     disabled={!dataReady || isLoading}
                   >
-                    {/* <option value="PENDING">Chờ duyệt</option> */}
+                    <option value="">Xét duyệt</option>
                     <option value="ACTIVE">Hoạt động</option>
                     {/* <option value="EXPIRED">Hết hạn</option> */}
                     <option value="REJECTED">Từ chối</option>

@@ -30,7 +30,7 @@ const JobDetail = () => {
     const expirationDate = new Date(dataPost.expirationDate);
 
     if (expirationDate > currentDate) {
-      const userData = JSON.parse(localStorage.getItem("userData"));
+      const userData = JSON.parse(localStorage.getItem("userInfo"));
       if (userData) setActiveModal(true);
       else toast.error("Xin hãy đăng nhập để có thể thực hiện nộp CV");
     } else toast.error("Hạn ứng tuyển đã hết");

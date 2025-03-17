@@ -21,16 +21,10 @@ const RightContent = ({ count, post, loading, onSortChange, currentSort }) => {
                     onChange={(e) => onSortChange(e.target.value)}
                     className="form-control form-control-sm d-inline-block w-auto ml-2"
                   >
-                    <option value="createdAt_desc">Mới nhất</option>
-                    <option value="createdAt_asc">Cũ nhất</option>
+                    <option value="createdAt_asc">Mới nhất</option>
+                    <option value="createdAt_desc">Cũ nhất</option>
                     <option value="name_asc">Tên A-Z</option>
                     <option value="name_desc">Tên Z-A</option>
-                    <option value="expirationDate_asc">
-                      Ngày hết hạn (gần nhất)
-                    </option>
-                    <option value="expirationDate_desc">
-                      Ngày hết hạn (xa nhất)
-                    </option>
                   </select>
                 </div>
                 {/* <!--  Select job items End--> */}

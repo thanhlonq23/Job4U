@@ -15,6 +15,16 @@ const getAllUserService = ({ keyword = "", page = 0, size = 10 }) => {
 const getUserByIdService = (id) => {
   return axios.get(`/api/users/${id}`);
 };
+//fdfsdfsd
+const getDetailUserById = (id) => {
+  return axios.get(`/api/users/${id}`);
+};
+
+const UpdateUserService = (id) => {
+  return axios.get(`/api/users/${id}`);
+};
+
+//fdsfsdfdsfsd
 
 const getCompanyIdByIdService = (id) => {
   return axios.get(`/api/users/get-company-id/${id}`);
@@ -49,4 +59,7 @@ export {
   deleteUserService,
   getCompanyIdByIdService,
   getDetailPostByIdService,
+  //dsadas
+  UpdateUserService,
+  getDetailUserById,
 };
