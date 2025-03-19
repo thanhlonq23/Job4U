@@ -12,9 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,105 +26,50 @@ public class CVController {
         this.cvService = cvService;
     }
 
-    // Lấy danh sách CV theo postId không phân trang
+    // Get a list of CVInfoDTO by post ID
     @GetMapping("/post/{postId}")
     public ResponseEntity<ApiResponse<List<CVInfoDTO>>> getCVInfoByPostId(@PathVariable("postId") Integer postId) {
         List<CVInfoDTO> cvInfoList = cvService.getCVInfoByPostId(postId);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved CV list for post",
-                cvInfoList
-        ));
+        return buildResponse("SUCCESS", "Successfully retrieved CV list for post", cvInfoList, HttpStatus.OK);
     }
 
-    // Lấy danh sách CV theo postId với phân trang và lọc
+    // Get a paginated list of CVInfoDTO with optional filtering
     @GetMapping("/page")
     public ResponseEntity<ApiResponse<Page<CVInfoDTO>>> getCVInfoWithPaginationAndFilter(
             @RequestParam(value = "postId", required = true) Integer postId,
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             Pageable pageable
     ) {
-        try {
-            Page<CVInfoDTO> cvInfoPage = cvService.getCVInfoWithPaginationAndFilter(postId, keyword, pageable);
-
-            if (cvInfoPage.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No CVs found matching the criteria",
-                        cvInfoPage
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of CVs",
-                    cvInfoPage
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving CVs: " + e.getMessage(),
-                    null
-            ));
-        }
+        Page<CVInfoDTO> cvInfoPage = cvService.getCVInfoWithPaginationAndFilter(postId, keyword, pageable);
+        String message = cvInfoPage.isEmpty() ? "No CVs found matching the criteria" : "Successfully retrieved the list of CVs";
+        return buildResponse("SUCCESS", message, cvInfoPage, HttpStatus.OK);
     }
 
+    // Get a paginated list of CVCandidateDTO by user ID
     @GetMapping("/get-all-cv-by-userId")
     public ResponseEntity<ApiResponse<Page<CVCandidateDTO>>> getAllCVsByUserId(
             @RequestParam Integer userId,
             Pageable pageable) {
-        try {
-            if (userId == null || userId <= 0) {
-                return ResponseEntity.badRequest().body(new ApiResponse<>(
-                        "ERROR",
-                        "Invalid userId",
-                        null
-                ));
-            }
-
-            Page<CVCandidateDTO> cvPage = cvService.getAllCVsByUserId(userId, pageable);
-
-            if (cvPage.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No CVs found for this user",
-                        cvPage
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved CVs for userId: " + userId,
-                    cvPage
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving CVs: " + e.getMessage(),
-                    null
-            ));
+        if (userId == null || userId <= 0) {
+            return buildResponse("ERROR", "Invalid userId", null, HttpStatus.BAD_REQUEST);
         }
+
+        Page<CVCandidateDTO> cvPage = cvService.getAllCVsByUserId(userId, pageable);
+        String message = cvPage.isEmpty() ? "No CVs found for this user" : "Successfully retrieved CVs for userId: " + userId;
+        return buildResponse("SUCCESS", message, cvPage, HttpStatus.OK);
     }
 
+    // Get detailed information of a CV by its ID
     @GetMapping("/get-detail-cv-by-id")
     public ResponseEntity<ApiResponse<CVDetailDTO>> getDetailCVById(@RequestParam int id) {
         CVDetailDTO cvDetail = cvService.getCVDetailById(id);
-
         if (cvDetail == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "CV with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "CV with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
-
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the CV details",
-                cvDetail
-        ));
+        return buildResponse("SUCCESS", "Successfully retrieved the CV details", cvDetail, HttpStatus.OK);
     }
 
+    // Create a new CV
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<CV>> createCV(
             @RequestParam("userId") Integer userId,
@@ -134,53 +77,22 @@ public class CVController {
             @RequestParam("file") String file,
             @RequestParam(value = "description", required = false) String description) {
 
-        // Kiểm tra các tham số bắt buộc
-        if (userId == null) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    "User ID cannot be empty",
-                    null
-            ));
-        }
-
-        if (postId == null) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    "Post ID cannot be empty",
-                    null
-            ));
-        }
-
-        if (file == null || file.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    "CV file cannot be empty",
-                    null
-            ));
+        if (userId == null || postId == null || file == null || file.isEmpty()) {
+            return buildResponse("ERROR", "Missing required parameters", null, HttpStatus.BAD_REQUEST);
         }
 
         try {
-            CV cv = new CV();
-
-            CV savedCV = cvService.saveCV(cv, userId, postId, file, description);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully created the CV",
-                    savedCV
-            ));
+            CV savedCV = cvService.saveCV(new CV(), userId, postId, file, description);
+            return buildResponse("SUCCESS", "Successfully created the CV", savedCV, HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    e.getMessage(),
-                    null
-            ));
+            return buildResponse("ERROR", e.getMessage(), null, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(
-                    "ERROR",
-                    "Failed to process CV: " + e.getMessage(),
-                    null
-            ));
+            return buildResponse("ERROR", "Failed to process CV: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // Build a ResponseEntity for API responses
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
     }
 }

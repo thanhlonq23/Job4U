@@ -16,36 +16,24 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
+
     @Autowired
     private CategoryService categoryService;
 
+    // Generic method for building responses
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
+    }
 
     // Get all categories
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories(
-    ) {
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
         try {
             List<Category> categories = categoryService.getAllCategories();
-
-            if (categories.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No categories found matching the criteria",
-                        categories
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of categories",
-                    categories
-            ));
+            String message = categories.isEmpty() ? "No categories found matching the criteria" : "Successfully retrieved the list of categories";
+            return buildResponse("SUCCESS", message, categories, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving categories: " + e.getMessage(),
-                    null
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving categories: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -57,48 +45,21 @@ public class CategoryController {
     ) {
         try {
             Page<Category> categories = categoryService.getCategoriesWithPaginationAndFilter(keyword, pageable);
-
-            if (categories.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No categories found matching the criteria",
-                        categories
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of categories",
-                    categories
-            ));
+            String message = categories.isEmpty() ? "No categories found matching the criteria" : "Successfully retrieved the list of categories";
+            return buildResponse("SUCCESS", message, categories, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving categories: " + e.getMessage(),
-                    null
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving categories: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     // Get category by ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Category>> getCategoryById(@PathVariable int id) {
         Category category = categoryService.getCategoryById(id);
-
         if (category == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Category with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "Category with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
-
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the category",
-                category
-        ));
+        return buildResponse("SUCCESS", "Successfully retrieved the category", category, HttpStatus.OK);
     }
 
     // Create a new category
@@ -106,63 +67,32 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Category>> createCategory(@RequestBody Category category) {
         if (category.getName() == null || category.getName().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    "Category name cannot be empty",
-                    null
-            ));
+            return buildResponse("ERROR", "Category name cannot be empty", null, HttpStatus.BAD_REQUEST);
         }
-
         Category savedCategory = categoryService.saveCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully created the category",
-                savedCategory
-        ));
+        return buildResponse("SUCCESS", "Successfully created the category", savedCategory, HttpStatus.CREATED);
     }
 
     // Update a category
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Category>> updateCategory(@PathVariable int id, @RequestBody Category category) {
-        Category existingCategory = categoryService.getCategoryById(id);
-
-        if (existingCategory == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Category with ID: " + id + " not found",
-                    null
-            ));
+        if (categoryService.getCategoryById(id) == null) {
+            return buildResponse("ERROR", "Category with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
-
         category.setId(id);
         Category updatedCategory = categoryService.saveCategory(category);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully updated the category",
-                updatedCategory
-        ));
+        return buildResponse("SUCCESS", "Successfully updated the category", updatedCategory, HttpStatus.OK);
     }
 
     // Delete a category
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable int id) {
-        Category category = categoryService.getCategoryById(id);
-
-        if (category == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Category with ID: " + id + " not found",
-                    null
-            ));
+        if (categoryService.getCategoryById(id) == null) {
+            return buildResponse("ERROR", "Category with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
-
         categoryService.deleteCategory(id);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully deleted the category",
-                null
-        ));
+        return buildResponse("SUCCESS", "Successfully deleted the category", null, HttpStatus.OK);
     }
 }

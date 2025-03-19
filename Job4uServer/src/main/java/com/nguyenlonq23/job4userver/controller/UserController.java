@@ -16,145 +16,92 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
 
-    // Get all users with optional keyword filter
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping
     public ResponseEntity<ApiResponse<Page<User>>> getAllUsersWithPaginationAndFilter(
-            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
-            Pageable pageable
-    ) {
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+            Pageable pageable) {
         try {
             Page<User> users = userService.getUsersWithPaginationAndFilter(keyword, pageable);
-
-            if (users.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No users found matching the criteria",
-                        users
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of users",
-                    users
-            ));
+            String message = users.isEmpty() ? "No users found matching the criteria." : "Successfully retrieved the list of users.";
+            return buildResponse("SUCCESS", message, users, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving users: " + e.getMessage(),
-                    null
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving users: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Get user by ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable int id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(value -> ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the user",
-                value
-        ))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                "ERROR",
-                "User with ID: " + id + " not found",
-                null
-        )));
+        return userService.getUserById(id)
+                .map(user -> buildResponse("SUCCESS", "Successfully retrieved the user.", user, HttpStatus.OK))
+                .orElse(buildResponse("ERROR", "User with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND));
     }
 
-
-    // Update a user
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable int id, @RequestBody User user) {
-        Optional<User> existingUserOptional = userService.getUserById(id);
-
-        if (existingUserOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "User with ID: " + id + " not found",
-                    null
-            ));
-        }
-
-        User existingUser = existingUserOptional.get();
-
-        // Kiểm tra và sao chép giá trị nếu trường trong `user` là null
-        user.setId(id); // Đảm bảo ID được gán đúng
-        user.setFirst_name(Optional.ofNullable(user.getFirst_name()).orElse(existingUser.getFirst_name()));
-        user.setLast_name(Optional.ofNullable(user.getLast_name()).orElse(existingUser.getLast_name()));
-        user.setAddress(Optional.ofNullable(user.getAddress()).orElse(existingUser.getAddress()));
-        user.setEmail(Optional.ofNullable(user.getEmail()).orElse(existingUser.getEmail()));
-        user.setPassword(Optional.ofNullable(user.getPassword()).orElse(existingUser.getPassword()));
-        user.setDob(Optional.ofNullable(user.getDob()).orElse(existingUser.getDob()));
-        user.setGender(Optional.ofNullable(user.getGender()).orElse(existingUser.getGender()));
-        user.setRole(Optional.ofNullable(user.getRole()).orElse(existingUser.getRole()));
-        user.setStatus(Optional.ofNullable(user.getStatus()).orElse(existingUser.getStatus()));
-        user.setCompany(Optional.ofNullable(user.getCompany()).orElse(existingUser.getCompany()));
-
-        // Lưu user đã cập nhật
-        User updatedUser = userService.saveUser(user);
-
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully updated the user",
-                updatedUser
-        ));
+        return userService.getUserById(id)
+                .map(existingUser -> {
+                    updateNonNullFields(existingUser, user);
+                    User updatedUser = userService.saveUser(existingUser);
+                    return buildResponse("SUCCESS", "Successfully updated the user.", updatedUser, HttpStatus.OK);
+                })
+                .orElse(buildResponse("ERROR", "User with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/update-company")
     @PreAuthorize("hasRole('EMPLOYER_OWNER')")
-    public ResponseEntity<User> updateUserCompany(
-            @RequestParam int userId,
-            @RequestParam int companyId
-    ) {
+    public ResponseEntity<User> updateUserCompany(@RequestParam int userId, @RequestParam int companyId) {
         User updatedUser = userService.updateCompanyForUser(userId, companyId);
         return ResponseEntity.ok(updatedUser);
     }
 
-
-
-    // Delete a user
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteUserById(@PathVariable int id) {
         Optional<User> user = userService.getUserById(id);
 
         if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "User with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "User with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
         }
 
         userService.deleteUser(id);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully deleted the user",
-                null
-        ));
+        return buildResponse("SUCCESS", "Successfully deleted the user.", null, HttpStatus.OK);
     }
+
 
     @GetMapping("/get-company-id/{id}")
     public ResponseEntity<ApiResponse<Integer>> getCompanyId(@PathVariable int id) {
-        Optional<Integer> companyId = userService.getCompanyIdByUserId(id);
-
-        if (companyId.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "CompanyId with user ID: " + id + " not found",
-                    null
-            ));
-        }
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the companyId",
-                companyId.get()
-        ));
+        return userService.getCompanyIdByUserId(id)
+                .map(companyId -> buildResponse("SUCCESS", "Successfully retrieved the companyId.", companyId, HttpStatus.OK))
+                .orElse(buildResponse("ERROR", "CompanyId with user ID: " + id + " not found.", null, HttpStatus.NOT_FOUND));
     }
 
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        if (data == null) {
+            return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, null));
+        }
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
+    }
+
+
+    private void updateNonNullFields(User existingUser, User newUser) {
+        existingUser.setFirst_name(Optional.ofNullable(newUser.getFirst_name()).orElse(existingUser.getFirst_name()));
+        existingUser.setLast_name(Optional.ofNullable(newUser.getLast_name()).orElse(existingUser.getLast_name()));
+        existingUser.setAddress(Optional.ofNullable(newUser.getAddress()).orElse(existingUser.getAddress()));
+        existingUser.setEmail(Optional.ofNullable(newUser.getEmail()).orElse(existingUser.getEmail()));
+        existingUser.setPassword(Optional.ofNullable(newUser.getPassword()).orElse(existingUser.getPassword()));
+        existingUser.setDob(Optional.ofNullable(newUser.getDob()).orElse(existingUser.getDob()));
+        existingUser.setGender(Optional.ofNullable(newUser.getGender()).orElse(existingUser.getGender()));
+        existingUser.setRole(Optional.ofNullable(newUser.getRole()).orElse(existingUser.getRole()));
+        existingUser.setStatus(Optional.ofNullable(newUser.getStatus()).orElse(existingUser.getStatus()));
+        existingUser.setCompany(Optional.ofNullable(newUser.getCompany()).orElse(existingUser.getCompany()));
+    }
 }

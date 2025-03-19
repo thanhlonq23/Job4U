@@ -1,167 +1,112 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.model.entity.Salary;
 import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
+import com.nguyenlonq23.job4userver.model.entity.Salary;
 import com.nguyenlonq23.job4userver.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/salaries")
+@RequestMapping("/api/salaries") // Endpoint for salary-related APIs
 public class SalaryController {
-    private SalaryService salaryService;
+
+    private final SalaryService salaryService;
 
     @Autowired
     public SalaryController(SalaryService salaryService) {
         this.salaryService = salaryService;
     }
 
-    @GetMapping
+    @GetMapping // Fetch all salaries
     public ResponseEntity<ApiResponse<List<Salary>>> getAllSalaries() {
         try {
             List<Salary> salaries = salaryService.getAllSalaries();
-
-            if (salaries.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No salaries found",
-                        salaries // Trả về đối tượng Page rỗng
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of salary",
-                    salaries // Trả về toàn bộ đối tượng Page
-            ));
+            String message = salaries.isEmpty() ? "No salaries found." : "Successfully retrieved the list of salaries.";
+            return buildResponse("SUCCESS", message, salaries, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving salaries: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving salaries: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Get all salaries
-    @GetMapping("/page")
+    @GetMapping("/page") // Fetch salaries with pagination
     public ResponseEntity<ApiResponse<Page<Salary>>> getAllSalariesWithPagination(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
-    ) {
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
-            Page<Salary> workTypes = salaryService.getSalariesWithPagination(page, size);
-
-            if (workTypes.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No salaries found",
-                        workTypes // Trả về đối tượng Page rỗng
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of salary",
-                    workTypes // Trả về toàn bộ đối tượng Page
-            ));
+            Page<Salary> salaries = salaryService.getSalariesWithPagination(page, size);
+            String message = salaries.isEmpty() ? "No salaries found." : "Successfully retrieved the list of salaries.";
+            return buildResponse("SUCCESS", message, salaries, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving salaries: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving salaries with pagination: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
-    // Get salary by ID
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // Fetch a salary by ID
     public ResponseEntity<ApiResponse<Salary>> getSalaryById(@PathVariable int id) {
-        Salary salary = salaryService.getSalaryById(id);
-        if (salary != null) {
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the salary",
-                    salary
-            ));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Salary with ID: " + id + " not found",
-                    null
-            ));
+        try {
+            Salary salary = salaryService.getSalaryById(id);
+            if (salary != null) {
+                return buildResponse("SUCCESS", "Successfully retrieved the salary.", salary, HttpStatus.OK);
+            } else {
+                return buildResponse("ERROR", "Salary with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while retrieving salary by ID: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Create a new salary
-    @PostMapping
+    @PostMapping // Create a new salary
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Salary>> createSalary(@RequestBody Salary salary) {
         if (salary.getName() == null || salary.getName().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    "Salary range is required",
-                    null
-            ));
+            return buildResponse("ERROR", "Salary name is required.", null, HttpStatus.BAD_REQUEST);
         }
-
-        Salary savedSalary = salaryService.saveSalary(salary);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully created the salary",
-                savedSalary
-        ));
+        try {
+            Salary savedSalary = salaryService.saveSalary(salary);
+            return buildResponse("SUCCESS", "Successfully created the salary.", savedSalary, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while creating salary: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Update a salary
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") // Update an existing salary
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Salary>> updateSalary(@PathVariable int id, @RequestBody Salary salary) {
-        Salary existingSalary = salaryService.getSalaryById(id);
-
-        if (existingSalary == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Salary with ID: " + id + " not found",
-                    null
-            ));
+        try {
+            Salary existingSalary = salaryService.getSalaryById(id);
+            if (existingSalary == null) {
+                return buildResponse("ERROR", "Salary with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
+            }
+            salary.setId(id);
+            Salary updatedSalary = salaryService.saveSalary(salary);
+            return buildResponse("SUCCESS", "Successfully updated the salary.", updatedSalary, HttpStatus.OK);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while updating salary: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        salary.setId(id);
-        Salary updatedSalary = salaryService.saveSalary(salary);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully updated the salary",
-                updatedSalary
-        ));
     }
 
-    // Delete a salary
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // Delete a salary by ID
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteSalary(@PathVariable int id) {
-        Salary existingSalary = salaryService.getSalaryById(id);
-
-        if (existingSalary == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Salary with ID: " + id + " not found",
-                    null
-            ));
+        try {
+            Salary existingSalary = salaryService.getSalaryById(id);
+            if (existingSalary == null) {
+                return buildResponse("ERROR", "Salary with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
+            }
+            salaryService.deleteSalary(id);
+            return buildResponse("SUCCESS", "Successfully deleted the salary.", null, HttpStatus.OK);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while deleting salary: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
-        salaryService.deleteSalary(id);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully deleted the salary",
-                null
-        ));
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
     }
 }

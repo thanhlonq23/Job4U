@@ -16,84 +16,47 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/experiences")
 public class ExperienceController {
+    private final ExperienceService experienceService;
+
     @Autowired
-    private ExperienceService experienceService;
+    public ExperienceController(ExperienceService experienceService) {
+        this.experienceService = experienceService;
+    }
 
     // Get all experiences
     @GetMapping
     public ResponseEntity<ApiResponse<List<Experience>>> getAllExperience() {
         try {
             List<Experience> experiences = experienceService.getAllExperiences();
-
-            if (experiences.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No experiences found matching the criteria",
-                        experiences // Trả về đối tượng rỗng
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of experiences",
-                    experiences // Trả về toàn bộ đối tượng Page
-            ));
+            String message = experiences.isEmpty() ? "No experiences found matching the criteria" : "Successfully retrieved the list of experiences";
+            return buildResponse("SUCCESS", message, experiences, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving experiences: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving experiences: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    // Get paginated and filtered experiences
     @GetMapping("/page")
     public ResponseEntity<ApiResponse<Page<Experience>>> getAllExperienceWithPagination(
-            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, // Từ khóa tìm kiếm
-            Pageable pageable // Thông tin phân trang và sắp xếp từ URL
-    ) {
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+            Pageable pageable) {
         try {
             Page<Experience> experiences = experienceService.getExperiences(keyword, pageable);
-
-            if (experiences.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No experiences found matching the criteria",
-                        experiences // Trả về đối tượng rỗng
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of experiences",
-                    experiences // Trả về toàn bộ đối tượng Page
-            ));
+            String message = experiences.isEmpty() ? "No experiences found matching the criteria" : "Successfully retrieved the list of experiences";
+            return buildResponse("SUCCESS", message, experiences, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving experiences: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving experiences: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     // Get experience by ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Experience>> getExperienceById(@PathVariable int id) {
         Experience experience = experienceService.getExperienceById(id);
         if (experience == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Experience with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "Experience with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the experience",
-                experience
-        ));
+        return buildResponse("SUCCESS", "Successfully retrieved the experience", experience, HttpStatus.OK);
     }
 
     // Create a new experience
@@ -101,58 +64,39 @@ public class ExperienceController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Experience>> createExperience(@RequestBody Experience experience) {
         if (experience.getName() == null || experience.getName().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(
-                    "ERROR",
-                    "Experience name cannot be empty",
-                    null
-            ));
+            return buildResponse("ERROR", "Experience name cannot be empty", null, HttpStatus.BAD_REQUEST);
         }
         Experience createdExperience = experienceService.saveExperience(experience);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully created a new experience",
-                createdExperience
-        ));
+        return buildResponse("SUCCESS", "Successfully created a new experience", createdExperience, HttpStatus.CREATED);
     }
 
-    // Update an experience
+    // Update an existing experience
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Experience>> updateExperience(@PathVariable int id, @RequestBody Experience experience) {
         Experience existingExperience = experienceService.getExperienceById(id);
         if (existingExperience == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Experience with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "Experience with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
         experience.setId(id);
         Experience updatedExperience = experienceService.saveExperience(experience);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully updated the experience",
-                updatedExperience
-        ));
+        return buildResponse("SUCCESS", "Successfully updated the experience", updatedExperience, HttpStatus.OK);
     }
 
-    // Delete an experience
+    // Delete experience by ID
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteExperience(@PathVariable int id) {
         Experience existingExperience = experienceService.getExperienceById(id);
         if (existingExperience == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Experience with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "Experience with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
         experienceService.deleteExperience(id);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully deleted the experience",
-                null
-        ));
+        return buildResponse("SUCCESS", "Successfully deleted the experience", null, HttpStatus.OK);
+    }
+
+    // Build a ResponseEntity for API responses
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
     }
 }

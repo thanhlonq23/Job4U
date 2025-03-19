@@ -1,7 +1,7 @@
 package com.nguyenlonq23.job4userver.controller;
 
-import com.nguyenlonq23.job4userver.model.entity.Skill;
 import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
+import com.nguyenlonq23.job4userver.model.entity.Skill;
 import com.nguyenlonq23.job4userver.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,131 +15,97 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/skills")
 public class SkillController {
+
+    private final SkillService skillService;
+
     @Autowired
-    private SkillService skillService;
+    public SkillController(SkillService skillService) {
+        this.skillService = skillService;
+    }
 
-    // Get all skills
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<Skill>>> getAllWorkTypes(
+    public ResponseEntity<ApiResponse<Page<Skill>>> getAllSkills(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
-    ) {
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
-            Page<Skill> workTypes = skillService.getSkillsWithPagination(page, size);
-
-            if (workTypes.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No skills found",
-                        workTypes // Trả về đối tượng Page rỗng
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of skills",
-                    workTypes // Trả về toàn bộ đối tượng Page
-            ));
+            Page<Skill> skills = skillService.getSkillsWithPagination(page, size);
+            String message = skills.isEmpty() ? "No skills found." : "Successfully retrieved the list of skills.";
+            return buildResponse("SUCCESS", message, skills, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving skills: " + e.getMessage(),
-                    null // Không trả về dữ liệu khi lỗi
-            ));
+            return buildResponse("ERROR", "An error occurred while retrieving skills: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
-    // Get skill by ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Skill>> getSkillById(@PathVariable int id) {
-        Skill skill = skillService.getSkillById(id);
-        if (skill != null) {
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the skill",
-                    skill
-            ));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Skill with ID: " + id + " not found",
-                    null
-            ));
+        try {
+            Skill skill = skillService.getSkillById(id);
+            if (skill != null) {
+                return buildResponse("SUCCESS", "Successfully retrieved the skill.", skill, HttpStatus.OK);
+            } else {
+                return buildResponse("ERROR", "Skill with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while retrieving the skill: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Get skills by category ID
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<ApiResponse<List<Skill>>> getSkillsByCategoryId(@PathVariable int categoryId) {
-        List<Skill> skills = skillService.getSkillsByCategoryId(categoryId);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully retrieved the skills by category ID",
-                skills
-        ));
+        try {
+            List<Skill> skills = skillService.getSkillsByCategoryId(categoryId);
+            return buildResponse("SUCCESS", "Successfully retrieved the skills by category ID.", skills, HttpStatus.OK);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while retrieving skills by category ID: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Create a new skill
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Skill>> createSkill(@RequestBody Skill skill) {
         if (skill.getName() == null || skill.getName().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    "Skill name is required",
-                    null
-            ));
+            return buildResponse("ERROR", "Skill name is required.", null, HttpStatus.BAD_REQUEST);
         }
-
-        Skill savedSkill = skillService.saveSkill(skill);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully created the skill",
-                savedSkill
-        ));
+        try {
+            Skill savedSkill = skillService.saveSkill(skill);
+            return buildResponse("SUCCESS", "Successfully created the skill.", savedSkill, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while creating the skill: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Update a skill
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Skill>> updateSkill(@PathVariable int id, @RequestBody Skill skill) {
-        Skill existingSkill = skillService.getSkillById(id);
-        if (existingSkill == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Skill with ID: " + id + " not found",
-                    null
-            ));
+        try {
+            Skill existingSkill = skillService.getSkillById(id);
+            if (existingSkill == null) {
+                return buildResponse("ERROR", "Skill with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
+            }
+            skill.setId(id);
+            Skill updatedSkill = skillService.saveSkill(skill);
+            return buildResponse("SUCCESS", "Successfully updated the skill.", updatedSkill, HttpStatus.OK);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while updating the skill: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        skill.setId(id);
-        Skill updatedSkill = skillService.saveSkill(skill);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully updated the skill",
-                updatedSkill
-        ));
     }
 
-    // Delete a skill
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteSkill(@PathVariable int id) {
-        Skill existingSkill = skillService.getSkillById(id);
-        if (existingSkill == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Skill with ID: " + id + " not found",
-                    null
-            ));
+        try {
+            Skill existingSkill = skillService.getSkillById(id);
+            if (existingSkill == null) {
+                return buildResponse("ERROR", "Skill with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
+            }
+            skillService.deleteSkill(id);
+            return buildResponse("SUCCESS", "Successfully deleted the skill.", null, HttpStatus.OK);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while deleting the skill: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
-        skillService.deleteSkill(id);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully deleted the skill",
-                null
-        ));
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
     }
 }

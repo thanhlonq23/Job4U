@@ -18,82 +18,37 @@ public class WorkTypeController {
     @Autowired
     private WorkTypeService workTypeService;
 
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
+    }
+
     // Get all work types
     @GetMapping
     public ResponseEntity<ApiResponse<List<WorkType>>> getAllWorkTypes() {
-        try {
-            List<WorkType> workTypes = workTypeService.getAllWorkTypes();
-
-            if (workTypes.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No work types found",
-                        workTypes
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of work types",
-                    workTypes
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving work types: " + e.getMessage(),
-                    null
-            ));
-        }
+        List<WorkType> workTypes = workTypeService.getAllWorkTypes();
+        String message = workTypes.isEmpty() ? "No work types found" : "Successfully retrieved the list of work types";
+        return buildResponse("SUCCESS", message, workTypes, HttpStatus.OK);
     }
 
+    // Get paginated work types
     @GetMapping("/page")
     public ResponseEntity<ApiResponse<Page<WorkType>>> getAllWorkTypes(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        try {
-            Page<WorkType> workTypes = workTypeService.getWorkTypesWithPagination(page, size);
-
-            if (workTypes.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>(
-                        "SUCCESS",
-                        "No work types found",
-                        workTypes
-                ));
-            }
-
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the list of work types",
-                    workTypes
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(
-                    "ERROR",
-                    "An error occurred while retrieving work types: " + e.getMessage(),
-                    null
-            ));
-        }
+        Page<WorkType> workTypes = workTypeService.getWorkTypesWithPagination(page, size);
+        String message = workTypes.isEmpty() ? "No work types found" : "Successfully retrieved the list of work types";
+        return buildResponse("SUCCESS", message, workTypes, HttpStatus.OK);
     }
-
 
     // Get work type by ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<WorkType>> getWorkTypeById(@PathVariable int id) {
         WorkType workType = workTypeService.getWorkTypeById(id);
-        if (workType != null) {
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "SUCCESS",
-                    "Successfully retrieved the work type",
-                    workType
-            ));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Work type with ID: " + id + " not found",
-                    null
-            ));
+        if (workType == null) {
+            return buildResponse("ERROR", "Work type with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
+        return buildResponse("SUCCESS", "Successfully retrieved the work type", workType, HttpStatus.OK);
     }
 
     // Create a new work type
@@ -101,19 +56,10 @@ public class WorkTypeController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<WorkType>> createWorkType(@RequestBody WorkType workType) {
         if (workType.getName() == null || workType.getName().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(
-                    "ERROR",
-                    "Work type name is required",
-                    null
-            ));
+            return buildResponse("ERROR", "Work type name is required", null, HttpStatus.BAD_REQUEST);
         }
-
         WorkType savedWorkType = workTypeService.saveWorkType(workType);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully created the work type",
-                savedWorkType
-        ));
+        return buildResponse("SUCCESS", "Successfully created the work type", savedWorkType, HttpStatus.CREATED);
     }
 
     // Update a work type
@@ -124,20 +70,11 @@ public class WorkTypeController {
             @RequestBody WorkType workType) {
         WorkType existingWorkType = workTypeService.getWorkTypeById(id);
         if (existingWorkType == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Work type with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "Work type with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
-
         workType.setId(id);
         WorkType updatedWorkType = workTypeService.saveWorkType(workType);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully updated the work type",
-                updatedWorkType
-        ));
+        return buildResponse("SUCCESS", "Successfully updated the work type", updatedWorkType, HttpStatus.OK);
     }
 
     // Delete a work type
@@ -146,18 +83,9 @@ public class WorkTypeController {
     public ResponseEntity<ApiResponse<Void>> deleteWorkType(@PathVariable int id) {
         WorkType existingWorkType = workTypeService.getWorkTypeById(id);
         if (existingWorkType == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
-                    "ERROR",
-                    "Work type with ID: " + id + " not found",
-                    null
-            ));
+            return buildResponse("ERROR", "Work type with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
-
         workTypeService.deleteWorkType(id);
-        return ResponseEntity.ok(new ApiResponse<>(
-                "SUCCESS",
-                "Successfully deleted the work type",
-                null
-        ));
+        return buildResponse("SUCCESS", "Successfully deleted the work type", null, HttpStatus.OK);
     }
 }
