@@ -22,8 +22,8 @@ public class CV {
     private Post post;
 
     @Lob
-    @Column(name = "file", columnDefinition = "MEDIUMBLOB")
-    private byte[] file;
+    @Column(name = "file", columnDefinition = "LONGTEXT")
+    private String file;
 
     @Column(name = "description")
     private String description;
