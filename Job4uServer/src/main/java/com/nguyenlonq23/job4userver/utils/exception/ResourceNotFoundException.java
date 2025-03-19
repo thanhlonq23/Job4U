@@ -1,4 +1,4 @@
-package com.nguyenlonq23.job4userver.util.exception;
+package com.nguyenlonq23.job4userver.utils.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

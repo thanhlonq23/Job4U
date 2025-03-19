@@ -1,4 +1,4 @@
-package com.nguyenlonq23.job4userver.util;
+package com.nguyenlonq23.job4userver.utils;
 
 import java.util.function.Consumer;
 
