@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactMarkdown from "react-markdown";
 import {
@@ -201,9 +201,6 @@ const PostDetail = () => {
           </div>
         </Modal>
       )}
-
-      {/* ToastContainer để hiển thị thông báo */}
-      <ToastContainer />
     </div>
   );
 };

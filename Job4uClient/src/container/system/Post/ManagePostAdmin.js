@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner, Modal, Row, Col, Card, CardBody, Button } from "reactstrap";
 import ReactPaginate from "react-paginate";
@@ -290,9 +290,6 @@ const ManagePost = () => {
           </div>
         </Modal>
       )}
-
-      {/* ToastContainer để hiển thị thông báo */}
-      <ToastContainer />
     </div>
   );
 };

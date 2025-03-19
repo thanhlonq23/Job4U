@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { Spinner, Modal } from "reactstrap";
 import { updatePostStatusService } from "../../../service/PostService";
 
@@ -102,9 +102,6 @@ const UpdatePostStatus = () => {
           </div>
         </Modal>
       )}
-
-      {/* ToastContainer để hiển thị thông báo */}
-      <ToastContainer />
     </div>
   );
 };

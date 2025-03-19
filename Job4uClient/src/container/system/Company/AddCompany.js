@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Lightbox from "react-image-lightbox";
-import { toast, ToastContainer } from "react-toastify";
+import { toast} from "react-toastify";
 import "react-image-lightbox/style.css";
 import CommonUtils from "../../../util/CommonUtils";
 import { Spinner, Modal, Row, Col, Card, CardBody } from "reactstrap";
@@ -419,9 +419,6 @@ const AddCompany = () => {
           </div>
         </Modal>
       )}
-
-      {/* ToastContainer để hiển thị thông báo */}
-      <ToastContainer />
     </div>
   );
 };

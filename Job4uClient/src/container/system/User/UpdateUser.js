@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"; 
 import { useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { Spinner, Modal } from "reactstrap";
 
 import {
@@ -292,9 +292,6 @@ const UpdateUser = () => {
           </div>
         </Modal>
       )}
-
-      {/* ToastContainer để hiển thị thông báo */}
-      <ToastContainer />
     </div>
   );
 };

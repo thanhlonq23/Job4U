@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner, Modal, Row, Col, Card, CardBody } from "reactstrap";
 import MDEditor from "@uiw/react-md-editor";
@@ -495,7 +495,6 @@ const AddPost = () => {
           </Card>
         </Col>
       </Row>
-      <ToastContainer />
     </div>
   );
 };

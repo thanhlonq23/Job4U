@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -80,6 +81,7 @@ const Header = () => {
         >
           <span className="icon-menu" />
         </button>
+        <ToastContainer />
       </div>
     </nav>
   );

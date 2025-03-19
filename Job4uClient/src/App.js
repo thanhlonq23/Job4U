@@ -1,12 +1,15 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./container/home/home";
+import Company from "./container/Company/ListCompany";
+import About from "./container/About/About";
 import JobPage from "./container/JobPage/JobPage";
 import Header from "./container/header/header";
 import Footer from "./container/footer/Footer";
 import JobDetail from "./container/JobDetail/JobDetail";
+import HomeCandidate from "./container/Candidate/HomeCandidate";
 
-import HomeAdmin, { adminRoutes } from "./container/system/HomeAdmin";
+import HomeAdmin from "./container/system/HomeAdmin";
 
 function App() {
   return (
@@ -19,6 +22,30 @@ function App() {
             <>
               <Header />
               <Home />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* Route cho trang công ty */}
+        <Route
+          path="/company"
+          element={
+            <>
+              <Header />
+              <Company />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* Route cho trang giới thiệu */}
+        <Route
+          path="/about"
+          element={
+            <>
+              <Header />
+              <About />
               <Footer />
             </>
           }
@@ -48,13 +75,35 @@ function App() {
           }
         />
 
+        <Route
+          path="/candidate/*"
+          element={
+            JSON.parse(localStorage.getItem("userInfo"))?.role ===
+            "JOB_SEEKER" ? (
+              <>
+                <Header />
+                <HomeCandidate />
+                <Footer />
+              </>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
         {/* Route cho trang Admin */}
-        <Route path="/admin" element={<Navigate to="/admin/" replace />} />
-        <Route path="/admin/*" element={<HomeAdmin />}>
-          {adminRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-        </Route>
+        <Route
+          path="/admin/*"
+          element={
+            ["ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF"].includes(
+              JSON.parse(localStorage.getItem("userInfo"))?.role
+            ) ? (
+              <HomeAdmin />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
     </div>
   );

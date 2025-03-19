@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "./header.scss";
 import AuthPopup from "../../components/auth/AuthPopup";
+import { toast, ToastContainer } from "react-toastify";
 
 const Header = () => {
   const [user, setUser] = useState({});
@@ -83,7 +84,7 @@ const Header = () => {
                           </li>
                           <li>
                             <NavLink
-                              to="#"
+                              to="/about"
                               isActive={() => window.scrollTo(0, 0)}
                             >
                               Giới thiệu
@@ -139,13 +140,16 @@ const Header = () => {
                                     Trang quản trị
                                   </Link>
                                 )}
-                              <Link
-                                to="/candidate/cv-post/"
-                                className="dropdown-item"
-                              >
-                                <i className="far fa-file-word text-primary"></i>
-                                Công việc đã nộp
-                              </Link>
+
+                              {user && user.role === "JOB_SEEKER" && (
+                                <Link
+                                  to="/candidate/cv-post/"
+                                  className="dropdown-item"
+                                >
+                                  <i className="far fa-file-word text-primary"></i>
+                                  Công việc đã nộp
+                                </Link>
+                              )}
                               <Link
                                 to="/candidate/changepassword/"
                                 className="dropdown-item"
@@ -193,6 +197,9 @@ const Header = () => {
           </div>
         </div>
         <AuthPopup isOpen={isAuthPopupOpen} onClose={closeAuthPopup} />
+
+        <ToastContainer />
+
         {/* <!-- Header End --> */}
       </header>
     </>

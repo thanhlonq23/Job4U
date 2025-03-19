@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { PAGINATION } from "../../../util/constant";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast} from "react-toastify";
 
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
@@ -259,8 +259,6 @@ const ManagerCompany = () => {
         />
       )}
 
-      {/* ToastContainer để hiển thị thông báo */}
-      <ToastContainer />
     </div>
   );
 };
