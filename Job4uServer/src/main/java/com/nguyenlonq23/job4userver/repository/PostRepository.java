@@ -13,8 +13,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Lazy
@@ -81,5 +83,34 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             @Param("currentDate") Date currentDate,
             Pageable pageable
     );
+
+
+    // Analyst
+    @Query(value = "SELECT COUNT(*) FROM posts WHERE created_At >= ?1", nativeQuery = true)
+    Long countPostsCreatedAfter(LocalDateTime date);
+
+    @Query(value = "SELECT s.salary_range, COUNT(p.id) as postCount FROM salaries s " +
+            "JOIN posts p ON s.id = p.salary_id " +
+            "GROUP BY s.id, s.salary_range ORDER BY postCount DESC", nativeQuery = true)
+    List<Map<String, Object>> findSalaryRangeDistribution();
+
+    @Query(value = "SELECT e.name, COUNT(p.id) as postCount FROM experiences e " +
+            "JOIN posts p ON e.id = p.experience_id " +
+            "GROUP BY e.id, e.name ORDER BY postCount DESC", nativeQuery = true)
+    List<Map<String, Object>> findExperienceDistribution();
+
+    @Query(value = "SELECT jl.name, COUNT(p.id) as postCount FROM joblevels jl " +
+            "JOIN posts p ON jl.id = p.joblevel_id " +
+            "GROUP BY jl.id, jl.name ORDER BY postCount DESC", nativeQuery = true)
+    List<Map<String, Object>> findJobLevelDistribution();
+
+    @Query(value = "SELECT wt.name, COUNT(p.id) as postCount FROM worktypes wt " +
+            "JOIN posts p ON wt.id = p.worktype_id " +
+            "GROUP BY wt.id, wt.name ORDER BY postCount DESC", nativeQuery = true)
+    List<Map<String, Object>> findWorkTypeDistribution();
+
+    @Query(value = "SELECT DATE_FORMAT(created_At, '%Y-%m') as month, COUNT(*) as postCount " +
+            "FROM posts GROUP BY month ORDER BY month ASC", nativeQuery = true)
+    List<Map<String, Object>> findPostCountByMonth();
 
 }

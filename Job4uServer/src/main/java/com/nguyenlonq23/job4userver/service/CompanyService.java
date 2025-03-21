@@ -2,9 +2,8 @@ package com.nguyenlonq23.job4userver.service;
 
 import com.nguyenlonq23.job4userver.model.entity.Company;
 import com.nguyenlonq23.job4userver.model.enums.CompanyStatus;
-import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import com.nguyenlonq23.job4userver.repository.CompanyRepository;
-import com.nguyenlonq23.job4userver.util.UpdateUtil;
+import com.nguyenlonq23.job4userver.utils.UpdateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;

@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Lazy
@@ -24,4 +26,10 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
     @Query("SELECT c.status FROM Company c WHERE c.id = :companyId")
     Optional<CompanyStatus> findStatusByCompanyId(@Param("companyId") int companyId);
 
+
+    // Analyst
+    @Query(value = "SELECT c.name, COUNT(p.id) as postCount FROM companies c " +
+            "JOIN posts p ON c.id = p.company_id " +
+            "GROUP BY c.id, c.name ORDER BY postCount DESC LIMIT 10", nativeQuery = true)
+    List<Map<String, Object>> findTopCompaniesWithMostPosts();
 }
