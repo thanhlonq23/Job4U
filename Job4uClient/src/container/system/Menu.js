@@ -59,6 +59,34 @@ const Menu = () => {
 
         {user.role === "ADMIN" && (
           <>
+            {/* Menu thống kê */}
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                onClick={() => toggleMenu("analytics")}
+                aria-expanded={expandedMenu["analytics"] || false}
+                href="#"
+              >
+                <i className="icon-head menu-icon" />
+                <span className="menu-title">Thống kê</span>
+                <i className="menu-arrow" />
+              </a>
+              <div
+                className={`collapse ${
+                  expandedMenu["analytics"] ? "show" : ""
+                }`}
+                id="analytics"
+              >
+                <ul className="flex-column nav sub-menu">
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/admin/post-analysis/">
+                      Thống kê bài đăng
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
             {/* Menu Quản lý User */}
             <li className="nav-item">
               <a
@@ -75,7 +103,7 @@ const Menu = () => {
                 className={`collapse ${expandedMenu["user"] ? "show" : ""}`}
                 id="user"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-user/">
                       Danh sách người dùng
@@ -92,7 +120,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["companies"] || false}
                 href="#"
               >
-                <i className="far fa-building menu-icon" />
+                <i className="fa-building far menu-icon" />
                 <span className="menu-title">Quản lý Công ty</span>
                 <i className="menu-arrow" />
               </a>
@@ -102,7 +130,7 @@ const Menu = () => {
                 }`}
                 id="companies"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-companies/">
                       Danh sách công ty
@@ -111,7 +139,7 @@ const Menu = () => {
                 </ul>
               </div>
             </li>
-            {/* Menu Quản lý loại công việc */}
+            {/* Menu Quản lý lĩnh vực */}
             <li className="nav-item">
               <a
                 className="nav-link"
@@ -121,22 +149,22 @@ const Menu = () => {
               >
                 <i className="fa fa-briefcase menu-icon" />
 
-                <span className="menu-title">Quản lý loại công việc</span>
+                <span className="menu-title">Quản lý lĩnh vực</span>
                 <i className="menu-arrow" />
               </a>
               <div
                 className={`collapse ${expandedMenu["jobtype"] ? "show" : ""}`}
                 id="jobtype"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-job-type/">
-                      Danh sách loại công việc
+                      Danh sách lĩnh vực
                     </Link>
                   </li>
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/add-job-type/">
-                      Thêm loại công việc
+                      Thêm lĩnh vực
                     </Link>
                   </li>
                 </ul>
@@ -150,7 +178,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["joblevel"] || false}
                 href="#"
               >
-                <i className="fas fa-level-up-alt menu-icon"></i>
+                <i className="fa-level-up-alt fas menu-icon"></i>
                 <span className="menu-title">Quản lý cấp bậc</span>
                 <i className="menu-arrow" />
               </a>
@@ -158,7 +186,7 @@ const Menu = () => {
                 className={`collapse ${expandedMenu["joblevel"] ? "show" : ""}`}
                 id="joblevel"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-job-level/">
                       Danh sách cấp bậc
@@ -180,7 +208,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["exptype"] || false}
                 href="#"
               >
-                <i className="far fa-star menu-icon"></i>
+                <i className="fa-star far menu-icon"></i>
                 <span className="menu-title">Quản lý kinh nghiệm</span>
                 <i className="menu-arrow" />
               </a>
@@ -188,7 +216,7 @@ const Menu = () => {
                 className={`collapse ${expandedMenu["exptype"] ? "show" : ""}`}
                 id="exptype"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-exp-type/">
                       Danh sách kinh nghiệm
@@ -210,7 +238,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["skilltype"] || false}
                 href="#"
               >
-                <i className="far fa-hand-paper menu-icon"></i>
+                <i className="fa-hand-paper far menu-icon"></i>
                 <span className="menu-title">Quản lý kỹ năng</span>
                 <i className="menu-arrow" />
               </a>
@@ -220,7 +248,7 @@ const Menu = () => {
                 }`}
                 id="skilltype"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-skill-type/">
                       Danh sách kỹ năng
@@ -242,7 +270,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["worktype"] || false}
                 href="#"
               >
-                <i className="fas fa-briefcase menu-icon"></i>
+                <i className="fa-briefcase fas menu-icon"></i>
                 <span className="menu-title">Quản lý hình thức làm việc</span>
                 <i className="menu-arrow" />
               </a>
@@ -250,7 +278,7 @@ const Menu = () => {
                 className={`collapse ${expandedMenu["worktype"] ? "show" : ""}`}
                 id="worktype"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-work-type/">
                       Danh sách hình thức
@@ -272,7 +300,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["salarytype"] || false}
                 href="#"
               >
-                <i className="fas fa-money-check-alt menu-icon"></i>
+                <i className="fa-money-check-alt fas menu-icon"></i>
                 <span className="menu-title">Quản lý khoảng lương</span>
                 <i className="menu-arrow" />
               </a>
@@ -282,7 +310,7 @@ const Menu = () => {
                 }`}
                 id="salarytype"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-salary-type/">
                       Danh sách khoảng lương
@@ -304,7 +332,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["post-admin"] || false}
                 href="#"
               >
-                <i className="fa-regular fa-pen-to-square menu-icon"></i>
+                <i className="fa-pen-to-square fa-regular menu-icon"></i>
                 <span className="menu-title">Quản lý bài đăng</span>
                 <i className="menu-arrow" />
               </a>
@@ -314,7 +342,7 @@ const Menu = () => {
                 }`}
                 id="post-admin"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-post-admin/">
                       Danh sách bài đăng
@@ -336,7 +364,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["company"] || false}
                 href="#"
               >
-                <i className="far fa-building menu-icon"></i>
+                <i className="fa-building far menu-icon"></i>
                 <span className="menu-title">Quản lý công ty</span>
                 <i className="menu-arrow" />
               </a>
@@ -344,7 +372,7 @@ const Menu = () => {
                 className={`collapse ${expandedMenu["company"] ? "show" : ""}`}
                 id="company"
               >
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   {user.role === "EMPLOYER_OWNER" && (
                     <li className="nav-item">
                       <Link
@@ -388,12 +416,12 @@ const Menu = () => {
                 aria-expanded="false"
                 aria-controls="post"
               >
-                <i className="fa-regular fa-pen-to-square menu-icon"></i>
+                <i className="fa-pen-to-square fa-regular menu-icon"></i>
                 <span className="menu-title">Quản lý bài đăng</span>
                 <i className="menu-arrow" />
               </a>
               <div className="collapse" id="post">
-                <ul className="nav flex-column sub-menu">
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     {" "}
                     <Link className="nav-link" to="/admin/add-post/">

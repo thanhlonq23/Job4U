@@ -119,13 +119,13 @@ const ViewCompanyDetail = () => {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex align-items-center justify-content-between mb-4">
               <h4 className="card-title">Chi tiết công ty</h4>
             </div>
 
             {isLoading ? (
               <div className="text-center py-5">
-                <div className="spinner-border text-primary" role="status">
+                <div className="text-primary spinner-border" role="status">
                   <span className="sr-only">Đang tải...</span>
                 </div>
                 <p className="mt-2">Đang tải thông tin công ty...</p>
@@ -231,7 +231,7 @@ const ViewCompanyDetail = () => {
 
                 {/* Thông tin chi tiết công ty */}
                 <div
-                  className="company-info p-4"
+                  className="p-4 company-info"
                   style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
                 >
                   <div className="row mb-3">
@@ -250,30 +250,30 @@ const ViewCompanyDetail = () => {
 
                   <div className="row mb-3">
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Trạng thái:</p>
+                      <p className="text-muted mb-1">Trạng thái:</p>
                       {renderStatus(company.status)}
                     </div>
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Số lượng nhân viên:</p>
+                      <p className="text-muted mb-1">Số lượng nhân viên:</p>
                       <p>{company.amountEmployer}</p>
                     </div>
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Mã số thuế:</p>
+                      <p className="text-muted mb-1">Mã số thuế:</p>
                       <p>{company.taxNumber || "Chưa cung cấp"}</p>
                     </div>
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Ngày tạo:</p>
+                      <p className="text-muted mb-1">Ngày tạo:</p>
                       <p>{formatDate(company.createdAt) || "Chưa cung cấp"}</p>
                     </div>
                   </div>
 
                   <div className="row mb-3">
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Email:</p>
+                      <p className="text-muted mb-1">Email:</p>
                       <p>{company.email}</p>
                     </div>
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Website:</p>
+                      <p className="text-muted mb-1">Website:</p>
                       <a
                         href={company.website}
                         target="_blank"
@@ -286,11 +286,11 @@ const ViewCompanyDetail = () => {
                       </a>
                     </div>
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Địa chỉ:</p>
+                      <p className="text-muted mb-1">Địa chỉ:</p>
                       <p>{company.address || "Chưa cung cấp"}</p>
                     </div>
                     <div className="col-md-3">
-                      <p className="mb-1 text-muted">Cập nhật gần nhất:</p>
+                      <p className="text-muted mb-1">Cập nhật gần nhất:</p>
                       <p>{formatDate(company.updatedAt) || "Chưa cung cấp"}</p>
                     </div>
                   </div>
@@ -306,7 +306,7 @@ const ViewCompanyDetail = () => {
 
                         {/* Hiển thị mô tả chỉ bằng HTML */}
                         <div
-                          className="description-content p-3"
+                          className="p-3 description-content"
                           style={{
                             border: "1px solid #dee2e6",
                             borderRadius: "5px",

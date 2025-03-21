@@ -302,7 +302,7 @@ const AddCompany = () => {
                             className="form-control"
                           />
                           {inputValues.thumbnailReview && (
-                            <div className="preview-container mt-2">
+                            <div className="mt-2 preview-container">
                               <div
                                 className="thumbnail-preview"
                                 style={{
@@ -327,7 +327,7 @@ const AddCompany = () => {
                             className="form-control"
                           />
                           {inputValues.coverImageReview && (
-                            <div className="preview-container mt-2">
+                            <div className="mt-2 preview-container">
                               <div
                                 className="cover-preview"
                                 style={{
@@ -347,7 +347,7 @@ const AddCompany = () => {
                   </Col>
 
                   <Col md={12}>
-                    <Card className="section-card mt-4">
+                    <Card className="mt-4 section-card">
                       <CardBody>
                         <h4 className="section-title">Mô tả công ty</h4>
                         <div className="markdown-editor-container">

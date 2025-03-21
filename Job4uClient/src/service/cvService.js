@@ -22,22 +22,45 @@ const createNewCv = (data) => {
     },
   });
 };
-const getAllListCvByPostService = (data) => {
-  return axios.get(
-    `/api/cv/get-all-list-cv-by-post?limit=${data.limit}&offset=${data.offset}&postId=${data.postId}`
-  );
-};
-const getDetailCvService = (id) => {
-  return axios.get(`/api/cv/get-detail-cv-by-id?cvId=${id}`);
-};
+
 const getAllListCvByUserIdService = (data) => {
-  return axios.get(
-    `/api/cv/get-all-cv-by-userId?limit=${data.limit}&offset=${data.offset}&userId=${data.userId}`
-  );
+  return axios.get("/api/cv/get-all-cv-by-userId", {
+    params: {
+      userId: data.userId,
+      page: data.page,
+      size: data.size,
+    },
+  });
 };
+
+const getAllListCvByPostIdService = ({
+  page = 0,
+  size = 10,
+  postId,
+  keyword = "",
+}) => {
+  return axios.get(`/api/cv/page`, {
+    params: {
+      postId: postId,
+      keyword: keyword,
+      page: page,
+      size: size,
+      sort: "id,desc",
+    },
+  });
+};
+
+const getDetailCvService = (id) => {
+  return axios.get("/api/cv/get-detail-cv-by-id", {
+    params: {
+      id: id,
+    },
+  });
+};
+
 export {
   createNewCv,
-  getAllListCvByPostService,
+  getAllListCvByPostIdService,
   getDetailCvService,
   getAllListCvByUserIdService,
 };

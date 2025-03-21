@@ -19,7 +19,7 @@ const ManageJobType = () => {
   const [isOpen, setisOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // **FETCH DỮ LIỆU DANH SÁCH LOẠI CÔNG VIỆC**
+  // **FETCH DỮ LIỆU DANH SÁCH LĨNH VỰC**
   const fetchJobTypes = async (page = 0) => {
     setIsLoading(true);
     try {
@@ -53,14 +53,14 @@ const ManageJobType = () => {
     setisOpen(true);
   };
 
-  // **XÓA LOẠI CÔNG VIỆC**
+  // **XÓA LĨNH VỰC**
   const handleDeleteJobType = async (event, id) => {
     event.preventDefault();
-    if (window.confirm("Bạn có chắc chắn muốn xóa loại công việc này?")) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa lĩnh vực này?")) {
       try {
         const res = await deleteCategoryService(id);
         if (res && res.errCode === 0) {
-          toast.success("Xóa loại công việc thành công");
+          toast.success("Xóa lĩnh vực thành công");
           setdataJobType((prev) => prev.filter((item) => item.id !== id));
 
           // Nếu xóa hết dữ liệu trên trang hiện tại, load lại trang trước đó
@@ -69,11 +69,11 @@ const ManageJobType = () => {
             setCurrentPage(currentPage - 1);
           }
         } else {
-          toast.error(res?.errMessage || "Xóa loại công việc thất bại!");
+          toast.error(res?.errMessage || "Xóa lĩnh vực thất bại!");
         }
       } catch (error) {
-        console.error("Lỗi khi xóa loại công việc:", error);
-        toast.error("Đã xảy ra lỗi khi xóa loại công việc!");
+        console.error("Lỗi khi xóa lĩnh vực:", error);
+        toast.error("Đã xảy ra lỗi khi xóa lĩnh vực!");
       }
     }
   };
@@ -90,15 +90,15 @@ const ManageJobType = () => {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4 className="card-title">DANH SÁCH LOẠI CÔNG VIỆC</h4>
+            <h4 className="card-title">DANH SÁCH LĨNH VỰC</h4>
 
-            {/* BẢNG DANH SÁCH LOẠI CÔNG VIỆC */}
+            {/* BẢNG DANH SÁCH LĨNH VỰC */}
             <div className="table-responsive pt-2">
               <table className="table table-bordered">
                 <thead>
                   <tr>
                     <th>STT</th>
-                    <th>Tên công việc</th>
+                    <th>Tên lĩnh vực</th>
                     <th>Hình ảnh</th>
                     <th>Thao tác</th>
                   </tr>

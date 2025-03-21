@@ -107,7 +107,7 @@ const ManageUser = () => {
         <div className="card-body">
           <h4 className="card-title">DANH SÁCH NGƯỜI DÙNG</h4>
           {/* Search form */}
-          <div className="d-flex mb-3 align-items-center gap-2">
+          <div className="d-flex align-items-center gap-2 mb-3">
             <input
               type="text"
               className="form-control"
@@ -122,7 +122,7 @@ const ManageUser = () => {
           </div>
           {isLoading ? (
             <div className="text-center my-3">
-              <div className="spinner-border text-primary" role="status">
+              <div className="text-primary spinner-border" role="status">
                 <span className="visually-hidden">Loading...</span>
               </div>
             </div>
