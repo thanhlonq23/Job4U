@@ -1,6 +1,3 @@
-// src/routes/adminRoutes.js
-import Home from "../container/system/Home";
-import ABC from "../container/system/ABC";
 import ManageUser from "../container/system/User/ManageUser";
 import UpdateUser from "../container/system/User/UpdateUser";
 import AddCategory from "../container/system/Category/AddCategory";
@@ -30,58 +27,94 @@ import AddSkill from "../container/system/Skill/AddSkill";
 import ManageCompany from "../container/system/Company/ManagerCompany";
 import CompanyDetail from "../container/system/Company/CompanyDetail";
 import IdentifyCompany from "../container/system/Company/IdentifyCompany";
+import EmployerDashBoard from "../container/system/DashBoard/EmployerDashBoard";
+import AdminDashBoard from "../container/system/DashBoard/AdminDashBoard";
+import AnalyticsDashboard from "../container/system/DashBoard/AnalyticsDashboard";
+import { Navigate } from "react-router-dom";
 
-const adminRoutes = [
-  { path: "", element: <ABC /> },
-  { path: "list-user", element: <ManageUser /> },
-  { path: "add-user", element: <UpdateUser /> },
-  { path: "edit-user/:id", element: <UpdateUser /> },
+const getRoleFromLocalStorage = () => {
+  const user = JSON.parse(localStorage.getItem("userInfo"));
+  return user?.role;
+};
 
-  { path: "add-job-type", element: <AddCategory /> },
-  { path: "list-job-type", element: <ManageCategory /> },
-  { path: "edit-job-type/:id", element: <AddCategory /> },
+const adminRoutes = () => {
+  const role = getRoleFromLocalStorage();
 
-  { path: "add-job-level", element: <AddJobLevel /> },
-  { path: "list-job-level", element: <ManageJobLevel /> },
-  { path: "edit-job-level/:id", element: <AddJobLevel /> },
+  if (role === "ADMIN") {
+    return [
+      { path: "", element: <AdminDashBoard /> },
+      { path: "post-analysis", element: <AnalyticsDashboard /> },
 
-  { path: "add-work-type", element: <AddWorkType /> },
-  { path: "list-work-type", element: <ManageWorkType /> },
-  { path: "edit-work-type/:id", element: <AddWorkType /> },
+      { path: "list-user", element: <ManageUser /> },
+      { path: "add-user", element: <UpdateUser /> },
+      { path: "edit-user/:id", element: <UpdateUser /> },
 
-  { path: "add-salary-type", element: <AddSalaryType /> },
-  { path: "list-salary-type", element: <ManageSalaryType /> },
-  { path: "edit-salary-type/:id", element: <AddSalaryType /> },
+      { path: "add-job-type", element: <AddCategory /> },
+      { path: "list-job-type", element: <ManageCategory /> },
+      { path: "edit-job-type/:id", element: <AddCategory /> },
 
-  { path: "add-exp-type", element: <AddExpType /> },
-  { path: "list-exp-type", element: <ManageExpType /> },
-  { path: "edit-exp-type/:id", element: <AddExpType /> },
+      { path: "add-job-level", element: <AddJobLevel /> },
+      { path: "list-job-level", element: <ManageJobLevel /> },
+      { path: "edit-job-level/:id", element: <AddJobLevel /> },
 
-  { path: "add-skill-type", element: <AddSkill /> },
-  { path: "list-skill-type", element: <ManageSkill /> },
-  { path: "edit-skill-type/:id", element: <AddSkill /> },
+      { path: "add-work-type", element: <AddWorkType /> },
+      { path: "list-work-type", element: <ManageWorkType /> },
+      { path: "edit-work-type/:id", element: <AddWorkType /> },
 
-  { path: "list-companies", element: <ManageCompany /> },
-  { path: "view-company/:id", element: <CompanyDetail /> },
-  { path: "identify-company/:id", element: <IdentifyCompany /> },
-  { path: "edit-company/:id", element: <AddCompany /> },
-  { path: "add-company", element: <AddCompany /> },
+      { path: "add-salary-type", element: <AddSalaryType /> },
+      { path: "list-salary-type", element: <ManageSalaryType /> },
+      { path: "edit-salary-type/:id", element: <AddSalaryType /> },
 
-  { path: "list-post-admin", element: <ManagePostAdmin /> },
-  { path: "post-detail/:id", element: <PostDetail /> },
-  { path: "update-post-status/:id", element: <UpdatePostStatus /> },
-  { path: "list-post", element: <ManagePost /> },
-  { path: "add-post", element: <AddPost /> },
-  { path: "edit-post/:id", element: <AddPost /> },
+      { path: "add-exp-type", element: <AddExpType /> },
+      { path: "list-exp-type", element: <ManageExpType /> },
+      { path: "edit-exp-type/:id", element: <AddExpType /> },
 
-  { path: "recruitment", element: <Recruitment /> },
-  { path: "list-employer", element: <ManageEmployer /> },
+      { path: "add-skill-type", element: <AddSkill /> },
+      { path: "list-skill-type", element: <ManageSkill /> },
+      { path: "edit-skill-type/:id", element: <AddSkill /> },
 
-  { path: "list-cv/:id", element: <ManageCv /> },
-  { path: "user-cv/:id", element: <UserCv /> },
-  
-  { path: "changepassword", element: <ChangePassword /> },
-  { path: "user-info", element: <UserInfo /> },
-];
+      { path: "list-companies", element: <ManageCompany /> },
+      { path: "view-company/:id", element: <CompanyDetail /> },
+      { path: "identify-company/:id", element: <IdentifyCompany /> },
+      { path: "edit-company/:id", element: <AddCompany /> },
+      { path: "add-company", element: <AddCompany /> },
+
+      { path: "list-post-admin", element: <ManagePostAdmin /> },
+      { path: "post-detail/:id", element: <PostDetail /> },
+      { path: "update-post-status/:id", element: <UpdatePostStatus /> },
+      { path: "list-post", element: <ManagePost /> },
+      { path: "add-post", element: <AddPost /> },
+      { path: "edit-post/:id", element: <AddPost /> },
+
+      { path: "recruitment", element: <Recruitment /> },
+      { path: "list-employer", element: <ManageEmployer /> },
+
+      { path: "list-cv/:id", element: <ManageCv /> },
+      { path: "user-cv/:id", element: <UserCv /> },
+
+      { path: "changepassword", element: <ChangePassword /> },
+      { path: "user-info", element: <UserInfo /> },
+    ];
+  } else if (role === "EMPLOYER_OWNER" || role === "EMPLOYER_STAFF") {
+    return [
+      { path: "", element: <EmployerDashBoard /> },
+      { path: "recruitment", element: <Recruitment /> },
+      { path: "list-post", element: <ManagePost /> },
+      { path: "add-post", element: <AddPost /> },
+      { path: "edit-post/:id", element: <AddPost /> },
+
+      { path: "edit-company/:id", element: <AddCompany /> },
+      { path: "add-company", element: <AddCompany /> },
+
+      { path: "list-cv/:id", element: <ManageCv /> },
+      { path: "user-cv/:id", element: <UserCv /> },
+
+      { path: "changepassword", element: <ChangePassword /> },
+      { path: "user-info", element: <UserInfo /> },
+    ];
+  } else {
+    return [{ path: "*", element: <Navigate to="/login" replace /> }];
+  }
+};
 
 export default adminRoutes;

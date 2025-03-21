@@ -20,6 +20,9 @@ const HomeAdmin = () => {
     }
   }, [navigate]);
 
+  // Gọi hàm adminRoutes để lấy danh sách các route
+  const routes = adminRoutes();
+
   return (
     <div className="container-scroller">
       <Header />
@@ -28,7 +31,7 @@ const HomeAdmin = () => {
         <div className="main-panel">
           <div className="content-wrapper">
             <Routes>
-              {adminRoutes.map((route, index) => (
+              {routes.map((route, index) => (
                 <Route key={index} path={route.path} element={route.element} />
               ))}
             </Routes>
