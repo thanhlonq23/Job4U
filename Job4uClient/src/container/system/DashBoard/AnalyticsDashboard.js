@@ -136,12 +136,12 @@ const AnalyticsDashboard = () => {
   // Chart configurations
   const chartConfigs = useMemo(
     () => ({
-      category: { title: "Phân phối theo danh mục", chartType: "pie" },
-      workType: { title: "Phân phối theo loại công việc", chartType: "pie" },
-      salary: { title: "Phân phối theo mức lương", chartType: "bar" },
-      experience: { title: "Phân phối theo kinh nghiệm", chartType: "bar" },
-      location: { title: "Phân phối theo vị trí", chartType: "horizontalBar" },
-      jobLevel: { title: "Phân phối theo cấp bậc công việc", chartType: "bar" },
+      category: { title: "Phân bố theo lĩnh vực", chartType: "pie" },
+      workType: { title: "Phân bố theo loại công việc", chartType: "pie" },
+      salary: { title: "Phân bố theo mức lương", chartType: "bar" },
+      experience: { title: "Phân bố theo kinh nghiệm", chartType: "bar" },
+      location: { title: "Phân bố theo vị trí", chartType: "horizontalBar" },
+      jobLevel: { title: "Phân bố theo cấp bậc công việc", chartType: "bar" },
       topCompanies: {
         title: "Top công ty đăng tuyển nhiều nhất",
         chartType: "bar",
@@ -334,7 +334,14 @@ const AnalyticsDashboard = () => {
               style={{ border: "1px solid  #5c5ac7" }}
             >
               <div className="card-body">
-                <h4 className="font-weight-normal mb-3">
+                <h4
+                  className="font-weight-normal mb-3"
+                  style={{
+                    fontWeight: "bold",
+                    color: "#5c5ac7",
+                    textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
+                  }}
+                >
                   {stat.title}
                   <i className={`float-right mdi mdi-24px ${stat.icon}`}></i>
                 </h4>
@@ -364,7 +371,7 @@ const AnalyticsDashboard = () => {
                   textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
                 }}
               >
-                Số lượng bài đăng theo tháng
+                Số lượng bài đăng hàng tháng tháng
               </h4>
               {distributionData.monthly.length ? (
                 <ResponsiveContainer width="100%" height={300}>

@@ -111,7 +111,14 @@ const EmployerDashBoard = () => {
             style={{ border: "1px solid  #5c5ac7" }}
           >
             <div className="card-body">
-              <h4 className="font-weight-normal mb-3">
+              <h4
+                className="font-weight-normal mb-3"
+                style={{
+                  fontWeight: "bold",
+                  color: "#5c5ac7",
+                  textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
+                }}
+              >
                 Tổng số hồ sơ
                 <i className="float-right mdi mdi-24px mdi-file-document"></i>
               </h4>
@@ -126,7 +133,14 @@ const EmployerDashBoard = () => {
             style={{ border: "1px solid  #5c5ac7" }}
           >
             <div className="card-body">
-              <h4 className="font-weight-normal mb-3">
+              <h4
+                className="font-weight-normal mb-3"
+                style={{
+                  fontWeight: "bold",
+                  color: "#5c5ac7",
+                  textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
+                }}
+              >
                 Hồ sơ mới trong tháng
                 <i className="float-right mdi mdi-24px mdi-calendar-text"></i>
               </h4>
@@ -141,7 +155,14 @@ const EmployerDashBoard = () => {
             style={{ border: "1px solid  #5c5ac7" }}
           >
             <div className="card-body">
-              <h4 className="font-weight-normal mb-3">
+              <h4
+                className="font-weight-normal mb-3"
+                style={{
+                  fontWeight: "bold",
+                  color: "#5c5ac7",
+                  textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
+                }}
+              >
                 Hồ sơ mới trong tuần
                 <i className="float-right mdi mdi-24px mdi-calendar-clock"></i>
               </h4>
@@ -156,7 +177,16 @@ const EmployerDashBoard = () => {
         <div className="col-lg-6 grid-margin stretch-card">
           <div className="card" style={{ border: "1px solid  #5c5ac7" }}>
             <div className="card-body">
-              <h4 className="card-title">Trạng thái kiểm tra hồ sơ</h4>
+              <h4
+                className="card-title"
+                style={{
+                  fontWeight: "bold",
+                  color: "#5c5ac7",
+                  textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
+                }}
+              >
+                Trạng thái kiểm tra hồ sơ
+              </h4>
               <div className="row">
                 <div className="col-md-4">
                   {statusData.map((item, index) => (
@@ -216,7 +246,16 @@ const EmployerDashBoard = () => {
         <div className="col-lg-6 grid-margin stretch-card">
           <div className="card" style={{ border: "1px solid  #5c5ac7" }}>
             <div className="card-body">
-              <h4 className="card-title">Số lượng hồ sơ theo tháng</h4>
+              <h4
+                className="card-title"
+                style={{
+                  fontWeight: "bold",
+                  color: "#5c5ac7",
+                  textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
+                }}
+              >
+                Số lượng hồ sơ theo tháng
+              </h4>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={monthlyData}
@@ -232,7 +271,7 @@ const EmployerDashBoard = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="cvCount" name="Số lượng hồ sơ" fill="#8884d8" />
+                  <Bar dataKey="cvCount" name="Số lượng hồ sơ" fill="#5c5ac7" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -245,7 +284,14 @@ const EmployerDashBoard = () => {
         <div className="col-lg-12 grid-margin stretch-card">
           <div className="card" style={{ border: "1px solid  #5c5ac7" }}>
             <div className="card-body">
-              <h4 className="card-title">
+              <h4
+                className="card-title"
+                style={{
+                  fontWeight: "bold",
+                  color: "#5c5ac7",
+                  textShadow: `0.5px 0.5px 1px rgba(75, 73, 172, 0.3)`,
+                }}
+              >
                 Top bài đăng có nhiều ứng viên nhất
               </h4>
               <ResponsiveContainer width="100%" height={300}>
@@ -267,7 +313,7 @@ const EmployerDashBoard = () => {
                   <Bar
                     dataKey="applications"
                     name="Số lượng ứng viên"
-                    fill="#82ca9d"
+                    fill="#5c5ac7"
                   />
                 </BarChart>
               </ResponsiveContainer>
