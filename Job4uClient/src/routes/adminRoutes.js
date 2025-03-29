@@ -30,6 +30,8 @@ import IdentifyCompany from "../container/system/Company/IdentifyCompany";
 import EmployerDashBoard from "../container/system/DashBoard/EmployerDashBoard";
 import AdminDashBoard from "../container/system/DashBoard/AdminDashBoard";
 import AnalyticsDashboard from "../container/system/DashBoard/AnalyticsDashboard";
+import CreateReport from "../container/system/Report/CreateReport";
+
 import { Navigate } from "react-router-dom";
 
 const getRoleFromLocalStorage = () => {
@@ -43,6 +45,7 @@ const adminRoutes = () => {
   if (role === "ADMIN") {
     return [
       { path: "", element: <AdminDashBoard /> },
+      { path: "create-report", element: <CreateReport /> },
       { path: "post-analysis", element: <AnalyticsDashboard /> },
 
       { path: "list-user", element: <ManageUser /> },

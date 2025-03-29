@@ -67,7 +67,7 @@ const Menu = () => {
                 aria-expanded={expandedMenu["analytics"] || false}
                 href="#"
               >
-                <i className="icon-head menu-icon" />
+                <i className="fa  fa-line-chart menu-icon" />
                 <span className="menu-title">Thống kê</span>
                 <i className="menu-arrow" />
               </a>
@@ -346,6 +346,32 @@ const Menu = () => {
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/list-post-admin/">
                       Danh sách bài đăng
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            {/* Menu báo cáo */}
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                onClick={() => toggleMenu("reports")}
+                aria-expanded={expandedMenu["reports"] || false}
+                href="#"
+              >
+                <i className="fa fa-file-text menu-icon" />
+                <span className="menu-title">Phân tích dữ liệu</span>
+                <i className="menu-arrow" />
+              </a>
+              <div
+                className={`collapse ${expandedMenu["reports"] ? "show" : ""}`}
+                id="reports"
+              >
+                <ul className="flex-column nav sub-menu">
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/admin/create-report/">
+                      Phân tích
                     </Link>
                   </li>
                 </ul>
