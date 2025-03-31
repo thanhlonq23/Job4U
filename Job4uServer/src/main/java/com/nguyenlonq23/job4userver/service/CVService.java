@@ -28,7 +28,6 @@ public class CVService {
 
     private PostRepository postRepository;
 
-    @Autowired
     public CVService(CVRepository cvRepository, UserRepository userRepository, PostRepository postRepository) {
         this.cvRepository = cvRepository;
         this.userRepository = userRepository;

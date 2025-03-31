@@ -1,12 +1,9 @@
 package com.nguyenlonq23.job4userver.service;
 
-import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.Experience;
 import com.nguyenlonq23.job4userver.repository.ExperienceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +12,11 @@ import java.util.List;
 @Lazy
 @Service
 public class ExperienceService {
-    @Autowired
-    private ExperienceRepository experienceRepository;
+    private final ExperienceRepository experienceRepository;
+
+    public ExperienceService(ExperienceRepository experienceRepository) {
+        this.experienceRepository = experienceRepository;
+    }
 
     public List<Experience> getAllExperiences() {
         return experienceRepository.findAll();

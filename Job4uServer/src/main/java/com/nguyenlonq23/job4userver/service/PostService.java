@@ -1,11 +1,10 @@
 package com.nguyenlonq23.job4userver.service;
 
 import com.nguyenlonq23.job4userver.dto.*;
-import com.nguyenlonq23.job4userver.mapper.PostMapper;
+import com.nguyenlonq23.job4userver.utils.mapper.PostMapper;
 import com.nguyenlonq23.job4userver.model.entity.Post;
 import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import com.nguyenlonq23.job4userver.repository.PostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,7 +24,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
 
-    @Autowired
     public PostService(PostRepository postRepository, PostMapper postMapper) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;

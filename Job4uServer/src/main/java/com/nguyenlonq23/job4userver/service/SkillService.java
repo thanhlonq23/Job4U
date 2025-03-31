@@ -1,9 +1,7 @@
 package com.nguyenlonq23.job4userver.service;
 
-import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.Skill;
 import com.nguyenlonq23.job4userver.repository.SkillRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,12 +12,11 @@ import java.util.List;
 @Lazy
 @Service
 public class SkillService {
-    @Autowired
-    private SkillRepository skillRepository;
 
-    // Lấy tất cả skills
-    public List<Skill> getAllSkills() {
-        return skillRepository.findAll();
+    private final SkillRepository skillRepository;
+
+    public SkillService(SkillRepository skillRepository) {
+        this.skillRepository = skillRepository;
     }
 
     public Page<Skill> getSkillsWithPagination(int page, int size) {

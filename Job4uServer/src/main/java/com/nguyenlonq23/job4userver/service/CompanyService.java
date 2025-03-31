@@ -16,8 +16,11 @@ import java.util.Optional;
 @Lazy
 @Service
 public class CompanyService {
-    @Autowired
     private CompanyRepository companyRepository;
+
+    public CompanyService(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
+    }
 
     // Lấy tất cả kèm phân trang,tìm kiếm, sort
     public Page<Company> getCompaniesWithPaginationAndFilter(String keyword, Pageable pageable) {

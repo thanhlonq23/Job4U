@@ -3,7 +3,6 @@ package com.nguyenlonq23.job4userver.service;
 
 import com.nguyenlonq23.job4userver.model.entity.WorkType;
 import com.nguyenlonq23.job4userver.repository.WorkTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,8 +14,11 @@ import java.util.List;
 @Lazy
 @Service
 public class WorkTypeService {
-    @Autowired
-    private WorkTypeRepository workTypeRepository;
+    private final WorkTypeRepository workTypeRepository;
+
+    public WorkTypeService(WorkTypeRepository workTypeRepository) {
+        this.workTypeRepository = workTypeRepository;
+    }
 
     // Lấy tất cả work types
     public List<WorkType> getAllWorkTypes() {
@@ -25,7 +27,7 @@ public class WorkTypeService {
 
     // Lấy dữ liệu phân trang
     public Page<WorkType> getWorkTypesWithPagination(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size); // Tạo Pageable (pageIndex, pageSize)
+        Pageable pageable = PageRequest.of(page, size);
         return workTypeRepository.findAll(pageable);
     }
 

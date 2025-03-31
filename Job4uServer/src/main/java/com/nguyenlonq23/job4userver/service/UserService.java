@@ -4,7 +4,6 @@ import com.nguyenlonq23.job4userver.model.entity.Company;
 import com.nguyenlonq23.job4userver.model.entity.User;
 import com.nguyenlonq23.job4userver.repository.CompanyRepository;
 import com.nguyenlonq23.job4userver.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,11 +14,13 @@ import java.util.Optional;
 @Lazy
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CompanyRepository companyRepository;
+    private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
 
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository) {
+        this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
+    }
 
     // Lấy tất cả categories kèm phân trang và từ khóa tìm kiếm,sort
     public Page<User> getUsersWithPaginationAndFilter(String keyword, Pageable pageable) {
@@ -83,12 +84,5 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
 
-
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
 }

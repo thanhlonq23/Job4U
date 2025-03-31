@@ -15,8 +15,11 @@ import java.util.List;
 @Lazy
 @Service
 public class CategoryService {
-    @Autowired
     private CategoryRepository categoryRepository;
+
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     // Lấy tất cả categories kèm phân trang và từ khóa tìm kiếm,sort
     public Page<Category> getCategoriesWithPaginationAndFilter(String keyword, Pageable pageable) {
@@ -31,7 +34,6 @@ public class CategoryService {
     public List<Category> getAllCategories( ) {
         return categoryRepository.findAll();
     }
-
 
     // Lấy category theo ID
     public Category getCategoryById(int id) {
