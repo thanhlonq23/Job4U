@@ -24,7 +24,6 @@ public class AnalyticsService {
 
     private final CVRepository cvRepository;
 
-    @Autowired
     public AnalyticsService(PostRepository postRepository, CompanyRepository companyRepository, CategoryRepository categoryRepository, LocationRepository locationRepository, UserRepository userRepository, CVRepository cvRepository) {
         this.postRepository = postRepository;
         this.companyRepository = companyRepository;
