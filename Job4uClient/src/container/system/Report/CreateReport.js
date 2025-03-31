@@ -731,7 +731,7 @@ const CreateReport = () => {
                   </div>
                 </div>
 
-                <div className="row mb-5">
+                {/* <div className="row mb-5">
                   <div className="col-md-12">
                     <div className="card">
                       <div className="card-body">
@@ -763,7 +763,7 @@ const CreateReport = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="row mb-5">
                   <div className="col-md-12">

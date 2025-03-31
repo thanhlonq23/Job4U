@@ -17,7 +17,6 @@ import AddPost from "../container/system/Post/AddPost";
 import ManagePost from "../container/system/Post/ManagePost";
 import ManagePostAdmin from "../container/system/Post/ManagePostAdmin";
 import PostDetail from "../container/system/Post/PostDetail";
-import UpdatePostStatus from "../container/system/Post/UpdatePostStatus";
 import ManageCv from "../container/system/Cv/ManageCv";
 import UserCv from "../container/system/Cv/UserCv";
 import ChangePassword from "../container/system/User/ChangePassword";
@@ -84,7 +83,6 @@ const adminRoutes = () => {
 
       { path: "list-post-admin", element: <ManagePostAdmin /> },
       { path: "post-detail/:id", element: <PostDetail /> },
-      { path: "update-post-status/:id", element: <UpdatePostStatus /> },
       { path: "list-post", element: <ManagePost /> },
       { path: "add-post", element: <AddPost /> },
       { path: "edit-post/:id", element: <AddPost /> },
@@ -116,7 +114,7 @@ const adminRoutes = () => {
       { path: "user-info", element: <UserInfo /> },
     ];
   } else {
-    return [{ path: "*", element: <Navigate to="/login" replace /> }];
+    return [{ path: "*", element: <Navigate to="/" replace /> }];
   }
 };
 

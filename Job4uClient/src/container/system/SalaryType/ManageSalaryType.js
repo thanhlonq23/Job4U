@@ -48,7 +48,7 @@ const ManageSalary = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa khoảng lương này?")) {
       try {
         const res = await deleteSalaryService(id);
-        if (res && res.errCode === 0) {
+        if (res && res.status === "SUCCESS") {
           toast.success("Xóa khoảng lương thành công");
           // Xóa phần tử khỏi danh sách hiện tại
           const updatedData = dataSalary.filter((item) => item.id !== id);
@@ -60,7 +60,7 @@ const ManageSalary = () => {
             fetchSalarys(currentPage - 1);
           }
         } else {
-          toast.error(res?.errMessage || "Xóa khoảng lương thất bại!");
+          toast.error(res?.message || "Xóa khoảng lương thất bại!");
         }
       } catch (error) {
         console.error("Lỗi khi xóa khoảng lương:", error);

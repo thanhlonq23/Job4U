@@ -14,7 +14,7 @@ const getAllSkillService = ({ page = 0, size = 10 }) => {
 };
 
 const getSkillByIdService = (id) => {
-  return axios.get(`/api/job-levels/${id}`);
+  return axios.get(`/api/skills/${id}`);
 };
 
 const updateSkillService = (data, id) => {

@@ -48,7 +48,7 @@ const ManageSkill = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa kỹ năng này?")) {
       try {
         const res = await deleteSkillService(id);
-        if (res && res.errCode === 0) {
+        if (res && res.status === "SUCCESS") {
           toast.success("Xóa kỹ năng thành công");
           // Xóa phần tử khỏi danh sách hiện tại
           const updatedData = dataSkill.filter((item) => item.id !== id);
@@ -60,7 +60,7 @@ const ManageSkill = () => {
             fetchSkills(currentPage - 1);
           }
         } else {
-          toast.error(res?.errMessage || "Xóa kỹ năng thất bại!");
+          toast.error(res?.message || "Xóa kỹ năng thất bại!");
         }
       } catch (error) {
         console.error("Lỗi khi xóa kỹ năng:", error);

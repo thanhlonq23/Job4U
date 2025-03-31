@@ -89,7 +89,7 @@ const JobDetail = () => {
                   <div className="job-post-details">
                     <div className="post-details1 mb-50">
                       <div className="small-section-tittle">
-                        <h4>Mô tả công việc</h4>
+                        <h4>Chi tiết tin tuyển dụng:</h4>
                       </div>
                     </div>
                     <div className="markdown-content">
@@ -124,6 +124,9 @@ const JobDetail = () => {
                         Kinh nghiệm : <span>{dataPost.experience?.name}</span>
                       </li>
                       <li>
+                        Số lượng: <span>{dataPost.amount}</span>
+                      </li>
+                      <li>
                         Hạn nộp :{" "}
                         <span>
                           {dataPost.expirationDate &&
@@ -148,12 +151,6 @@ const JobDetail = () => {
                       </li>
                       <li>
                         Địa chỉ : <span>{dataPost.company?.address}</span>
-                      </li>
-                      <li>
-                        Email : <span>{dataPost.company?.email}</span>
-                      </li>
-                      <li>
-                        Số nhân viên cần tuyển: <span>{dataPost.amount}</span>
                       </li>
                     </ul>
                   </div>

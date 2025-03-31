@@ -75,6 +75,20 @@ function App() {
           }
         />
 
+        {/* Route cho trang Admin */}
+        <Route
+          path="/admin/*"
+          element={
+            ["ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF"].includes(
+              JSON.parse(localStorage.getItem("userInfo"))?.role
+            ) ? (
+              <HomeAdmin />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
         <Route
           path="/candidate/*"
           element={
@@ -86,21 +100,7 @@ function App() {
                 <Footer />
               </>
             ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-
-        {/* Route cho trang Admin */}
-        <Route
-          path="/admin/*"
-          element={
-            ["ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF"].includes(
-              JSON.parse(localStorage.getItem("userInfo"))?.role
-            ) ? (
-              <HomeAdmin />
-            ) : (
-              <Navigate to="/login" />
+              <Navigate to="/" />
             )
           }
         />

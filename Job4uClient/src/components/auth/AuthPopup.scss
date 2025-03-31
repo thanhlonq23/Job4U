@@ -428,7 +428,7 @@ $font-family: "Poppins", sans-serif;
       h1 {
         font-size: 36px;
       }
-      
+
       p {
         font-size: 14px;
       }
@@ -439,4 +439,32 @@ $font-family: "Poppins", sans-serif;
 .auth-popup__btn--loading {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+// OTP
+.auth-popup__otp-container {
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  text-align: center;
+
+  h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+
+  p {
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+
+  .auth-popup__input-box {
+    margin-bottom: 20px;
+  }
+
+  .auth-popup__error {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+  }
 }

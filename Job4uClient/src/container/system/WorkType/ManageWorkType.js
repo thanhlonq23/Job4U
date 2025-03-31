@@ -45,7 +45,7 @@ const ManageWorkType = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa hình thức làm việc này?")) {
       try {
         const res = await DeleteWorkTypeService(id);
-        if (res && res.errCode === 0) {
+        if (res && res.status === "SUCCESS") {
           toast.success("Xóa hình thức làm việc thành công");
           // Xóa phần tử khỏi danh sách hiện tại
           const updatedData = dataWorkType.filter((item) => item.id !== id);
@@ -57,7 +57,7 @@ const ManageWorkType = () => {
             fetchJobLevels(currentPage - 1);
           }
         } else {
-          toast.error(res?.errMessage || "Xóa hình thức làm việc thất bại!");
+          toast.error(res?.message || "Xóa hình thức làm việc thất bại!");
         }
       } catch (error) {
         console.error("Lỗi khi xóa hình thức làm việc:", error);

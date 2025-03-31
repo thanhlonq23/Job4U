@@ -59,7 +59,7 @@ const ManageJobType = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa lĩnh vực này?")) {
       try {
         const res = await deleteCategoryService(id);
-        if (res && res.errCode === 0) {
+        if (res && res.status === "SUCCESS") {
           toast.success("Xóa lĩnh vực thành công");
           setdataJobType((prev) => prev.filter((item) => item.id !== id));
 

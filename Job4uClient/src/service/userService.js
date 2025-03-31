@@ -15,16 +15,14 @@ const getAllUserService = ({ keyword = "", page = 0, size = 10 }) => {
 const getUserByIdService = (id) => {
   return axios.get(`/api/users/${id}`);
 };
-//fdfsdfsd
+
 const getDetailUserById = (id) => {
   return axios.get(`/api/users/${id}`);
 };
 
-const UpdateUserService = (id) => {
+const updateUserService = (id) => {
   return axios.get(`/api/users/${id}`);
 };
-
-//fdsfsdfdsfsd
 
 const getCompanyIdByIdService = (id) => {
   return axios.get(`/api/users/get-company-id/${id}`);
@@ -34,7 +32,7 @@ const createNewUser = (data) => {
   return axios.post(`/api/create-new-user`, data);
 };
 
-const updateUserService = (id, companyId) => {
+const updateUserCompanyService = (id, companyId) => {
   return axios.put(`/api/users/update-company`, null, {
     params: {
       userId: id,
@@ -55,11 +53,10 @@ export {
   getAllUserService,
   getUserByIdService,
   createNewUser,
-  updateUserService,
+  updateUserCompanyService,
   deleteUserService,
   getCompanyIdByIdService,
   getDetailPostByIdService,
-  //dsadas
-  UpdateUserService,
+  updateUserService,
   getDetailUserById,
 };

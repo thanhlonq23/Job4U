@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { toast} from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactMarkdown from "react-markdown";
 import {
@@ -11,7 +11,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Button,
   Badge,
 } from "reactstrap";
 import moment from "moment";
@@ -62,30 +61,30 @@ const PostDetail = () => {
   };
 
   return (
-    <div className="post-detail-container">
+    <div className="post-detail-container p-4">
       <Row>
         <Col md={12}>
-          <Card className="main-card">
-            <CardHeader>
+          <Card className="main-card shadow-sm border-0">
+            <CardHeader className="bg-primary text-white py-3">
               <div className="d-flex justify-content-between align-items-center">
-                <h4 className="mb-0">CHI TIẾT BÀI ĐĂNG</h4>
+                <h4 className="mb-0"></h4>
                 <div>
                   <Link
                     to="/admin/list-post-admin"
-                    className="btn btn-secondary mr-2"
+                    className="btn btn-light me-2"
                   >
-                    <i className="ti-arrow-left mr-1"></i> Quay lại
+                    <i className="ti-arrow-left me-1"></i> Quay lại
                   </Link>
                   <Link
                     to={`/admin/edit-post/${id}`}
-                    className="btn btn-primary"
+                    className="btn btn-warning text-white"
                   >
-                    <i className="ti-pencil mr-1"></i> Chỉnh sửa
+                    <i className="ti-pencil me-1"></i> Chỉnh sửa
                   </Link>
                 </div>
               </div>
             </CardHeader>
-            <CardBody>
+            <CardBody className="bg-light">
               {isLoading ? (
                 <div className="text-center py-5">
                   <Spinner color="primary" />
@@ -96,19 +95,24 @@ const PostDetail = () => {
                   <Col md={12}>
                     <div className="post-header mb-4">
                       <div className="d-flex justify-content-between align-items-start">
-                        <h3 className="post-title">{post.name}</h3>
+                        <h3 className="post-title text-primary">{post.name}</h3>
                         <Badge
                           color={
                             statusMapping[post.status]?.color || "secondary"
                           }
+                          className="px-3 py-2"
                         >
                           {statusMapping[post.status]?.label ||
                             "Không xác định"}
                         </Badge>
                       </div>
-                      <p className="text-muted">
-                        Đăng bởi: {post.posterFistName} {post.posterLastName} |
-                        Hết hạn: {formatDate(post.expirationDate)}
+                      <p className="text-muted mt-2">
+                        Đăng bởi:{" "}
+                        <strong>
+                          {post.posterFistName} {post.posterLastName}
+                        </strong>{" "}
+                        | Hết hạn:{" "}
+                        <strong>{formatDate(post.expirationDate)}</strong>
                       </p>
                     </div>
                   </Col>
@@ -116,58 +120,43 @@ const PostDetail = () => {
                   <Col md={12}>
                     <div className="post-meta mb-4">
                       <Row>
-                        <Col md={3} className="mb-3">
-                          <div className="meta-item">
-                            <h6 className="meta-title">Số lượng tuyển dụng</h6>
-                            <p className="meta-value">{post.amount} người</p>
-                          </div>
-                        </Col>
-                        <Col md={3} className="mb-3">
-                          <div className="meta-item">
-                            <h6 className="meta-title">Địa điểm</h6>
-                            <p className="meta-value">{post.location?.name}</p>
-                          </div>
-                        </Col>
-                        <Col md={3} className="mb-3">
-                          <div className="meta-item">
-                            <h6 className="meta-title">Ngành nghề</h6>
-                            <p className="meta-value">{post.category?.name}</p>
-                          </div>
-                        </Col>
-                        <Col md={3} className="mb-3">
-                          <div className="meta-item">
-                            <h6 className="meta-title">Vị trí</h6>
-                            <p className="meta-value">{post.jobLevel?.name}</p>
-                          </div>
-                        </Col>
-                        <Col md={3} className="mb-3">
-                          <div className="meta-item">
-                            <h6 className="meta-title">Hình thức làm việc</h6>
-                            <p className="meta-value">{post.workType?.name}</p>
-                          </div>
-                        </Col>
-                        <Col md={3} className="mb-3">
-                          <div className="meta-item">
-                            <h6 className="meta-title">Mức lương</h6>
-                            <p className="meta-value">{post.salary?.name}</p>
-                          </div>
-                        </Col>
-                        <Col md={3} className="mb-3">
-                          <div className="meta-item">
-                            <h6 className="meta-title">Kinh nghiệm</h6>
-                            <p className="meta-value">
-                              {post.experience?.name}
-                            </p>
-                          </div>
-                        </Col>
+                        {[
+                          {
+                            title: "Số lượng tuyển dụng",
+                            value: `${post.amount} người`,
+                          },
+                          { title: "Địa điểm", value: post.location?.name },
+                          { title: "Ngành nghề", value: post.category?.name },
+                          { title: "Vị trí", value: post.jobLevel?.name },
+                          {
+                            title: "Hình thức làm việc",
+                            value: post.workType?.name,
+                          },
+                          { title: "Mức lương", value: post.salary?.name },
+                          {
+                            title: "Kinh nghiệm",
+                            value: post.experience?.name,
+                          },
+                        ].map((meta, index) => (
+                          <Col md={3} key={index} className="mb-3">
+                            <div className="meta-item bg-white  shadow-sm p-3">
+                              <h6 className="meta-title text-secondary">
+                                {meta.title}
+                              </h6>
+                              <p className="meta-value mb-0">{meta.value}</p>
+                            </div>
+                          </Col>
+                        ))}
                       </Row>
                     </div>
                   </Col>
 
                   <Col md={12}>
                     <div className="post-description mb-4">
-                      <h5 className="section-title">Mô tả công việc</h5>
-                      <div className="description-content markdown-content">
+                      <h5 className="section-title text-primary">
+                        Mô tả công việc
+                      </h5>
+                      <div className="description-content markdown-content bg-white p-3 rounded shadow-sm">
                         <ReactMarkdown>{post.description}</ReactMarkdown>
                       </div>
                     </div>
@@ -195,7 +184,7 @@ const PostDetail = () => {
       {/* Loading Modal */}
       {isLoading && (
         <Modal isOpen centered className="loading-modal">
-          <div className="spinner-container">
+          <div className="spinner-container text-center py-5">
             <Spinner color="primary" />
             <p className="mt-2">Đang xử lý...</p>
           </div>

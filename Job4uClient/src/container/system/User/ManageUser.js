@@ -51,16 +51,20 @@ const ManageUser = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
       try {
         const res = await deleteUserService(id);
-        if (res && res.errCode === 0) {
-          toast.success("Xóa người dùng thành công");
-          setDataUser((prev) => prev.filter((item) => item.id !== id));
+        console.log(res.message);
 
-          if (dataUser.length === 1 && currentPage > 0) {
-            fetchUsers(currentPage - 1);
+        if (res && res.status === "SUCCESS") {
+          toast.success("Xóa người dùng thành công");
+
+          const isLastUserOnPage = dataUser.length === 1 && currentPage > 0;
+
+          fetchUsers(isLastUserOnPage ? currentPage - 1 : currentPage);
+
+          if (isLastUserOnPage) {
             setCurrentPage(currentPage - 1);
           }
         } else {
-          toast.error(res?.errMessage || "Xóa người dùng thất bại!");
+          toast.error(res?.message || "Xóa người dùng thất bại!");
         }
       } catch (error) {
         console.error("Lỗi khi xóa người dùng:", error);

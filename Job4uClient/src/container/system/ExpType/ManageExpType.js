@@ -48,7 +48,7 @@ const ManageExperience = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa kinh nghiệm  này?")) {
       try {
         const res = await deleteExperienceService(id);
-        if (res && res.errCode === 0) {
+        if (res && res.status === "SUCCESS") {
           toast.success("Xóa kinh nghiệm  thành công");
           // Xóa phần tử khỏi danh sách hiện tại
           const updatedData = dataExperience.filter((item) => item.id !== id);
@@ -60,7 +60,7 @@ const ManageExperience = () => {
             fetchExperiences(currentPage - 1);
           }
         } else {
-          toast.error(res?.errMessage || "Xóa kinh nghiệm  thất bại!");
+          toast.error(res?.message || "Xóa kinh nghiệm  thất bại!");
         }
       } catch (error) {
         console.error("Lỗi khi xóa kinh nghiệm :", error);

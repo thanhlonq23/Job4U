@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
   createNewUser,
   getDetailUserById,
-  UpdateUserService,
+  updateUserService,
 } from "../../service/UserService";
 import { useFetchAllcode } from "../../util/fetch";
 import DatePicker from "../../components/input/DatePicker";
@@ -118,7 +118,7 @@ const CandidateInfo = () => {
     setInputValues({ ...inputValues, ["isOpen"]: true });
   };
   let handleSaveUser = async () => {
-    let res = await UpdateUserService({
+    let res = await updateUserService({
       id: inputValues.id,
       firstName: inputValues.firstName,
       lastName: inputValues.lastName,

@@ -44,7 +44,7 @@ const AddSkill = () => {
               },
             });
           } else {
-            toast.error(response?.errMessage || "Lỗi khi tải dữ liệu!");
+            toast.error(response?.message || "Lỗi khi tải dữ liệu!");
           }
         } catch (error) {
           toast.error("Không thể tải dữ liệu!");
@@ -86,6 +86,8 @@ const AddSkill = () => {
           size: 10,
           keyword: debouncedKeyword.trim(),
         });
+
+        console.log(response);
 
         if (response?.status === "SUCCESS" && response.data?.content) {
           setCategories(response.data.content); // Gán danh sách từ API

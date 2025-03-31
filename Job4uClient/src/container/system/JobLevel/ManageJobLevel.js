@@ -48,7 +48,7 @@ const ManageJobLevel = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa cấp bậc này?")) {
       try {
         const res = await deleteJobLevelService(id);
-        if (res && res.errCode === 0) {
+        if (res && res.status === "SUCCESS") {
           toast.success("Xóa cấp bậc thành công");
           // Xóa phần tử khỏi danh sách hiện tại
           const updatedData = dataJobLevel.filter((item) => item.id !== id);

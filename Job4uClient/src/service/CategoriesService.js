@@ -14,7 +14,7 @@ const getAllCategoryService = ({ page = 0, size = 10 }) => {
 }; 
 
 const searchCategoryService = ({ page = 0, size = 10, keyword = "" }) => {
-  return axios.get(`/api/categories/search`, {
+  return axios.get(`/api/categories/page`, {
     params: {
       page,
       size,

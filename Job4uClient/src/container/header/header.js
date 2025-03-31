@@ -158,7 +158,7 @@ const Header = () => {
                                 Đổi mật khẩu
                               </Link>
                               <NavLink
-                                to="/login"
+                                to="/"
                                 className="dropdown-item"
                                 onClick={() => {
                                   localStorage.removeItem("userInfo");

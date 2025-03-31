@@ -75,7 +75,7 @@ const AddWorkType = () => {
       setIsLoading(false); // Tắt trạng thái tải
 
       // Xử lý kết quả trả về
-      if (response && response.errCode === 0) {
+      if (response && response.status === "SUCCESS") {
         toast.success(
           isActionADD
             ? "Thêm hình thức làm việc thành công!"
@@ -89,7 +89,7 @@ const AddWorkType = () => {
           });
         }
       } else {
-        toast.error(response?.errMessage || "Đã xảy ra lỗi!");
+        toast.error(response?.message || "Đã xảy ra lỗi!");
       }
     } catch (error) {
       setIsLoading(false);

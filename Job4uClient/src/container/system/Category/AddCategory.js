@@ -82,7 +82,7 @@ const AddCategory = () => {
         ? await createCategoryService(payload)
         : await updateCategoryService(payload, id);
 
-      if (response?.errCode === 0) {
+      if (response?.status === "SUCCESS") {
         toast.success(
           isActionAdd
             ? "Thêm loại công việc thành công"
@@ -120,9 +120,7 @@ const AddCategory = () => {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">
-            {isActionAdd
-              ? "THÊM MỚI CÔNG VIỆC"
-              : "CẬP NHẬT CÔNG VIỆC"}
+            {isActionAdd ? "THÊM MỚI CÔNG VIỆC" : "CẬP NHẬT CÔNG VIỆC"}
           </h4>
 
           <form>

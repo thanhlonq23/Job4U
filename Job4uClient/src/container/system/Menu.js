@@ -415,7 +415,26 @@ const Menu = () => {
                       </Link>
                     </li>
                   )}
+                </ul>
+              </div>
+            </li>
 
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                onClick={() => toggleMenu("employee")}
+                aria-expanded={expandedMenu["employee"] || false}
+                href="#"
+              >
+                <i className="fa fa-user menu-icon"></i>
+                <span className="menu-title">Quản lý nhân viên</span>
+                <i className="menu-arrow" />
+              </a>
+              <div
+                className={`collapse ${expandedMenu["employee"] ? "show" : ""}`}
+                id="employee"
+              >
+                <ul className="flex-column nav sub-menu">
                   <li className="nav-item">
                     <Link className="nav-link" to="/admin/recruitment/">
                       Tuyển dụng vào công ty

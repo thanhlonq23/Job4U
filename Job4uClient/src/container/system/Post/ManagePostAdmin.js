@@ -2,7 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Spinner, Modal, Row, Col, Card, CardBody, Button } from "reactstrap";
+import {
+  Spinner,
+  Modal,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Button,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "reactstrap";
 import ReactPaginate from "react-paginate";
 import moment from "moment";
 import { PAGINATION } from "../../../util/constant";
@@ -10,15 +21,24 @@ import {
   banPostService,
   activePostService,
 } from "../../../service/userService1";
-import { getAllPostService } from "../../../service/PostService";
+import {
+  getAllPostService,
+  updatePostStatusService,
+} from "../../../service/PostService";
 
-const ManagePost = () => {
+const ManagePostAdmin = () => {
   const [dataPost, setDataPost] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+
+  // State cho modal xét duyệt
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("PENDING");
+  const [selectedPostName, setSelectedPostName] = useState("");
 
   // Mapping trạng thái từ backend
   const statusMapping = {
@@ -130,6 +150,47 @@ const ManagePost = () => {
     setSearchTerm(value);
   }, 300);
 
+  // Functions for modal
+  const openModal = (id, postName) => {
+    setSelectedPostId(id);
+    setSelectedPostName(postName);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedPostId(null);
+    setSelectedStatus("PENDING");
+  };
+
+  const handleStatusChange = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  const handleUpdatePostStatus = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await updatePostStatusService({
+        id: selectedPostId,
+        status: selectedStatus,
+      });
+
+      if (response?.status === "SUCCESS") {
+        toast.success("Cập nhật trạng thái bài đăng thành công!");
+        await fetchPosts(currentPage);
+        closeModal();
+      } else {
+        toast.error(response?.data?.errMessage || "Đã xảy ra lỗi!");
+      }
+    } catch (error) {
+      console.error("Error updating post status:", error);
+      toast.error("Đã xảy ra lỗi khi cập nhật trạng thái bài đăng!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const filteredPosts = dataPost.filter((post) =>
     post.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -230,12 +291,16 @@ const ManagePost = () => {
                                   Chi tiết bài đăng
                                 </Link>
                                 &nbsp; &nbsp;
-                                <Link
+                                <a
+                                  href="#"
                                   style={{ color: "#4B49AC" }}
-                                  to={`/admin/update-post-status/${item.id}`}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    openModal(item.id, item.name);
+                                  }}
                                 >
                                   Xét duyệt
-                                </Link>
+                                </a>
                               </div>
                             </td>
                           </tr>
@@ -281,8 +346,58 @@ const ManagePost = () => {
         </Col>
       </Row>
 
+      <Modal
+        isOpen={modalOpen}
+        toggle={closeModal}
+        style={{ top: "25%", transform: "translateY(-20%)" }}
+      >
+        <ModalHeader toggle={closeModal}>XÉT DUYỆT BÀI ĐĂNG</ModalHeader>
+        <ModalBody>
+          <p>
+            <strong>Bài đăng:</strong> {selectedPostName}
+          </p>
+          <div className="form-group">
+            <label>Trạng thái</label>
+            <select
+              value={selectedStatus}
+              onChange={handleStatusChange}
+              className="form-control"
+              disabled={isLoading}
+            >
+              <option value="">Xét duyệt</option>
+              <option value="ACTIVE">Hoạt động</option>
+              <option value="REJECTED">Từ chối</option>
+            </select>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="secondary"
+            onClick={closeModal}
+            disabled={isLoading}
+            className="mx-3"
+          >
+            Hủy
+          </Button>
+
+          <Button
+            color="primary"
+            onClick={handleUpdatePostStatus}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Spinner size="sm" /> Đang lưu...
+              </>
+            ) : (
+              "Lưu"
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
       {/* Loading Modal */}
-      {isLoading && (
+      {isLoading && !modalOpen && (
         <Modal isOpen centered className="loading-modal">
           <div className="spinner-container">
             <Spinner color="primary" />
@@ -294,4 +409,4 @@ const ManagePost = () => {
   );
 };
 
-export default ManagePost;
+export default ManagePostAdmin;
