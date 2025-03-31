@@ -18,7 +18,6 @@ public class SkillController {
 
     private final SkillService skillService;
 
-    @Autowired
     public SkillController(SkillService skillService) {
         this.skillService = skillService;
     }

@@ -18,7 +18,6 @@ public class SalaryController {
 
     private final SalaryService salaryService;
 
-    @Autowired
     public SalaryController(SalaryService salaryService) {
         this.salaryService = salaryService;
     }

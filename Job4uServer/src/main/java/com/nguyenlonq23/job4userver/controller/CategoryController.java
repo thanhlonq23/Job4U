@@ -17,12 +17,10 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
-    @Autowired
     private CategoryService categoryService;
 
-    // Generic method for building responses
-    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
-        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     // Get all categories
@@ -94,5 +92,9 @@ public class CategoryController {
         }
         categoryService.deleteCategory(id);
         return buildResponse("SUCCESS", "Successfully deleted the category", null, HttpStatus.OK);
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
     }
 }

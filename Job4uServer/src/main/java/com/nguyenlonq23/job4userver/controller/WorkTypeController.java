@@ -15,8 +15,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/work-types")
 public class WorkTypeController {
-    @Autowired
-    private WorkTypeService workTypeService;
+    private final WorkTypeService workTypeService;
+
+    public WorkTypeController(WorkTypeService workTypeService) {
+        this.workTypeService = workTypeService;
+    }
 
     private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
         return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));

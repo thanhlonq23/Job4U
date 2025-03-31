@@ -18,7 +18,6 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @Autowired
     public LocationController(LocationService locationService) {
         this.locationService = locationService;
     }

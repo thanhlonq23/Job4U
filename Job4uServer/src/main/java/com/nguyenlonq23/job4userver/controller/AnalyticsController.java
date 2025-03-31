@@ -19,7 +19,6 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
-    @Autowired
     public AnalyticsController(AnalyticsService analyticsService) {
         this.analyticsService = analyticsService;
     }

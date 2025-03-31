@@ -18,8 +18,11 @@ import java.util.Optional;
 @RequestMapping("/api/companies")
 public class CompanyController {
 
-    @Autowired
     private CompanyService companyService;
+
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
         return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));

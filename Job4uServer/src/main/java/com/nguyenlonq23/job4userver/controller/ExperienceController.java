@@ -18,7 +18,6 @@ import java.util.List;
 public class ExperienceController {
     private final ExperienceService experienceService;
 
-    @Autowired
     public ExperienceController(ExperienceService experienceService) {
         this.experienceService = experienceService;
     }

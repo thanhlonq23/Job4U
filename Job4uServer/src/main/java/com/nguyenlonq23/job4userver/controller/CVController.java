@@ -21,7 +21,6 @@ public class CVController {
 
     private final CVService cvService;
 
-    @Autowired
     public CVController(CVService cvService) {
         this.cvService = cvService;
     }

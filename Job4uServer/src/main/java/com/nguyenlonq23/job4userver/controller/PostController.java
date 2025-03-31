@@ -1,8 +1,8 @@
 package com.nguyenlonq23.job4userver.controller;
 
 import com.nguyenlonq23.job4userver.dto.*;
-import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.model.entity.Post;
+import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.model.enums.PostStatus;
 import com.nguyenlonq23.job4userver.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +16,33 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-
     private final PostService postService;
 
-    @Autowired
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
-    // Utility method for building API responses
-    private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
-        return ResponseEntity.status(httpStatus).body(new ApiResponse<>(status, message, data));
+    // Utility method to parse and validate PostStatus
+    private PostStatus parseStatus(String status) {
+        if (status == null || status.isEmpty()) return null;
+        try {
+            return PostStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status value: " + status);
+        }
     }
 
-    // Get all posts with pagination
+    private Pageable createPageable(Integer page, Integer size, String sortBy, String direction) {
+        Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page != null ? page : 0, size != null ? size : 10, Sort.by(sortDirection, sortBy));
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<PostAdminPageDTO>>> getAllPosts(
@@ -42,19 +50,16 @@ public class PostController {
             Pageable pageable) {
         try {
             PostStatus postStatus = parseStatus(status);
-            pageable = (pageable == null) ? PageRequest.of(0, 10) : pageable;
-
+            pageable = pageable == null ? PageRequest.of(0, 10) : pageable;
             Page<PostAdminPageDTO> posts = postService.getPostsWithPagination(postStatus, pageable);
-            String message = posts.isEmpty() ? "No posts found" : "Successfully retrieved the list of posts";
-            return buildResponse("SUCCESS", message, posts, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Retrieved posts", posts));
         } catch (IllegalArgumentException e) {
-            return buildResponse("ERROR", e.getMessage(), null, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", e.getMessage(), null));
         } catch (Exception e) {
-            return buildResponse("ERROR", "An unexpected error occurred: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>("ERROR", e.getMessage(), null));
         }
     }
 
-    // Search posts with filters
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<PostDTO>>> searchPosts(
             @RequestParam(required = false) String keyword,
@@ -68,64 +73,113 @@ public class PostController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
         try {
-            Sort.Direction sortDirection = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-            Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
-
+            Pageable pageable = createPageable(page, size, sortBy, direction);
             Page<PostDTO> posts = postService.searchPosts(keyword, categoryId, locationId, workTypeIds, jobLevelIds, experienceIds, pageable);
-            return buildResponse("SUCCESS", "Successfully retrieved filtered posts", posts, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Filtered posts retrieved", posts));
         } catch (Exception e) {
-            return buildResponse("ERROR", e.getMessage(), null, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", e.getMessage(), null));
         }
     }
 
-    // Get posts by company ID with pagination
     @GetMapping("/company")
     public ResponseEntity<ApiResponse<Page<PostEmployerPageDTO>>> findPostsByCompanyIdWithPagination(
-            @RequestParam(value = "companyId", required = false, defaultValue = "") String companyId,
+            @RequestParam(value = "companyId", required = false) String companyId,
             @RequestParam(value = "status", required = false) String status,
             Pageable pageable) {
         try {
             PostStatus postStatus = parseStatus(status);
-            pageable = (pageable == null) ? PageRequest.of(0, 10) : pageable;
-
+            pageable = pageable == null ? PageRequest.of(0, 10) : pageable;
             Page<PostEmployerPageDTO> posts = postService.findPostsByCompanyIdAndStatusWithPagination(companyId, postStatus, pageable);
-            String message = posts.isEmpty() ? "No posts found" : "Successfully retrieved the list of posts";
-            return buildResponse("SUCCESS", message, posts, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Retrieved posts by company ID", posts));
         } catch (IllegalArgumentException e) {
-            return buildResponse("ERROR", e.getMessage(), null, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", e.getMessage(), null));
         } catch (Exception e) {
-            return buildResponse("ERROR", "An unexpected error occurred: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>("ERROR", e.getMessage(), null));
         }
     }
 
-    // Get post by ID
     @GetMapping("/get-by-id")
     public ResponseEntity<ApiResponse<PostDetailDTO>> getPostById(@RequestParam int id) {
         Optional<PostDetailDTO> post = postService.getPostDetailById(id);
-        return post.map(postDetailDTO -> buildResponse("SUCCESS", "Successfully retrieved the post", postDetailDTO, HttpStatus.OK))
-                .orElseGet(() -> buildResponse("ERROR", "Post with ID: " + id + " not found", null, HttpStatus.NOT_FOUND));
+        return post.map(detail -> ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Post retrieved", detail)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("ERROR", "Post not found", null)));
     }
 
-    // Create a new post
+    @GetMapping("/get-post-detail")
+    public ResponseEntity<ApiResponse<PostDetailPageDTO>> getPostDetailById(@RequestParam Integer id) {
+        try {
+            if (id == null || id <= 0) {
+                throw new IllegalArgumentException("Invalid post ID");
+            }
+            PostDetailPageDTO post = postService.getPostDetailById(id);
+            return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Post details retrieved", post));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("ERROR", e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>("ERROR", e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<Post>>> getPostsByUserId(@PathVariable int userId) {
+        List<Post> posts = postService.getPostsByUserId(userId);
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Posts retrieved by user ID", posts));
+    }
+
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<ApiResponse<Page<Post>>> getPostsByCompanyId(
+            @PathVariable int companyId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        Page<Post> posts = postService.getPostsByCompanyId(companyId, page, size);
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Posts retrieved by company ID", posts));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER', 'EMPLOYER_STAFF')")
     public ResponseEntity<ApiResponse<Post>> createPost(@RequestBody Post post) {
         if (post.getName() == null || post.getName().isEmpty()) {
-            return buildResponse("ERROR", "Post name is required", null, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", "Post name is required", null));
         }
         Post createdPost = postService.createPost(post);
-        return buildResponse("SUCCESS", "Successfully created the post", createdPost, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("SUCCESS", "Post created", createdPost));
     }
 
-    // Utility method to parse status
-    private PostStatus parseStatus(String status) {
-        if (status == null || status.isEmpty()) {
-            return null;
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER', 'EMPLOYER_STAFF')")
+    public ResponseEntity<ApiResponse<Post>> updatePost(@PathVariable int id, @RequestBody Post post) {
+        Optional<Post> existingPost = postService.getPostById(id);
+        if (existingPost.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("ERROR", "Post not found", null));
         }
+        post.setId(id);
+        Post updatedPost = postService.updatePost(post);
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Post updated", updatedPost));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER_OWNER', 'EMPLOYER_STAFF')")
+    public ResponseEntity<ApiResponse<Void>> deletePost(@PathVariable int id) {
+        Optional<Post> existingPost = postService.getPostById(id);
+        if (existingPost.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("ERROR", "Post not found", null));
+        }
+        postService.deletePost(id);
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Post deleted", null));
+    }
+
+    @PutMapping("/update-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> updatePostStatus(
+            @RequestParam("id") int id,
+            @RequestParam("status") PostStatus status) {
         try {
-            return PostStatus.valueOf(status);
+            postService.updatePostStatus(id, status);
+            return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Post status updated", null));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("ERROR", e.getMessage(), null));
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid status value: " + status);
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", e.getMessage(), null));
         }
     }
 }

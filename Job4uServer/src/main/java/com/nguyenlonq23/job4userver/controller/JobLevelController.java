@@ -19,7 +19,6 @@ public class JobLevelController {
 
     private final JobLevelService jobLevelService;
 
-    @Autowired
     public JobLevelController(JobLevelService jobLevelService) {
         this.jobLevelService = jobLevelService;
     }
