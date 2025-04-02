@@ -1,5 +1,6 @@
 package com.nguyenlonq23.job4userver.service;
 
+import com.nguyenlonq23.job4userver.dto.OTPData;
 import com.nguyenlonq23.job4userver.utils.exception.ResourceNotFoundException;
 import com.nguyenlonq23.job4userver.utils.exception.UserAlreadyExistsException;
 import com.nguyenlonq23.job4userver.model.entity.Company;
@@ -22,10 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Lazy
 @Service
@@ -131,13 +129,13 @@ public class AuthService {
     }
 
     public void generateAndSendOTP(String email) {
-        // Tạo mã OTP ngẫu nhiên (6 chữ số)
+        // Kiểm tra email đã tồn tại
+        if (userRepository.existsByEmail(email)) {
+            throw new UserAlreadyExistsException("Email đã tồn tại trong hệ thống");
+        }
+
         String otp = String.format("%06d", new Random().nextInt(999999));
-
-        // Lưu OTP vào otpStore
         otpStore.put(email, new OTPData(otp, System.currentTimeMillis(), 0));
-
-        // Gửi email chứa OTP
         try {
             emailService.sendEmail(email, "Mã OTP Xác Minh", "Mã OTP của bạn là: " + otp + ". Mã này có hiệu lực trong 60 giây.");
         } catch (Exception e) {
@@ -152,38 +150,30 @@ public class AuthService {
         }
 
         long currentTime = System.currentTimeMillis();
-        if (currentTime - otpData.createdAt > 60_000) { // 60 giây
+        if (currentTime - otpData.getCreatedAt() > 60_000) {
             otpStore.remove(email);
             throw new RuntimeException("Mã OTP đã hết hạn.");
         }
 
-        if (otpData.failedAttempts >= 3) { // 3 lần sai không tính lần đầu
+        if (otpData.getFailedAttempts() >= 3) {
             otpStore.remove(email);
             throw new RuntimeException("Bạn đã nhập sai quá số lần cho phép.");
         }
 
-        if (!otpData.otp.equals(inputOtp)) {
-            otpData.failedAttempts++;
-            otpStore.put(email, otpData); // Cập nhật số lần thất bại
-            throw new RuntimeException("Mã OTP không đúng. Bạn còn " + (3 - otpData.failedAttempts) + " lần thử.");
+        if (!otpData.getOtp().equals(inputOtp)) {
+            otpStore.put(email, new OTPData(otpData.getOtp(), otpData.getCreatedAt(), otpData.getFailedAttempts() + 1));
+            throw new RuntimeException("Mã OTP không đúng. Bạn còn " + (3 - otpData.getFailedAttempts() - 1) + " lần thử.");
         }
 
-        // Nếu đúng, xóa OTP và trả về true
         otpStore.remove(email);
         return true;
     }
 
-
-    // Class để lưu thông tin OTP
-    private static class OTPData {
-        String otp;
-        long createdAt;
-        int failedAttempts;
-
-        OTPData(String otp, long createdAt, int failedAttempts) {
-            this.otp = otp;
-            this.createdAt = createdAt;
-            this.failedAttempts = failedAttempts;
-        }
+    public void cleanupExpiredOtps() {
+        long currentTime = System.currentTimeMillis();
+        otpStore.entrySet().removeIf(entry ->
+                currentTime - entry.getValue().getCreatedAt() > 60_000 // Xóa nếu quá 60 giây
+        );
     }
+
 }

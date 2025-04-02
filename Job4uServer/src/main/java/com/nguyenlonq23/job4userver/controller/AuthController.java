@@ -6,6 +6,7 @@ import com.nguyenlonq23.job4userver.dto.request.LoginRequest;
 import com.nguyenlonq23.job4userver.dto.request.RegisterRequest;
 import com.nguyenlonq23.job4userver.service.AuthService;
 import com.nguyenlonq23.job4userver.service.EmailService;
+import com.nguyenlonq23.job4userver.utils.exception.UserAlreadyExistsException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
-            // Kiểm tra xem email đã được xác minh OTP chưa (có thể dùng một flag hoặc kiểm tra logic khác)
             AuthResponse authResponse = authService.register(registerRequest);
             return buildResponse("SUCCESS", "User registered successfully", authResponse, HttpStatus.OK);
         } catch (Exception e) {
@@ -64,6 +64,8 @@ public class AuthController {
             String email = request.get("email");
             authService.generateAndSendOTP(email);
             return buildResponse("SUCCESS", "OTP đã được gửi đến email của bạn.", null, HttpStatus.OK);
+        } catch (UserAlreadyExistsException e) {
+            return buildResponse("ERROR", e.getMessage(), null, HttpStatus.CONFLICT);
         } catch (Exception e) {
             return buildResponse("ERROR", e.getMessage(), null, HttpStatus.BAD_REQUEST);
         }

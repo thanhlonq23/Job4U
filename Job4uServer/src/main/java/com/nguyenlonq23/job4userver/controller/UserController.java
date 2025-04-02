@@ -1,8 +1,11 @@
 package com.nguyenlonq23.job4userver.controller;
 
+import com.nguyenlonq23.job4userver.dto.UserCompanyDTO;
 import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
+import com.nguyenlonq23.job4userver.model.entity.JobLevel;
 import com.nguyenlonq23.job4userver.model.entity.User;
 import com.nguyenlonq23.job4userver.service.UserService;
+import com.nguyenlonq23.job4userver.utils.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -43,6 +47,31 @@ public class UserController {
                 .orElse(buildResponse("ERROR", "User with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/get-company-id/{id}")
+    public ResponseEntity<ApiResponse<Integer>> getCompanyId(@PathVariable int id) {
+        return userService.getCompanyIdByUserId(id)
+                .map(companyId -> buildResponse("SUCCESS", "Successfully retrieved the companyId.", companyId, HttpStatus.OK))
+                .orElse(buildResponse("ERROR", "CompanyId with user ID: " + id + " not found.", null, HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/get-user-by-company-id")
+    @PreAuthorize("hasRole('EMPLOYER_OWNER')")
+    public ResponseEntity<ApiResponse<Page<UserCompanyDTO>>> getUsersByCompanyId(@RequestParam("id") int companyId, Pageable pageable) {
+        try {
+            Page<UserCompanyDTO> users = userService.getUsersByCompanyId(companyId, pageable);
+
+            String message = users.isEmpty()
+                    ? "No users found for company with ID: " + companyId
+                    : "Successfully retrieved users for company with ID: " + companyId;
+
+            return buildResponse("SUCCESS", message, users, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return buildResponse("ERROR", e.getMessage(), null, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return buildResponse("ERROR", "An error occurred while retrieving users: " + e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable int id, @RequestBody User user) {
@@ -56,10 +85,21 @@ public class UserController {
     }
 
     @PutMapping("/update-company")
-    @PreAuthorize("hasRole('EMPLOYER_OWNER')")
+    @PreAuthorize("hasAnyRole('EMPLOYER_OWNER','ADMIN')")
     public ResponseEntity<User> updateUserCompany(@RequestParam int userId, @RequestParam int companyId) {
         User updatedUser = userService.updateCompanyForUser(userId, companyId);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/terminate-user-by-id/{userId}")
+    @PreAuthorize("hasRole('EMPLOYER_OWNER')")
+    public ResponseEntity<ApiResponse<User>> terminateEmployee(@PathVariable int userId) {
+        try {
+            User updatedUser = userService.terminateEmployee(userId);
+            return buildResponse("SUCCESS", "Successfully terminated employee with ID: " + userId, updatedUser, HttpStatus.OK);
+        } catch (Exception e) {
+            return buildResponse("ERROR", e.getMessage(), null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -67,21 +107,14 @@ public class UserController {
     public ResponseEntity<ApiResponse<Void>> deleteUserById(@PathVariable int id) {
         Optional<User> user = userService.getUserById(id);
 
-        if (user.isEmpty()) {
+        if (user.isEmpty())
             return buildResponse("ERROR", "User with ID: " + id + " not found.", null, HttpStatus.NOT_FOUND);
-        }
+
 
         userService.deleteUser(id);
         return buildResponse("SUCCESS", "Successfully deleted the user.", null, HttpStatus.OK);
     }
 
-
-    @GetMapping("/get-company-id/{id}")
-    public ResponseEntity<ApiResponse<Integer>> getCompanyId(@PathVariable int id) {
-        return userService.getCompanyIdByUserId(id)
-                .map(companyId -> buildResponse("SUCCESS", "Successfully retrieved the companyId.", companyId, HttpStatus.OK))
-                .orElse(buildResponse("ERROR", "CompanyId with user ID: " + id + " not found.", null, HttpStatus.NOT_FOUND));
-    }
 
     private <T> ResponseEntity<ApiResponse<T>> buildResponse(String status, String message, T data, HttpStatus httpStatus) {
         if (data == null) {

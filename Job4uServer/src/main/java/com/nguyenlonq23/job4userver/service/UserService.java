@@ -1,9 +1,13 @@
 package com.nguyenlonq23.job4userver.service;
 
+import com.nguyenlonq23.job4userver.dto.UserCompanyDTO;
 import com.nguyenlonq23.job4userver.model.entity.Company;
+import com.nguyenlonq23.job4userver.model.entity.Role;
 import com.nguyenlonq23.job4userver.model.entity.User;
 import com.nguyenlonq23.job4userver.repository.CompanyRepository;
+import com.nguyenlonq23.job4userver.repository.RoleRepository;
 import com.nguyenlonq23.job4userver.repository.UserRepository;
+import com.nguyenlonq23.job4userver.utils.exception.ResourceNotFoundException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +20,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository, CompanyRepository companyRepository) {
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
+        this.roleRepository = roleRepository;
     }
 
     // Lấy tất cả categories kèm phân trang và từ khóa tìm kiếm,sort
@@ -84,5 +90,57 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public Page<UserCompanyDTO> getUsersByCompanyId(int companyId, Pageable pageable) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found with id: " + companyId));
 
+        Page<User> userPage = userRepository.findAllUserByCompanyId(companyId, pageable);
+
+        return userPage.map(this::convertToDTO);
+    }
+
+    private UserCompanyDTO convertToDTO(User user) {
+        UserCompanyDTO dto = new UserCompanyDTO();
+
+        dto.setId(user.getId());
+        dto.setFirstName(user.getFirst_name());
+        dto.setLastName(user.getLast_name());
+        dto.setFullName(user.getFirst_name() + " " + user.getLast_name());
+        dto.setEmail(user.getEmail());
+        dto.setDob(user.getDob());
+        dto.setGender(user.getGender());
+
+        if (user.getRole() != null) {
+            dto.setRoleName(user.getRole().getName());
+        }
+
+        return dto;
+    }
+
+    public User terminateEmployee(int userId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User with ID: " + userId + " not found"));
+
+        Role jobSeekerRole = roleRepository.findByName("JOB_SEEKER")
+                .orElseThrow(() -> new Exception("Không tìm thấy role JOB_SEEKER"));
+
+        Company company = user.getCompany();
+        companyRepository.save(company);
+
+        user.setRole(jobSeekerRole);
+        user.setCompany(null);
+
+        User updatedUser = userRepository.save(user);
+
+        // Cập nhật số lượng nhân viên trong company
+        if (company != null) {
+            Integer currentAmount = company.getAmountEmployer();
+            if (currentAmount != null && currentAmount > 0) {
+                company.setAmountEmployer(currentAmount - 1);
+                companyRepository.save(company);
+            }
+        }
+
+        return updatedUser;
+    }
 }
