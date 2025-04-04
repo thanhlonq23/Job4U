@@ -8,6 +8,7 @@ import Header from "./container/header/header";
 import Footer from "./container/footer/Footer";
 import JobDetail from "./container/JobDetail/JobDetail";
 import HomeCandidate from "./container/Candidate/HomeCandidate";
+import ConfirmInvitationPage from "./container/ConfirmInvitation/ConfirmInvitationPage";
 
 import HomeAdmin from "./container/system/HomeAdmin";
 
@@ -102,6 +103,18 @@ function App() {
             ) : (
               <Navigate to="/" />
             )
+          }
+        />
+
+        {/* Route cho trang xác nhận lời mời */}
+        <Route
+          path="/confirm-invitation"
+          element={
+            <>
+              <Header />
+              <ConfirmInvitationPage />
+              <Footer />
+            </>
           }
         />
       </Routes>

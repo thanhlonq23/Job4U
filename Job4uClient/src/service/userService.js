@@ -20,6 +20,16 @@ const getDetailUserById = (id) => {
   return axios.get(`/api/users/${id}`);
 };
 
+const getAllEmployeeService = (data) => {
+  return axios.get(`/api/users/get-user-by-company-id`, {
+    params: {
+      id: data.id,
+      page: data.page,
+      size: data.size,
+    },
+  });
+};
+
 const updateUserService = (id) => {
   return axios.get(`/api/users/${id}`);
 };
@@ -32,17 +42,16 @@ const createNewUser = (data) => {
   return axios.post(`/api/create-new-user`, data);
 };
 
-const updateUserCompanyService = (id, companyId) => {
-  return axios.put(`/api/users/update-company`, null, {
-    params: {
-      userId: id,
-      companyId: companyId,
-    },
-  });
+const terminateUserService = (id) => {
+  return axios.put(`/api/users/terminate-user-by-id/${id}`);
 };
 
 const deleteUserService = (id) => {
   return axios.delete(`/api/users/${id}`);
+};
+
+const deleteEmployeeService = (id) => {
+  return axios.delete(`/api/users/delete-employee-by-id/${id}`);
 };
 
 const getDetailPostByIdService = (id) => {
@@ -53,10 +62,12 @@ export {
   getAllUserService,
   getUserByIdService,
   createNewUser,
-  updateUserCompanyService,
+  terminateUserService,
   deleteUserService,
   getCompanyIdByIdService,
   getDetailPostByIdService,
   updateUserService,
   getDetailUserById,
+  getAllEmployeeService,
+  deleteEmployeeService,
 };

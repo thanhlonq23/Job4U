@@ -441,7 +441,7 @@ const Menu = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/admin/list-employer/">
+                    <Link className="nav-link" to="/admin/list-employee/">
                       Danh sách nhân viên
                     </Link>
                   </li>

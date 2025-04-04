@@ -1,0 +1,134 @@
+.confirm-invitation-page {
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f4f7fc;
+  box-sizing: border-box;
+
+  &__content {
+    width: 100%;
+    max-width: 480px;
+    padding: 30px;
+    background: #ffffff;
+    border: 2px solid #567ffa;
+    box-shadow: 0 8px 24px rgba(59, 95, 196, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #1a2b56;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 16px;
+    color: #5a6a85;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .confirm-btn {
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(135deg, #6b86d6, #3b5fc4);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(59, 95, 196, 0.2);
+    transition: all 0.3s ease;
+
+    &:hover:not(.confirm-btn--loading) {
+      background: linear-gradient(135deg, #3b5fc4, #2a4a9e);
+      box-shadow: 0 6px 16px rgba(59, 95, 196, 0.3);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(.confirm-btn--loading) {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(59, 95, 196, 0.2);
+    }
+
+    &--loading {
+      background: #b0b7c3;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+
+  .reject-btn {
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(135deg, #e57373, #d32f2f);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+    transition: all 0.3s ease;
+
+    &:hover:not(.reject-btn--loading) {
+      background: linear-gradient(135deg, #d32f2f, #b71c1c);
+      box-shadow: 0 6px 16px rgba(211, 47, 47, 0.3);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(.reject-btn--loading) {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(211, 47, 47, 0.2);
+    }
+
+    &--loading {
+      background: #b0b7c3;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .confirm-invitation-page {
+    padding: 15px;
+
+    &__content {
+      max-width: 100%;
+      padding: 20px;
+      border-width: 1px;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    p {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    &__buttons {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .confirm-btn,
+    .reject-btn {
+      width: 100%;
+      padding: 12px;
+    }
+  }
+}

@@ -1,15 +1,15 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { RecruitmentService } from "../../../service/userService1";
+import { inviteStaffService } from "../../../service/InvitationService";
+
 const Recruitment = () => {
   const [inputValues, setInputValues] = useState({
     email: "",
   });
-
   const [user, setUser] = useState({});
+
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData"));
+    const userData = JSON.parse(localStorage.getItem("userInfo"));
     setUser(userData);
   }, []);
 
@@ -17,28 +17,34 @@ const Recruitment = () => {
     const { name, value } = event.target;
     setInputValues({ ...inputValues, [name]: value });
   };
-  let handleSubmit = async () => {
-    let res = await RecruitmentService({
-      email: inputValues.email,
-      companyId: user.company_id,
-    });
-    if (res && res.errCode === 0) {
-      toast.success("Tuyển dụng thành công !");
-      setInputValues({
-        ...inputValues,
-        ["email"]: "",
-      });
-    } else {
-      toast.error(res.errMessage);
+
+  const handleSubmit = async () => {
+    if (!inputValues.email) {
+      toast.error("Vui lòng nhập email!");
+      return;
+    }
+
+    try {
+      const response = await inviteStaffService(user.email, inputValues.email);
+      if (response.status === "SUCCESS") {
+        toast.success("Lời mời đã được gửi thành công!");
+        setInputValues({ ...inputValues, email: "" });
+      } else {
+        toast.error(response.data.message || "Không thể gửi lời mời!");
+      }
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi gửi lời mời!");
+      console.error("Error inviting staff:", error);
     }
   };
+
   return (
     <div className="">
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">Tuyển dụng nhân viên</h4>
-            <br></br>
+            <br />
             <form className="form-sample">
               <div className="row">
                 <div className="col-md-6">
@@ -51,6 +57,7 @@ const Recruitment = () => {
                         name="email"
                         onChange={(event) => handleOnChange(event)}
                         className="form-control"
+                        placeholder="Nhập email nhân viên"
                       />
                     </div>
                   </div>
@@ -58,11 +65,11 @@ const Recruitment = () => {
               </div>
 
               <button
-                onClick={() => handleSubmit()}
+                onClick={handleSubmit} // Loại bỏ () để tránh gọi ngay khi render
                 type="button"
                 className="btn btn-primary mr-2"
               >
-                <i class="ti-file btn1-icon-prepend"></i>
+                <i className="ti-file btn1-icon-prepend"></i>
                 Gửi
               </button>
             </form>

@@ -103,7 +103,11 @@ const AuthPopup = ({ isOpen, onClose }) => {
         role: user.role,
       };
 
-      const redirectPath = ["ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF"].includes(user.role)
+      const redirectPath = [
+        "ADMIN",
+        "EMPLOYER_OWNER",
+        "EMPLOYER_STAFF",
+      ].includes(user.role)
         ? "/admin/"
         : "/";
 
@@ -219,8 +223,14 @@ const AuthPopup = ({ isOpen, onClose }) => {
     <div className="auth-popup__overlay" onClick={onClose}>
       <div className="auth-popup__wrapper" onClick={handlePopupClick}>
         {!showOTPPopup ? (
-          <div className={`auth-popup__container ${isActive ? "auth-popup__container--active" : ""}`}>
-            <button className="auth-popup__close-btn" onClick={onClose}>×</button>
+          <div
+            className={`auth-popup__container ${
+              isActive ? "auth-popup__container--active" : ""
+            }`}
+          >
+            <button className="auth-popup__close-btn" onClick={onClose}>
+              ×
+            </button>
 
             {/* Form Đăng nhập */}
             <div className="auth-popup__form-box">
@@ -253,7 +263,9 @@ const AuthPopup = ({ isOpen, onClose }) => {
                 </div>
                 <button
                   type="submit"
-                  className={`auth-popup__btn ${isLoading ? "auth-popup__btn--loading" : ""}`}
+                  className={`auth-popup__btn ${
+                    isLoading ? "auth-popup__btn--loading" : ""
+                  }`}
                   disabled={isLoading}
                 >
                   {isLoading ? "Đang xử lý..." : "Đăng Nhập"}
@@ -342,7 +354,9 @@ const AuthPopup = ({ isOpen, onClose }) => {
                 </div>
                 <button
                   type="submit"
-                  className={`auth-popup__btn ${isLoading ? "auth-popup__btn--loading" : ""}`}
+                  className={`auth-popup__btn ${
+                    isLoading ? "auth-popup__btn--loading" : ""
+                  }`}
                   disabled={isLoading}
                 >
                   {isLoading ? "Đang xử lý..." : "Đăng Ký"}
@@ -380,7 +394,8 @@ const AuthPopup = ({ isOpen, onClose }) => {
           <div className="auth-popup__otp-container">
             <h2>Nhập mã OTP</h2>
             <p>
-              Mã OTP đã được gửi đến {registerData.email}. Thời gian còn lại: {otpTimer}s
+              Mã OTP đã được gửi đến {registerData.email}. Thời gian còn lại:{" "}
+              {otpTimer}s
             </p>
             <form onSubmit={handleOTPSubmit}>
               <div className="auth-popup__input-box">
@@ -395,7 +410,9 @@ const AuthPopup = ({ isOpen, onClose }) => {
               </div>
               <button
                 type="submit"
-                className={`auth-popup__btn ${isLoading ? "auth-popup__btn--loading" : ""}`}
+                className={`auth-popup__btn ${
+                  isLoading ? "auth-popup__btn--loading" : ""
+                }`}
                 disabled={isLoading || otpExpired || otpLocked}
               >
                 {isLoading ? "Đang xử lý..." : "Xác minh"}

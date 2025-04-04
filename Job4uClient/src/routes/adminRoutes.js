@@ -12,7 +12,6 @@ import AddExpType from "../container/system/ExpType/AddExpType";
 import ManageExpType from "../container/system/ExpType/ManageExpType";
 import AddCompany from "../container/system/Company/AddCompany";
 import Recruitment from "../container/system/Company/Recruitment";
-import ManageEmployer from "../container/system/Company/ManageEmployer";
 import AddPost from "../container/system/Post/AddPost";
 import ManagePost from "../container/system/Post/ManagePost";
 import ManagePostAdmin from "../container/system/Post/ManagePostAdmin";
@@ -32,6 +31,7 @@ import AnalyticsDashboard from "../container/system/DashBoard/AnalyticsDashboard
 import CreateReport from "../container/system/Report/CreateReport";
 
 import { Navigate } from "react-router-dom";
+import ManageEmployee from "../container/system/Company/ManageEmployee";
 
 const getRoleFromLocalStorage = () => {
   const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -87,9 +87,6 @@ const adminRoutes = () => {
       { path: "add-post", element: <AddPost /> },
       { path: "edit-post/:id", element: <AddPost /> },
 
-      { path: "recruitment", element: <Recruitment /> },
-      { path: "list-employer", element: <ManageEmployer /> },
-
       { path: "list-cv/:id", element: <ManageCv /> },
       { path: "user-cv/:id", element: <UserCv /> },
 
@@ -100,6 +97,8 @@ const adminRoutes = () => {
     return [
       { path: "", element: <EmployerDashBoard /> },
       { path: "recruitment", element: <Recruitment /> },
+      { path: "list-employee", element: <ManageEmployee /> },
+
       { path: "list-post", element: <ManagePost /> },
       { path: "add-post", element: <AddPost /> },
       { path: "edit-post/:id", element: <AddPost /> },

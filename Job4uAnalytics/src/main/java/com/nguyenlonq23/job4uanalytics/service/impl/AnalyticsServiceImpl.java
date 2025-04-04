@@ -64,7 +64,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             posts.createOrReplaceTempView("posts");
             salaries.createOrReplaceTempView("salaries");
 
-            // Điều kiện WHERE cho category_id (nếu có)
+            // Điều kiện WHERE cho category_id\
             String categoryFilter = categoryId != null ? "AND p.category_id = " + categoryId : "";
 
             // Truy vấn skillDemandQuery
@@ -78,7 +78,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                             "GROUP BY s.name, c.name " +
                             "ORDER BY demand_count DESC " +
                             "LIMIT 20";
-            System.out.println("I:" + skillDemandQuery);
 
             Dataset<Row> skillDemand = sparkSession.sql(skillDemandQuery);
             List<Map<String, Object>> skillDemandList = skillDemand.collectAsList().stream().map(row -> {
@@ -100,7 +99,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                             categoryFilter + " " +
                             "GROUP BY s.name, month " +
                             "ORDER BY month ASC, demand_count DESC";
-            System.out.println("II:" + skillTrendQuery);
 
             Dataset<Row> skillTrend = sparkSession.sql(skillTrendQuery);
             List<Map<String, Object>> skillTrendList = skillTrend.collectAsList().stream().map(row -> {
@@ -128,7 +126,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                             "GROUP BY s.name " +
                             "ORDER BY avg_salary DESC " +
                             "LIMIT 20";
-            System.out.println("III:" + salaryBySkillQuery);
             Dataset<Row> salaryBySkill = sparkSession.sql(salaryBySkillQuery);
             List<Map<String, Object>> salaryBySkillList = salaryBySkill.collectAsList().stream().map(row -> {
                 Map<String, Object> map = new HashMap<>();
