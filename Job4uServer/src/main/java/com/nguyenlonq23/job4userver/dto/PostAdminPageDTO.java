@@ -16,9 +16,6 @@ public class PostAdminPageDTO {
     private Date expirationDate;
     private PostStatus status;
 
-    public PostAdminPageDTO() {
-    }
-
     public PostAdminPageDTO(int id, String name, String companyName, String category, String jobLevel, String workType, Date expirationDate, PostStatus status) {
         this.id = id;
         this.name = name;

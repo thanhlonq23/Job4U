@@ -17,7 +17,7 @@ public class ScheduledTaskService {
         this.authService = authService;
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 1000000)
     public void cleanupExpiredOtps() {
         authService.cleanupExpiredOtps(); // Gọi phương thức dọn dẹp từ AuthService
         System.out.println("Cleaned up expired OTPs at " + new java.util.Date());

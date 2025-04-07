@@ -52,23 +52,11 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/**").permitAll()
-//                        .requestMatchers("/api/posts").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-//                        .requestMatchers("/api/categories").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-//                        .requestMatchers("/api/experiences").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-//                        .requestMatchers("/api/job-levels").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-//                        .requestMatchers("/api/salaries").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-//                        .requestMatchers("/api/skills").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-//                        .requestMatchers("/api/work-types").hasAnyRole("ADMIN", "EMPLOYER_OWNER", "EMPLOYER_STAFF")
-//                        .anyRequest().authenticated()
-//                )
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setContentType("application/json;charset=UTF-8");
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \"You don't have permission to access this resource\"}");
+                            response.getWriter().write("{\"ERROR\": \"Access Denied\", \"message\": \"You don't have permission to access this resource\"}");
                         })
                 )
                 .sessionManagement(session -> session
