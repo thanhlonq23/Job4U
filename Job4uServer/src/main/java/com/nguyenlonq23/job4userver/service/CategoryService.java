@@ -1,5 +1,6 @@
 package com.nguyenlonq23.job4userver.service;
 
+import com.nguyenlonq23.job4userver.dto.CategoryPostCountDTO;
 import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.model.entity.WorkType;
 import com.nguyenlonq23.job4userver.repository.CategoryRepository;
@@ -29,6 +30,10 @@ public class CategoryService {
         }
         // Trả về toàn bộ nếu không có keyword
         return categoryRepository.findAll(pageable);
+    }
+
+    public List<CategoryPostCountDTO> getTop5CategoriesByPostCount() {
+        return categoryRepository.findTop5CategoriesByPostCount();
     }
 
     public List<Category> getAllCategories( ) {

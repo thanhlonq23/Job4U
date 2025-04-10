@@ -44,11 +44,14 @@ public class SecurityConfig {
                                 "/api/posts/get-post-detail",
                                 "/api/posts/search",
                                 "/api/categories",
+                                "/api/categories/top-5-by-posts",
                                 "/api/locations",
                                 "/api/salaries",
                                 "/api/job-levels",
                                 "/api/work-types",
-                                "/api/experiences"
+                                "/api/experiences",
+                                "/api/companies/search",
+                                "/api/companies/detail/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

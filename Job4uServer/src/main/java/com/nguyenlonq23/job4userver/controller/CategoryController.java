@@ -1,5 +1,6 @@
 package com.nguyenlonq23.job4userver.controller;
 
+import com.nguyenlonq23.job4userver.dto.CategoryPostCountDTO;
 import com.nguyenlonq23.job4userver.model.entity.Category;
 import com.nguyenlonq23.job4userver.dto.response.ApiResponse;
 import com.nguyenlonq23.job4userver.service.CategoryService;
@@ -58,6 +59,16 @@ public class CategoryController {
             return buildResponse("ERROR", "Category with ID: " + id + " not found", null, HttpStatus.NOT_FOUND);
         }
         return buildResponse("SUCCESS", "Successfully retrieved the category", category, HttpStatus.OK);
+    }
+
+    @GetMapping("/top-5-by-posts")
+    public ResponseEntity<ApiResponse<List<CategoryPostCountDTO>>> getTop5CategoriesByPostCount() {
+        try {
+            List<CategoryPostCountDTO> topCategories = categoryService.getTop5CategoriesByPostCount();
+            return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Top 5 categories retrieved", topCategories));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", e.getMessage(), null));
+        }
     }
 
     // Create a new category

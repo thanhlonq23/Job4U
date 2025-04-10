@@ -1,5 +1,6 @@
 package com.nguyenlonq23.job4userver.repository;
 
+import com.nguyenlonq23.job4userver.dto.CategoryPostCountDTO;
 import com.nguyenlonq23.job4userver.model.entity.Category;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -22,4 +23,12 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
             "GROUP BY c.id, c.name ORDER BY postCount DESC", nativeQuery = true)
     List<Map<String, Object>> findCategoryPostCounts();
 
+
+    @Query("SELECT new com.nguyenlonq23.job4userver.dto.CategoryPostCountDTO(" +
+            "c.id, c.name, c.image, COUNT(p.id)) " +
+            "FROM Category c LEFT JOIN Post p ON c.id = p.category.id " +
+            "GROUP BY c.id, c.name, c.image " +
+            "ORDER BY COUNT(p.id) DESC " +
+            "LIMIT 3")
+    List<CategoryPostCountDTO> findTop5CategoriesByPostCount();
 }

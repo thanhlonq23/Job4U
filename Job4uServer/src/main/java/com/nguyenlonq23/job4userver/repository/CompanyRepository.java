@@ -1,6 +1,7 @@
 package com.nguyenlonq23.job4userver.repository;
 
-import com.nguyenlonq23.job4userver.model.entity.Category;
+import com.nguyenlonq23.job4userver.dto.CompanyDTO;
+import com.nguyenlonq23.job4userver.dto.CompanyDetailDTO;
 import com.nguyenlonq23.job4userver.model.entity.Company;
 import com.nguyenlonq23.job4userver.model.enums.CompanyStatus;
 import org.springframework.context.annotation.Lazy;
@@ -26,6 +27,15 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
     @Query("SELECT c.status FROM Company c WHERE c.id = :companyId")
     Optional<CompanyStatus> findStatusByCompanyId(@Param("companyId") int companyId);
 
+    @Query("SELECT new com.nguyenlonq23.job4userver.dto.CompanyDTO(c.id, c.name, c.thumbnail, c.coverImage, c.description_Markdown) " +
+            "FROM Company c WHERE :keyword IS NULL OR c.name LIKE %:keyword%")
+    Page<CompanyDTO> findCompanies(String keyword, Pageable pageable);
+
+    @Query("SELECT new com.nguyenlonq23.job4userver.dto.CompanyDetailDTO(" +
+            "c.id, c.name, c.thumbnail, c.coverImage, c.description_Markdown, " +
+            "c.website, c.address) " +
+            "FROM Company c WHERE c.id = :id")
+    Optional<CompanyDetailDTO> findCompanyDetailById(@Param("id") int id);
 
     // Analyst
     @Query(value = "SELECT c.name, COUNT(p.id) as postCount FROM companies c " +
