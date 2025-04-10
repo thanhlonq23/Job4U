@@ -11,7 +11,7 @@ const getAllCategoryService = ({ page = 0, size = 10 }) => {
       size,
     },
   });
-}; 
+};
 
 const searchCategoryService = ({ page = 0, size = 10, keyword = "" }) => {
   return axios.get(`/api/categories/page`, {
@@ -35,6 +35,16 @@ const deleteCategoryService = (id) => {
   return axios.delete(`/api/categories/${id}`);
 };
 
+const getTop5CategoriesByPostCount = async () => {
+  try {
+    const response = await axios.get("/api/categories/top-5-by-posts");
+    return response;
+  } catch (error) {
+    console.error("Error fetching top categories:", error);
+    throw error;
+  }
+};
+
 export {
   createCategoryService,
   getAllCategoryService,
@@ -42,4 +52,5 @@ export {
   deleteCategoryService,
   getCategoryByIdService,
   searchCategoryService,
+  getTop5CategoriesByPostCount,
 };

@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./container/home/home";
 import Company from "./container/Company/ListCompany";
+import DetailCompany from "./container/Company/DetailCompany";
 import About from "./container/About/About";
 import JobPage from "./container/JobPage/JobPage";
 import Header from "./container/header/header";
@@ -35,6 +36,17 @@ function App() {
             <>
               <Header />
               <Company />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/detail-company/:id"
+          element={
+            <>
+              <Header />
+              <DetailCompany />
               <Footer />
             </>
           }

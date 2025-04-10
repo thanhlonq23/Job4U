@@ -23,6 +23,16 @@ const searchCompanyService = ({ page = 0, size = 10, keyword = "" }) => {
   });
 };
 
+const getDetailCompanyById = async (id) => {
+  try {
+    const response = await axios.get(`/api/companies/detail/${id}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching company detail:", error);
+    throw error;
+  }
+};
+
 const getCompanyByIdService = (id) => {
   return axios.get(`/api/companies/${id}`);
 };
@@ -51,4 +61,5 @@ export {
   getCompanyByIdService,
   searchCompanyService,
   getCompanyStatusByIdService,
+  getDetailCompanyById,
 };

@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// import Categories from '../../components/home/Categories'
-// import FeatureJobs from '../../components/home/FeaturesJobs'
-import { getListPostService } from "../../service/userService1";
-
+import { getTop5CategoriesByPostCount } from "../../service/CategoriesService";
 import "./home.scss";
 
 const Home = () => {
   const [dataFeature, setDataFeature] = useState([]);
+  const [topCategories, setTopCategories] = useState([]); // State cho top categories
 
-  let loadPost = async (limit, offset) => {
+  // Hàm load top 5 categories
+  const loadTopCategories = async () => {
+    try {
+      const res = await getTop5CategoriesByPostCount();
+      console.log("AA");
+      console.log(res);
+
+      if (res && res.status === "SUCCESS") {
+        setTopCategories(res.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching top categories:", error);
+    }
+  };
+
+  // Hàm load posts (giữ nguyên logic của bạn, hiện đang mock = 0)
+  const loadPost = async (limit, offset) => {
     // let arrData = await getListPostService({
     //     limit: limit,
     //     offset: offset,
@@ -20,67 +34,55 @@ const Home = () => {
     //     category_worktype_id: '',
     //     experience_job_id: '',
     //     sortName: false
-    // })
-    let arrData = 0;
+    // });
+    let arrData = 0; // Giữ nguyên mock của bạn
 
     if (arrData && arrData.errCode === 0) {
       setDataFeature(arrData.data);
     }
   };
+
   useEffect(() => {
-    let fetchPost = async () => {
-      await loadPost(5, 0);
+    const fetchData = async () => {
+      await loadPost(5, 0); // Load posts
+      await loadTopCategories(); // Load top categories
     };
-    fetchPost();
+    fetchData();
   }, []);
+
   return (
     <>
-      {/* <div id="preloader-active">
-        <div class="preloader d-flex align-items-center justify-content-center">
-          <div class="preloader-inner position-relative">
-            <div class="preloader-circle"></div>
-            <div class="preloader-img pere-text">
-              <img src="assets/img/logo/logo.png" alt="" />
-            </div>
-          </div>
-        </div>
-      </div> */}
-      {/* <!-- Preloader Start --> */}
-
       <main>
-        {/* <!-- slider Area Start--> */}
-        <div class="slider-area ">
-          {/* <!-- Mobile Menu --> */}
-          <div class="slider-active">
+        {/* Slider Area Start */}
+        <div className="slider-area">
+          <div className="slider-active">
             <div
-              class="single-slider slider-height d-flex align-items-center"
+              className="single-slider slider-height d-flex align-items-center"
               style={{
                 backgroundImage: `url("./assets/img/banner/banner-1.png")`,
               }}
             >
-              <div class="container">
-                <div class="row">
-                  <div class="col-xl-6 col-lg-9 col-md-10">
-                    <div class="hero__caption">
-                      {/* <h1>NƠI KHỞI ĐẦU CHO HÀNH TRÌNH SỰ NGHIỆP CỦA BẠN </h1> */}
+              <div className="container">
+                <div className="row">
+                  <div className="col-xl-6 col-lg-9 col-md-10">
+                    <div className="hero__caption">
                       <h1>TÌM CÔNG VIỆC PHÙ HỢP VỚI BẠN</h1>
                     </div>
                   </div>
                 </div>
-                {/* <!-- Search Box --> */}
-                <div class="row">
-                  <div class="col-xl-8">
-                    <form action="#" class="search-box">
-                      <div class="input-form">
+                <div className="row">
+                  <div className="col-xl-8">
+                    <form action="#" className="search-box">
+                      <div className="input-form">
                         <input
                           type="text"
                           placeholder="Nhập từ khóa tìm kiếm"
                         />
                       </div>
-                      <div class="select-form">
-                        <div class="select-itms">
+                      <div className="select-form">
+                        <div className="select-itms">
                           <select
-                            class="form-select form-select-lg mb-3"
+                            className="form-select form-select-lg mb-3"
                             aria-label=".form-select-lg example"
                           >
                             <option selected>Địa điểm</option>
@@ -90,7 +92,7 @@ const Home = () => {
                           </select>
                         </div>
                       </div>
-                      <div class="search-form">
+                      <div className="search-form">
                         <a href="#">Tìm kiếm</a>
                       </div>
                     </form>
@@ -100,39 +102,62 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* <!-- slider Area End-->
-        <!-- Our Services Start --> */}
-        <div class="our-services section-pad-t30">
-          <div class="container">
-            {/* <!-- Section Tittle --> */}
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="section-tittle text-center">
+        {/* Slider Area End */}
+
+        {/* Our Services Start */}
+        <div className="our-services section-pad-t30">
+          <div className="container">
+            {/* Section Tittle */}
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="section-tittle text-center">
                   <span>Lĩnh vực công việc nổi bật</span>
-                  <h2>Danh mục nghề nghiệp </h2>
+                  <h2>Danh mục nghề nghiệp</h2>
                 </div>
               </div>
             </div>
-            {/* <Categories /> */}
-            {/* <!-- More Btn -->
-                <!-- Section Button --> */}
+            {/* Hiển thị top 5 danh mục */}
+            <div className="row d-flex justify-content-center">
+              {topCategories.length > 0 ? (
+                topCategories.map((category) => (
+                  <div key={category.id} className="col-lg-3 col-md-4 col-sm-6">
+                    <div className="single-services text-center mb-30">
+                      <div className="services-ion">
+                        <img
+                          src={category.image}
+                          alt={category.name}
+                          style={{ width: "80px", height: "80px" }}
+                        />
+                      </div>
+                      <div className="services-cap">
+                        <h5>{category.name}</h5>
+                        <p>{category.postCount} bài đăng</p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>Đang tải dữ liệu...</p>
+              )}
+            </div>
           </div>
         </div>
-        {/* <!-- Our Services End -->
-        <!-- Online CV Area Start --> */}
+        {/* Our Services End */}
+
+        {/* Online CV Area Start */}
         <div
-          class="online-cv cv-bg section-overly pt-90 pb-120"
+          className="online-cv cv-bg section-overly pt-90 pb-120"
           style={{
             backgroundImage: `url("assets/img/gallery/cv_bg.jpg")`,
           }}
         >
-          <div class="container">
-            <div class="row justify-content-center">
-              <div class="col-xl-10">
-                <div class="cv-caption text-center">
-                  <p class="pera1">Nhiều công việc đang chờ bạn</p>
-                  <p class="pera2"> Bạn đã hứng thú đã tìm việc chưa ?</p>
-                  <Link to="/job" class="border-btn2 border-btn4">
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-xl-10">
+                <div className="cv-caption text-center">
+                  <p className="pera1">Nhiều công việc đang chờ bạn</p>
+                  <p className="pera2">Bạn đã hứng thú đã tìm việc chưa?</p>
+                  <Link to="/job" className="border-btn2 border-btn4">
                     Tìm việc ngay
                   </Link>
                 </div>
@@ -140,14 +165,14 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* <!-- Online CV Area End-->
-        <!-- Featured_job_start --> */}
-        <section class="featured-job-area feature-padding">
-          <div class="container">
-            {/* <!-- Section Tittle --> */}
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="section-tittle text-center">
+        {/* Online CV Area End */}
+
+        {/* Featured Job Start */}
+        <section className="featured-job-area feature-padding">
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="section-tittle text-center">
                   <h2>Công việc mới đăng</h2>
                 </div>
               </div>
@@ -155,52 +180,51 @@ const Home = () => {
             {/* <FeatureJobs dataFeature={dataFeature} /> */}
           </div>
         </section>
-        {/* <!-- Featured_job_end -->
-        <!-- How  Apply Process Start--> */}
+        {/* Featured Job End */}
+
+        {/* How Apply Process Start */}
         <div
-          class="apply-process-area apply-bg pt-150 pb-150"
+          className="apply-process-area apply-bg pt-150 pb-150"
           style={{
             backgroundImage: `url("assets/img/gallery/how-applybg.png")`,
           }}
         >
-          <div class="container">
-            {/* <!-- Section Tittle --> */}
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="section-tittle white-text text-center">
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="section-tittle white-text text-center">
                   <span>Quy trình tìm việc</span>
-                  <h2> Thực hiện như thế nào ?</h2>
+                  <h2>Thực hiện như thế nào?</h2>
                 </div>
               </div>
             </div>
-            {/* <!-- Apply Process Caption --> */}
-            <div class="row">
-              <div class="col-lg-4 col-md-6">
-                <div class="single-process text-center mb-30">
-                  <div class="process-ion">
-                    <span class="flaticon-search"></span>
+            <div className="row">
+              <div className="col-lg-4 col-md-6">
+                <div className="single-process text-center mb-30">
+                  <div className="process-ion">
+                    <span className="flaticon-search"></span>
                   </div>
-                  <div class="process-cap">
+                  <div className="process-cap">
                     <h5>1. Tìm kiếm công việc</h5>
                   </div>
                 </div>
               </div>
-              <div class="col-lg-4 col-md-6">
-                <div class="single-process text-center mb-30">
-                  <div class="process-ion">
-                    <span class="flaticon-curriculum-vitae"></span>
+              <div className="col-lg-4 col-md-6">
+                <div className="single-process text-center mb-30">
+                  <div className="process-ion">
+                    <span className="flaticon-curriculum-vitae"></span>
                   </div>
-                  <div class="process-cap">
+                  <div className="process-cap">
                     <h5>2. Ứng tuyển công việc</h5>
                   </div>
                 </div>
               </div>
-              <div class="col-lg-4 col-md-6">
-                <div class="single-process text-center mb-30">
-                  <div class="process-ion">
-                    <span class="flaticon-tour"></span>
+              <div className="col-lg-4 col-md-6">
+                <div className="single-process text-center mb-30">
+                  <div className="process-ion">
+                    <span className="flaticon-tour"></span>
                   </div>
-                  <div class="process-cap">
+                  <div className="process-cap">
                     <h5>3. Nhận công việc</h5>
                   </div>
                 </div>
@@ -208,6 +232,7 @@ const Home = () => {
             </div>
           </div>
         </div>
+        {/* How Apply Process End */}
       </main>
     </>
   );
