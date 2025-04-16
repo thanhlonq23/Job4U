@@ -32,29 +32,29 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         try {
             Dataset<Row> skills = sparkSession.read()
                     .format("jdbc")
-                    .option("url", "jdbc:mysql://localhost:3306/job4u")
-                    .option("dbtable", "job4u.skills")
+                    .option("url", "jdbc:mysql://localhost:3306/job4u1")
+                    .option("dbtable", "job4u1.skills")
                     .option("user", "root")
                     .option("password", "")
                     .load();
             Dataset<Row> categories = sparkSession.read()
                     .format("jdbc")
-                    .option("url", "jdbc:mysql://localhost:3306/job4u")
-                    .option("dbtable", "job4u.categories")
+                    .option("url", "jdbc:mysql://localhost:3306/job4u1")
+                    .option("dbtable", "job4u1.categories")
                     .option("user", "root")
                     .option("password", "")
                     .load();
             Dataset<Row> posts = sparkSession.read()
                     .format("jdbc")
-                    .option("url", "jdbc:mysql://localhost:3306/job4u")
-                    .option("dbtable", "job4u.posts")
+                    .option("url", "jdbc:mysql://localhost:3306/job4u1")
+                    .option("dbtable", "job4u1.posts")
                     .option("user", "root")
                     .option("password", "")
                     .load();
             Dataset<Row> salaries = sparkSession.read()
                     .format("jdbc")
-                    .option("url", "jdbc:mysql://localhost:3306/job4u")
-                    .option("dbtable", "job4u.salaries")
+                    .option("url", "jdbc:mysql://localhost:3306/job4u1")
+                    .option("dbtable", "job4u1.salaries")
                     .option("user", "root")
                     .option("password", "")
                     .load();
@@ -64,8 +64,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             posts.createOrReplaceTempView("posts");
             salaries.createOrReplaceTempView("salaries");
 
-            // Điều kiện WHERE cho category_id\
-            String categoryFilter = categoryId != null ? "AND p.category_id = " + categoryId : "";
+            // Điều kiện WHERE cho category_id
+            String categoryFilter = (categoryId != null) ? "AND p.category_id = " + categoryId : "";
 
             // Truy vấn skillDemandQuery
             String skillDemandQuery =
@@ -76,8 +76,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                             "WHERE LOWER(p.description_markdown) LIKE CONCAT('%', LOWER(s.name), '%') " +
                             categoryFilter + " " +
                             "GROUP BY s.name, c.name " +
-                            "ORDER BY demand_count DESC " +
-                            "LIMIT 20";
+                            "ORDER BY demand_count DESC";
 
             Dataset<Row> skillDemand = sparkSession.sql(skillDemandQuery);
             List<Map<String, Object>> skillDemandList = skillDemand.collectAsList().stream().map(row -> {
@@ -124,8 +123,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                             "WHERE LOWER(p.description_markdown) LIKE CONCAT('%', LOWER(s.name), '%') " +
                             categoryFilter + " " +
                             "GROUP BY s.name " +
-                            "ORDER BY avg_salary DESC " +
-                            "LIMIT 20";
+                            "ORDER BY avg_salary DESC ";
             Dataset<Row> salaryBySkill = sparkSession.sql(salaryBySkillQuery);
             List<Map<String, Object>> salaryBySkillList = salaryBySkill.collectAsList().stream().map(row -> {
                 Map<String, Object> map = new HashMap<>();
@@ -150,7 +148,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             // Load data từ MySQL vào Spark DataFrame
             Dataset<Row> cvs = sparkSession.read()
                     .format("jdbc")
-                    .option("url", "jdbc:mysql://localhost:3306/job4u")
+                    .option("url", "jdbc:mysql://localhost:3306/job4u1")
                     .option("dbtable", "cvs")
                     .option("user", "root")
                     .option("password", "")
@@ -158,7 +156,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
             Dataset<Row> posts = sparkSession.read()
                     .format("jdbc")
-                    .option("url", "jdbc:mysql://localhost:3306/job4u")
+                    .option("url", "jdbc:mysql://localhost:3306/job4u1")
                     .option("dbtable", "posts")
                     .option("user", "root")
                     .option("password", "")
@@ -166,7 +164,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
             Dataset<Row> categories = sparkSession.read()
                     .format("jdbc")
-                    .option("url", "jdbc:mysql://localhost:3306/job4u")
+                    .option("url", "jdbc:mysql://localhost:3306/job4u1")
                     .option("dbtable", "categories")
                     .option("user", "root")
                     .option("password", "")
@@ -177,7 +175,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             posts.createOrReplaceTempView("posts");
             categories.createOrReplaceTempView("categories");
 
-            // Query để phân tích tỷ lệ chuyển đổi (conversion rate) theo ngành
             String conversionRateQuery =
                     "SELECT c.name AS category_name, " +
                             "COUNT(cv.id) AS application_count, " +
