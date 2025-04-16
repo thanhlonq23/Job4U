@@ -70,12 +70,14 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "(COALESCE(:workTypeIds, NULL) IS NULL OR p.workType.id IN :workTypeIds) AND " +
             "(COALESCE(:jobLevelIds, NULL) IS NULL OR p.jobLevel.id IN :jobLevelIds) AND " +
             "(COALESCE(:experienceIds, NULL) IS NULL OR p.experience.id IN :experienceIds) AND " +
+            "(:companyId IS NULL OR p.company.id = :companyId) AND " +
             "p.status = :status AND " +
             "p.expiration_date >= :currentDate")
     Page<Post> findWithFilters(
             @Param("keyword") String keyword,
             @Param("categoryId") Integer categoryId,
             @Param("locationId") Integer locationId,
+            @Param("companyId") Integer companyId,
             @Param("workTypeIds") List<Integer> workTypeIds,
             @Param("jobLevelIds") List<Integer> jobLevelIds,
             @Param("experienceIds") List<Integer> experienceIds,

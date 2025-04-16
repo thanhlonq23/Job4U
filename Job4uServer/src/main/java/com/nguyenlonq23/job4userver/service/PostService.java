@@ -151,10 +151,10 @@ public class PostService {
     // Tìm kiếm nâng cao
     public Page<PostDTO> searchPosts(String keyword, Integer categoryId, Integer locationId,
                                      List<Integer> workTypeIds, List<Integer> jobLevelIds,
-                                     List<Integer> experienceIds, Pageable pageable) {
+                                     List<Integer> experienceIds, Integer companyId, Pageable pageable) {
 
         Page<Post> postsPage = postRepository.findWithFilters(
-                keyword, categoryId, locationId, workTypeIds, jobLevelIds, experienceIds,
+                keyword, categoryId, locationId, companyId, workTypeIds, jobLevelIds, experienceIds,
                 PostStatus.ACTIVE, new Date(), pageable
         );
 

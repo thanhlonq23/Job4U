@@ -86,6 +86,7 @@ public class AuthService {
         Role role = roleRepository.findByName(registerRequest.isEmployer() ? "EMPLOYER_OWNER" : "JOB_SEEKER")
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy vai trò phù hợp"));
 
+
         // Tạo người dùng mới
         User user = new User();
         user.setEmail(registerRequest.getEmail());

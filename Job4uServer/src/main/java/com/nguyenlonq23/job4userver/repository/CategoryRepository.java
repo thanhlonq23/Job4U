@@ -29,6 +29,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
             "FROM Category c LEFT JOIN Post p ON c.id = p.category.id " +
             "GROUP BY c.id, c.name, c.image " +
             "ORDER BY COUNT(p.id) DESC " +
-            "LIMIT 3")
+            "LIMIT 4")
     List<CategoryPostCountDTO> findTop5CategoriesByPostCount();
 }

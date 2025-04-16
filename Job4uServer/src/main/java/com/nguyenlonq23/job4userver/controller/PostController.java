@@ -65,6 +65,7 @@ public class PostController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer locationId,
+            @RequestParam(required = false) Integer companyId,
             @RequestParam(required = false) List<Integer> workTypeIds,
             @RequestParam(required = false) List<Integer> jobLevelIds,
             @RequestParam(required = false) List<Integer> experienceIds,
@@ -74,7 +75,8 @@ public class PostController {
             @RequestParam(defaultValue = "desc") String direction) {
         try {
             Pageable pageable = createPageable(page, size, sortBy, direction);
-            Page<PostDTO> posts = postService.searchPosts(keyword, categoryId, locationId, workTypeIds, jobLevelIds, experienceIds, pageable);
+            Page<PostDTO> posts = postService.searchPosts(keyword, categoryId, locationId,
+                    workTypeIds, jobLevelIds, experienceIds, companyId, pageable);
             return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Filtered posts retrieved", posts));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse<>("ERROR", e.getMessage(), null));

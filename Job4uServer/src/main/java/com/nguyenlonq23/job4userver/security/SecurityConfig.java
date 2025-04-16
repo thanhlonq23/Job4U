@@ -51,7 +51,8 @@ public class SecurityConfig {
                                 "/api/work-types",
                                 "/api/experiences",
                                 "/api/companies/search",
-                                "/api/companies/detail/**"
+                                "/api/companies/detail/**",
+                                "/api/invitation/confirm-invitation"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
