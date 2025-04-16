@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getTop5CategoriesByPostCount } from "../../service/CategoriesService";
+import { searchPostService } from "../../service/PostService";
+import Job from "../../components/Job/Job";
 import "./home.scss";
 
 const Home = () => {
-  const [dataFeature, setDataFeature] = useState([]);
-  const [topCategories, setTopCategories] = useState([]); // State cho top categories
+  const [topCategories, setTopCategories] = useState([]);
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const postsPerPage = 3;
+  const maxPosts = 12;
+  const [keyword, setKeyword] = useState("");
+  const [locationId, setLocationId] = useState("");
+  const navigate = useNavigate();
 
-  // Hàm load top 5 categories
   const loadTopCategories = async () => {
     try {
       const res = await getTop5CategoriesByPostCount();
-      console.log("AA");
-      console.log(res);
-
       if (res && res.status === "SUCCESS") {
         setTopCategories(res.data || []);
       }
@@ -22,38 +27,57 @@ const Home = () => {
     }
   };
 
-  // Hàm load posts (giữ nguyên logic của bạn, hiện đang mock = 0)
-  const loadPost = async (limit, offset) => {
-    // let arrData = await getListPostService({
-    //     limit: limit,
-    //     offset: offset,
-    //     category_job_id: '',
-    //     address_id: '',
-    //     salary_job_id: '',
-    //     category_joblevel_id: '',
-    //     category_worktype_id: '',
-    //     experience_job_id: '',
-    //     sortName: false
-    // });
-    let arrData = 0; // Giữ nguyên mock của bạn
-
-    if (arrData && arrData.errCode === 0) {
-      setDataFeature(arrData.data);
+  const loadRecentPosts = async (page) => {
+    try {
+      const res = await searchPostService({
+        page,
+        size: postsPerPage,
+        sortBy: "createdAt",
+        direction: "desc",
+      });
+      if (res && res.status === "SUCCESS") {
+        const newPosts = res.data.content || [];
+        setTotalPosts(res.data.totalElements);
+        setRecentPosts((prevPosts) => {
+          const updatedPosts = [...prevPosts, ...newPosts].slice(0, maxPosts);
+          return updatedPosts;
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching recent posts:", error);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      await loadPost(5, 0); // Load posts
-      await loadTopCategories(); // Load top categories
+      await loadTopCategories();
+      await loadRecentPosts(0);
     };
     fetchData();
   }, []);
 
+  const handleLoadMore = () => {
+    const nextPage = currentPage + 1;
+    loadRecentPosts(nextPage);
+    setCurrentPage(nextPage);
+  };
+
+  const handleSearch = () => {
+    // Chuyển hướng sang /job với query string
+    const query = new URLSearchParams();
+    if (keyword) query.set("keyword", keyword);
+    if (locationId) query.set("locationId", locationId);
+    navigate(`/job?${query.toString()}`);
+  };
+
+  const showLoadMore =
+    recentPosts.length < maxPosts &&
+    recentPosts.length < totalPosts &&
+    totalPosts > (currentPage + 1) * postsPerPage;
+
   return (
     <>
       <main>
-        {/* Slider Area Start */}
         <div className="slider-area">
           <div className="slider-active">
             <div
@@ -72,28 +96,48 @@ const Home = () => {
                 </div>
                 <div className="row">
                   <div className="col-xl-8">
-                    <form action="#" className="search-box">
+                    <form
+                      className="search-box"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSearch();
+                      }}
+                    >
                       <div className="input-form">
                         <input
                           type="text"
                           placeholder="Nhập từ khóa tìm kiếm"
+                          value={keyword}
+                          onChange={(e) => setKeyword(e.target.value)}
                         />
                       </div>
                       <div className="select-form">
                         <div className="select-itms">
                           <select
-                            className="form-select form-select-lg mb-3"
-                            aria-label=".form-select-lg example"
+                            className="form-select form-select-lg"
+                            value={locationId}
+                            onChange={(e) => setLocationId(e.target.value)}
                           >
-                            <option selected>Địa điểm</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            <option value="">Địa điểm</option>
+                            <option value="1">Hà Nội</option>
+                            <option value="2">TP. Hồ Chí Minh</option>
+                            <option value="3">Đà Nẵng</option>
                           </select>
                         </div>
                       </div>
                       <div className="search-form">
-                        <a href="#">Tìm kiếm</a>
+                        <button
+                          type="submit"
+                          style={{
+                            backgroundColor: "#2b55ff",
+                            border: "none",
+                            color: "white",
+                            padding: "15% 28%",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Tìm kiếm
+                        </button>
                       </div>
                     </form>
                   </div>
@@ -102,12 +146,9 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* Slider Area End */}
 
-        {/* Our Services Start */}
         <div className="our-services section-pad-t30">
           <div className="container">
-            {/* Section Tittle */}
             <div className="row">
               <div className="col-lg-12">
                 <div className="section-tittle text-center">
@@ -116,12 +157,11 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            {/* Hiển thị top 5 danh mục */}
             <div className="row d-flex justify-content-center">
               {topCategories.length > 0 ? (
                 topCategories.map((category) => (
                   <div key={category.id} className="col-lg-3 col-md-4 col-sm-6">
-                    <div className="single-services text-center mb-30">
+                    <div className="text-center mb-30">
                       <div className="services-ion">
                         <img
                           src={category.image}
@@ -142,14 +182,10 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* Our Services End */}
 
-        {/* Online CV Area Start */}
         <div
           className="online-cv cv-bg section-overly pt-90 pb-120"
-          style={{
-            backgroundImage: `url("assets/img/gallery/cv_bg.jpg")`,
-          }}
+          style={{ backgroundImage: `url("assets/img/gallery/cv_bg.jpg")` }}
         >
           <div className="container">
             <div className="row justify-content-center">
@@ -165,9 +201,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* Online CV Area End */}
 
-        {/* Featured Job Start */}
         <section className="featured-job-area feature-padding">
           <div className="container">
             <div className="row">
@@ -177,12 +211,31 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            {/* <FeatureJobs dataFeature={dataFeature} /> */}
+            <div className="row justify-content-center">
+              <div className="col-lg-9">
+                {recentPosts.length > 0 ? (
+                  recentPosts.map((post) => (
+                    <Link to={`/detail-job/${post.id}`} key={post.id}>
+                      <div className="single-job-items mb-30 transition-hover-shadow">
+                        <Job data={post} />
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p>Đang tải bài đăng...</p>
+                )}
+              </div>
+            </div>
+            {showLoadMore && (
+              <div className="row justify-content-center mt-30">
+                <button className="btn btn-primary" onClick={handleLoadMore}>
+                  Xem thêm
+                </button>
+              </div>
+            )}
           </div>
         </section>
-        {/* Featured Job End */}
 
-        {/* How Apply Process Start */}
         <div
           className="apply-process-area apply-bg pt-150 pb-150"
           style={{
@@ -232,7 +285,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* How Apply Process End */}
       </main>
     </>
   );

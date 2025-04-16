@@ -134,15 +134,49 @@ const CreateReport = () => {
 
   const prepareSkillTrendData = () => {
     if (!skillDemandData?.skillTrends) return [];
-    const monthGroups = {};
-    skillDemandData.skillTrends.forEach((item) => {
-      if (!monthGroups[item.month]) monthGroups[item.month] = {};
-      monthGroups[item.month][item.skill_name] = item.demand_count;
+
+    // Lấy danh sách tất cả các kỹ năng duy nhất
+    const uniqueSkills = [
+      ...new Set(skillDemandData.skillTrends.map((item) => item.skill_name)),
+    ];
+
+    // Xác định khoảng thời gian (từ tháng nhỏ nhất đến tháng lớn nhất trong dữ liệu)
+    const months = [];
+    const minMonth = skillDemandData.skillTrends.reduce(
+      (min, item) => (item.month < min ? item.month : min),
+      skillDemandData.skillTrends[0]?.month
+    );
+    const maxMonth = skillDemandData.skillTrends.reduce(
+      (max, item) => (item.month > max ? item.month : max),
+      skillDemandData.skillTrends[0]?.month
+    );
+
+    let current = new Date(minMonth + "-01");
+    const end = new Date(maxMonth + "-01");
+
+    while (current <= end) {
+      months.push(
+        `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}`
+      );
+      current.setMonth(current.getMonth() + 1);
+    }
+
+    // Tạo dữ liệu cho biểu đồ
+    const result = months.map((month) => {
+      const monthData = { month };
+      uniqueSkills.forEach((skill) => {
+        const skillData = skillDemandData.skillTrends.find(
+          (item) => item.month === month && item.skill_name === skill
+        );
+        monthData[skill] = skillData ? skillData.demand_count : 0;
+      });
+      return monthData;
     });
-    return Object.keys(monthGroups).map((month) => ({
-      month,
-      ...monthGroups[month],
-    }));
+
+    return result;
   };
 
   const prepareSalaryData = () =>
@@ -271,7 +305,7 @@ const CreateReport = () => {
               skill: item.skill_name,
               salary: item.avg_salary,
             });
-            row.getCell("salary").numFmt = '#,##0 "đồng"';
+            row.getCell("salary").numFmt = '#,##0 "$"';
           });
         }
 
@@ -731,7 +765,7 @@ const CreateReport = () => {
                   </div>
                 </div>
 
-                {/* <div className="row mb-5">
+                <div className="row mb-5">
                   <div className="col-md-12">
                     <div className="card">
                       <div className="card-body">
@@ -763,7 +797,7 @@ const CreateReport = () => {
                       </div>
                     </div>
                   </div>
-                </div> */}
+                </div>
 
                 <div className="row mb-5">
                   <div className="col-md-12">
@@ -785,7 +819,7 @@ const CreateReport = () => {
                               <YAxis />
                               <Tooltip
                                 formatter={(value) =>
-                                  value.toLocaleString("vi-VN") + " đồng"
+                                  value.toLocaleString("vi-VN") + " $"
                                 }
                               />
                               <Legend />

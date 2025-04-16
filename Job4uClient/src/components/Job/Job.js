@@ -25,7 +25,7 @@ const Job = ({ data }) => {
             <img
               src={data.companyLogo}
               alt={data.companyName}
-              style={{ width: "85px", height: "85px", objectFit: "contain" }}
+              style={{ width: "70px", height: "auto", objectFit: "contain" }}
             />
           ) : (
             <img

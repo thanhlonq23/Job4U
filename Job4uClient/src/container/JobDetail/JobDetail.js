@@ -62,16 +62,29 @@ const JobDetail = () => {
               <div className="row justify-content-between">
                 <div className="col-xl-7 col-lg-8">
                   <div className="single-job-items mb-30">
-                    <div className="job-items">
+                    <div
+                      className="job-items"
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
                       <div className="company-img company-img-details">
                         <img
                           src={dataPost.company.thumbnail}
                           alt="Ảnh công ty"
-                          width={100}
-                          height={100}
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            maxWidth: "150px",
+                            maxHeight: "150px",
+                            minWidth: "50px",
+                            minHeight: "50px",
+                            objectFit: "contain",
+                          }}
                         />
                       </div>
-                      <div className="job-tittle">
+                      <div
+                        className="job-tittle"
+                        style={{ marginLeft: "10px" }}
+                      >
                         <h4>{dataPost.name}</h4>
 
                         <ul>

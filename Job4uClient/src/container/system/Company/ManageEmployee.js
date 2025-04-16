@@ -114,7 +114,6 @@ const ManageEmployee = () => {
                   <th>Họ và tên</th>
                   <th>Email</th>
                   <th>Ngày sinh</th>
-                  <th>Giới tính</th>
                   <th>Vai trò</th>
                   <th>Thao tác</th>
                 </tr>
@@ -136,7 +135,6 @@ const ManageEmployee = () => {
                       <td>{item.fullName}</td>
                       <td>{item.email}</td>
                       <td>{formatDate(item.dob)}</td>
-                      <td>{formatGender(item.gender)}</td>
                       <td>
                         {item.roleName === "EMPLOYER_OWNER"
                           ? "Chủ công ty"

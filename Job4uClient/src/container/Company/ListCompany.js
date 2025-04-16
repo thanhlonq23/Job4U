@@ -67,8 +67,13 @@ const ListCompany = () => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onKeyPress={handleKeyPress}
+          style={{ marginBottom: "30px", height: "3.5rem" }}
         />
-        <button className="btn btn-primary mr-2" type="submit">
+        <button
+          className="btn btn-primary mr-2"
+          type="submit"
+          style={{ marginBottom: "30px" }}
+        >
           <i className="bi bi-search me-1"></i> Tìm kiếm
         </button>
       </div>

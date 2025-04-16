@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import LeftBar from "./LeftPage/LeftBar";
 import RightContent from "./RightPage/RightContent";
 import ReactPaginate from "react-paginate";
@@ -9,7 +10,7 @@ const JobPage = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(10);
   const [searchLoading, setSearchLoading] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -22,13 +23,28 @@ const JobPage = () => {
   const [direction, setDirection] = useState("desc");
   const [error, setError] = useState(null);
 
-  const fetchPosts = async (page) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Hàm lấy dữ liệu từ API
+  const fetchPosts = async ({
+    page,
+    keyword,
+    categoryId,
+    locationId,
+    workTypeIds,
+    jobLevelIds,
+    experienceIds,
+    salaryIds,
+    sortBy,
+    direction,
+  }) => {
     setSearchLoading(true);
     setError(null);
 
     try {
       const response = await searchPostService({
-        page: page,
+        page,
         size: pageSize,
         keyword,
         categoryId,
@@ -37,6 +53,7 @@ const JobPage = () => {
         jobLevelIds,
         experienceIds,
         salaryIds,
+        companyId: null,
         sortBy,
         direction,
       });
@@ -62,21 +79,85 @@ const JobPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchPosts(0);
-  }, []);
+  // Hàm cập nhật URL dựa trên state hiện tại
+  const updateUrl = (newPage = currentPage) => {
+    const query = new URLSearchParams();
+    if (keyword) query.set("keyword", keyword);
+    if (categoryId) query.set("categoryId", categoryId);
+    if (locationId) query.set("locationId", locationId);
+    if (workTypeIds.length) query.set("workTypeIds", workTypeIds.join(","));
+    if (jobLevelIds.length) query.set("jobLevelIds", jobLevelIds.join(","));
+    if (experienceIds.length)
+      query.set("experienceIds", experienceIds.join(","));
+    if (salaryIds.length) query.set("salaryIds", salaryIds.join(","));
+    if (sortBy) query.set("sortBy", sortBy);
+    if (direction) query.set("direction", direction);
+    query.set("page", newPage.toString());
 
-  const handleSearch = () => {
-    setCurrentPage(0);
-    fetchPosts(0);
+    navigate(`/job?${query.toString()}`, { replace: true });
   };
 
+  // Khởi tạo state từ URL và truy vấn API
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+
+    // Trích xuất tham số từ URL
+    const urlKeyword = queryParams.get("keyword") || "";
+    const urlCategoryId = queryParams.get("categoryId") || "";
+    const urlLocationId = queryParams.get("locationId") || "";
+    const urlWorkTypeIds =
+      queryParams.get("workTypeIds")?.split(",").filter(Boolean) || [];
+    const urlJobLevelIds =
+      queryParams.get("jobLevelIds")?.split(",").filter(Boolean) || [];
+    const urlExperienceIds =
+      queryParams.get("experienceIds")?.split(",").filter(Boolean) || [];
+    const urlSalaryIds =
+      queryParams.get("salaryIds")?.split(",").filter(Boolean) || [];
+    const urlSortBy = queryParams.get("sortBy") || "createdAt";
+    const urlDirection = queryParams.get("direction") || "desc";
+    const urlPage = parseInt(queryParams.get("page") || "0", 10);
+
+    // Cập nhật state để UI hiển thị đúng
+    setKeyword(urlKeyword);
+    setCategoryId(urlCategoryId);
+    setLocationId(urlLocationId);
+    setWorkTypeIds(urlWorkTypeIds);
+    setJobLevelIds(urlJobLevelIds);
+    setExperienceIds(urlExperienceIds);
+    setSalaryIds(urlSalaryIds);
+    setSortBy(urlSortBy);
+    setDirection(urlDirection);
+    setCurrentPage(urlPage);
+
+    // Gọi fetchPosts với tham số từ URL
+    fetchPosts({
+      page: urlPage,
+      keyword: urlKeyword,
+      categoryId: urlCategoryId,
+      locationId: urlLocationId,
+      workTypeIds: urlWorkTypeIds,
+      jobLevelIds: urlJobLevelIds,
+      experienceIds: urlExperienceIds,
+      salaryIds: urlSalaryIds,
+      sortBy: urlSortBy,
+      direction: urlDirection,
+    });
+  }, [location.search]);
+
+  // Xử lý tìm kiếm
+  const handleSearch = () => {
+    setCurrentPage(0);
+    updateUrl(0);
+  };
+
+  // Xử lý thay đổi trang
   const handlePageChange = (selectedPage) => {
     const newPage = selectedPage.selected;
     setCurrentPage(newPage);
-    fetchPosts(newPage);
+    updateUrl(newPage);
   };
 
+  // Reset bộ lọc
   const resetFilters = () => {
     setKeyword("");
     setCategoryId("");
@@ -85,9 +166,19 @@ const JobPage = () => {
     setJobLevelIds([]);
     setExperienceIds([]);
     setSalaryIds([]);
-    setCurrentPage(0);
     setSortBy("createdAt");
     setDirection("desc");
+    setCurrentPage(0);
+    updateUrl(0);
+  };
+
+  // Xử lý thay đổi sắp xếp
+  const handleSortChange = (sortOption) => {
+    const [sort, dir] = sortOption.split("_");
+    setSortBy(sort);
+    setDirection(dir);
+    setCurrentPage(0);
+    updateUrl(0);
   };
 
   return (
@@ -138,19 +229,14 @@ const JobPage = () => {
                       placeholder="Tìm kiếm công việc..."
                       value={keyword}
                       onChange={(e) => setKeyword(e.target.value)}
-                      style={{
-                        height: "55px",
-                      }}
+                      style={{ height: "55px" }}
                     />
                     <div className="input-group-append">
                       <button
                         className="btn btn-primary"
                         type="button"
                         onClick={handleSearch}
-                        style={{
-                          width: "auto",
-                          padding: "5px 10px",
-                        }}
+                        style={{ width: "auto", padding: "5px 10px" }}
                       >
                         Tìm kiếm
                       </button>
@@ -158,36 +244,18 @@ const JobPage = () => {
                   </div>
                 </div>
                 <LeftBar
-                  worktype={(id) =>
-                    setWorkTypeIds((prev) =>
-                      prev.includes(id)
-                        ? prev.filter((item) => item !== id)
-                        : [...prev, id]
-                    )
-                  }
-                  recieveSalary={(id) =>
-                    setSalaryIds((prev) =>
-                      prev.includes(id)
-                        ? prev.filter((item) => item !== id)
-                        : [...prev, id]
-                    )
-                  }
-                  recieveExp={(id) =>
-                    setExperienceIds((prev) =>
-                      prev.includes(id)
-                        ? prev.filter((item) => item !== id)
-                        : [...prev, id]
-                    )
-                  }
+                  selectedCategory={categoryId}
+                  selectedLocation={locationId}
+                  selectedWorkTypes={workTypeIds}
+                  selectedJobLevels={jobLevelIds}
+                  selectedExperiences={experienceIds}
+                  selectedSalaries={salaryIds}
                   recieveJobType={(id) => setCategoryId(id)}
-                  recieveJobLevel={(id) =>
-                    setJobLevelIds((prev) =>
-                      prev.includes(id)
-                        ? prev.filter((item) => item !== id)
-                        : [...prev, id]
-                    )
-                  }
                   recieveLocation={(id) => setLocationId(id)}
+                  worktype={(ids) => setWorkTypeIds(ids)}
+                  recieveJobLevel={(ids) => setJobLevelIds(ids)}
+                  recieveExp={(ids) => setExperienceIds(ids)}
+                  recieveSalary={(ids) => setSalaryIds(ids)}
                   resetFilters={resetFilters}
                 />
               </div>
@@ -196,12 +264,7 @@ const JobPage = () => {
                   count={totalElements}
                   post={posts}
                   loading={searchLoading}
-                  onSortChange={(sortOption) => {
-                    const [sort, dir] = sortOption.split("_");
-                    setSortBy(sort);
-                    setDirection(dir);
-                    handleSearch();
-                  }}
+                  onSortChange={handleSortChange}
                   currentSort={`${sortBy}_${direction}`}
                 />
               </div>

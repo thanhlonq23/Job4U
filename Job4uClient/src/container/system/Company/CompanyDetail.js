@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 import moment from "moment";
+import ReactMarkdown from "react-markdown"; // Thêm thư viện react-markdown
 import { getCompanyByIdService } from "../../../service/CompanyService";
 
 const ViewCompanyDetail = () => {
@@ -295,8 +296,6 @@ const ViewCompanyDetail = () => {
                     </div>
                   </div>
 
-                  <div className="row mb-3"></div>
-
                   <div className="row mt-4">
                     <div className="col-md-12">
                       <div className="description-section">
@@ -304,7 +303,7 @@ const ViewCompanyDetail = () => {
                           Mô tả công ty
                         </h5>
 
-                        {/* Hiển thị mô tả chỉ bằng HTML */}
+                        {/* Hiển thị mô tả bằng Markdown */}
                         <div
                           className="p-3 description-content"
                           style={{
@@ -314,13 +313,13 @@ const ViewCompanyDetail = () => {
                             backgroundColor: "#fff",
                           }}
                         >
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html:
-                                company.description_HTML ||
-                                "<p>Không có mô tả</p>",
-                            }}
-                          ></div>
+                          {company.description_Markdown ? (
+                            <ReactMarkdown>
+                              {company.description_Markdown}
+                            </ReactMarkdown>
+                          ) : (
+                            <p>Không có mô tả</p>
+                          )}
                         </div>
                       </div>
                     </div>

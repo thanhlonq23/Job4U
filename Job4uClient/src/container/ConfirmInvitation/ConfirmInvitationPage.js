@@ -15,7 +15,7 @@ const ConfirmInvitationPage = () => {
     try {
       const response = await confirmInvitationService(token, accept);
       if (response.status === "SUCCESS") {
-        toast.success(response.data.message);
+        toast.success(response.message);
         setTimeout(() => {
           navigate("/");
         }, 1000);
@@ -23,7 +23,6 @@ const ConfirmInvitationPage = () => {
         toast.error(response.message || "Xác nhận thất bại!");
       }
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi xác nhận!");
       console.error("Error confirming invitation:", error);
       setTimeout(() => {
         navigate("/");
