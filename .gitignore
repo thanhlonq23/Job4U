@@ -1,2 +1,3 @@
 Job4uServer/src/main/resources/application.properties
 /.cache
+Job4uAnalytics/src/main/resources/application.properties
